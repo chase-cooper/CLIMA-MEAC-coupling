@@ -1,0 +1,4 @@
+Access to MEAC is initially restricted to R. Hu, S. Seager, S. Ranjan, and their groups. Departing members of these groups gain the right to take their
+ version of the code with them as independent branches upon substantive use or improvement of the code. “Substantive” here corresponds to either authoring a first-author publication using the code, or using it as a main tool for their thesis, or substantially
+ improving the code as documented in a publication with a co-author credit. MEAC users agree to notify other users including Hu, Seager and Ranjan upon detection of errors or bugs in MEAC. All users of MEAC agree that MEAC source code written by R. Hu cannot
+ be shared publicly without R. Hu’s explicit approval.

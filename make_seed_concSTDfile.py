@@ -285,6 +285,12 @@ def generate_new_concentrationSTD(old_concSTD, new_zTP, zmin, zmax, zbin,new_con
     #Second, interpolate the new zTP to the new altitude grid.
     # T_new=np.interp(z_grid_new, z_zTP, T_zTP) 
     # logP_new=np.interp(z_grid_new, z_zTP, logP_zTP) #interpolation for pressure is performed in log(p) space.
+    print('z_grid_new')
+    print(z_grid_new)
+    print('z_zTP')
+    print(z_zTP)
+    print('T_zTP')
+    print(T_zTP)
     T_new=MEAC_interp(z_grid_new, z_zTP, T_zTP) 
     logP_new=MEAC_interp(z_grid_new, z_zTP, logP_zTP) #interpolation for pressure is performed in log(p) space.   
     

@@ -1,0 +1,25 @@
+This is intended as a text changelog as a complement/backup to the GitHub changelog. It may be ancillary and abandoned later.
+
+STARTED WITH CODE CURRENT UP TO RANJAN ET AL 2022 APJ
+
+***1/11/2024 SR***
+-Removed the extra exoplanet scenarios. The user will have to generate fresh versions for their individual scenarios anyway, and they take too long to maintain. Now just keeping Earth, Mars, and the Sun scenarios. 
+-Removed the NH3-fromRenyu scenario as well. That was present to permit validation against Seager et al. 2013ab (H2-dominated atmospheres). However, the choices behind the details of that scenario were not detailed, the code has evolved since then, and so the utility of this comparison point is limited. 
+------>Removed the corresponding zone_N2H2_NH3.dat zone scenario file as well.
+------>Removed  zone_scenario_CO2N2r_addNOx.dat and zone_scenario_CO2N2_addOCS.dat as well because they were only used for Ranjan et al. 2020; they are superflous for future work. 
+-Removed the erroneous CO2 file. Leaving the diversity of H2O files as they are all reasonable to some degree, given the lack of replication of Ranjan+2020 by an independent group (while there is no obvious flaw with Ranjan+2020, the gold standard for confidence is independent replication) 
+-Removed P55 from Earth reaction network as well.
+-Removed the old M88-M91, which were nominally channels for OH + CH3 in a three-body reaction, ultimately from Humpfer+1994 via NIST. However, they were not correctly implemented and they have never been used. So just straight-up deleted...done
+-Wogan+2023 personal communication: R3 (C + H2 --> CH + H) is a duplicate of R193 (H2 + C --> CH + H). Solution: Zero R193 in ReactionRate.c, excise R193 from all reaction networks. 
+-Wogan+2023 personal communication: R147 is a high-pressure limit expression, which leads to errors in some regimes (very subtle). Solution: (1) Zero R147 in ReactionRate.c, eliminate it from the reaction network files. (2) Add a new M88 that corresponds to the correct version of this reaction. This is a fit to Xu+2015 by Wogan+2023 (paper to be submitted imminently).
+-Removed the CO2, N2, H2 scenarios and replaced them with a single superset scenario list titled "Exoplanet_noN" which corresponds to Hu+2012. 
+-Extended CO2 concSTD to 100 km following Ranjan+2023b.
+
+1/25/24 SR
+-Updated CO + OH ratelaws to JPL2020 recommendation. Specifically: (1) Updated M39 to JPL2020 (2) Added M39 to zone_Exoplanet_noN.dat. (2) Added M89 OH + CO + M --> H2O + H + M to ReactionRateM.c and Reaction_M.txt. (3) Removed R511 and added M89 to all scenario files. FINDING: This causes the CO mixing ratio to go into tension with observations by a factor of ~7 (worsens by a factor of 3). I suspect the 3-body enhancement is not being treated correctly.
+
+1/31/24-2/1/24 SR
+-Corrected 3-body enhancement when CO2 dominant. This scaling was previously being applied to the final reaction rate. Instead, it should ONLY apply to the low-pressure limits. 
+---Commented out bit in ReactionRateM.c where all reactions scaled.
+---Reactions update: M1-M9. M9 is a tricky one, not only are the latest estimates in major tension with the previous reviews, but the NIST import does not match what is in the table (sometimes by quite a bit). 
+
