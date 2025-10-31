@@ -80,6 +80,21 @@ def writeParameters():
 
     f.close()
 
+def writeIncludeFile():
+    f = writeOrCreate(CINCLUDE)
+    f.write(f"""c---------------------------------------------------
+c Include file to contain common declarations
+c
+c JHM, 06-16-06
+c--------------------------------------------------
+        PARAMETER(ND={ND})
+        PARAMETER(RAD={RAD})
+        PARAMETER(TCONV={TCONV})
+        PARAMETER(MINSTEPS={NMINSTEPS})
+        PARAMETER(FIXH20={FIXH2O})
+        implicit real*8(A-H,O-Z)""")
+    f.close()
+
 def writeScenarioFile():
     # Substitute surface albedo and new ZTP profile into scenario file
     ff = open(f"{MEACPATH}/{MSCENARIO}",'r')
@@ -94,6 +109,36 @@ def writeScenarioFile():
     ff = writeOrCreate(f"{MEACPATH}/{MSCENARIO}")
     ff.write(newfile)
     ff.close()
+
+def writeCLIMAinput():
+    f = open('templates/clima_input.txt','r')
+    template = f.read()
+    f.close()
+
+    # Do the writing
+    template = template.replace('{1}',str(NMAXSTEPS))           # number of CLIMA steps
+    template = template.replace('{2}',str(RELHUM))              # relative humidity
+    template = template.replace('{3}',str(P0))                  # TOA pressure [bar]
+    template = template.replace('{4}',str(PSURF))               # Surface pressure [bar]
+    template = template.replace('{5}',str(G))                   # Surface gravity [cgs]
+    template = template.replace('{6}',str(IO3))                 # Ozone flag
+    template = template.replace('{7}',str(ICONSERVE))           # Energy conservation flag
+    template = template.replace('{8}',str(SURFALB))             # Surface albedo
+    template = template.replace('{9}',str(INSTELL))             # Instellation [S_Earth]
+    template = template.replace('{10}',"1.0")                   # Max CO2 mixing ratio
+    template = template.replace('{11}',str(IME))                # Methane/ethane flag
+    template = template.replace('{12}',str(DOEDDY).lower())     # Eddy flag
+    template = template.replace('{13}',str(FCLOUD))             # Fractional cloudiness
+    template = template.replace('{14}',str(KZ_MIN))             # Eddy diffusivity
+    template = template.replace('{15}',str(CRAINF))             # Rainout parameter
+    template = template.replace('{16}',str(CSIG))               # ???
+    template = template.replace('{17}',str(SUPERSAT))           # ???
+    template = template.replace('{18}',str(COLDTRAPMINMIX))     # Minimum mixing ratio above coldtrap
+    template = template.replace('{19}',str(FCMINF))             # See above
+
+    f = writeOrCreate(CINPUT)
+    f.write(template)
+    f.close()
 
 def writeMEACout(conc_file:str,out_dir:str='',id:str=''):
     # holy shit my code is ass
@@ -143,48 +188,20 @@ def writeMEACout(conc_file:str,out_dir:str='',id:str=''):
         f.write(np.format_float_scientific(mrO3[j],precision=3,trim='k',unique=True,exp_digits=2,min_digits=3)+'\n')
     f.close()
 
-def writeCLIMAinput():
-    f = open('templates/clima_input.txt','r')
-    template = f.read()
+def writeCLIMAout(clima_last:str,out_dir:str='',id:str=''):
+    f = open(clima_last,'r')
+    data = ''.join(f.readlines()[1:])
+    data = np.fromstring(data,dtype=np.float32,sep=' ').reshape((ND,9))
     f.close()
 
-    # Do the writing
-    template = template.replace('{1}',str(NMAXSTEPS))           # number of CLIMA steps
-    template = template.replace('{2}',str(RELHUM))              # relative humidity
-    template = template.replace('{3}',str(P0))                  # TOA pressure [bar]
-    template = template.replace('{4}',str(PSURF))               # Surface pressure [bar]
-    template = template.replace('{5}',str(G))                   # Surface gravity [cgs]
-    template = template.replace('{6}',str(IO3))                 # Ozone flag
-    template = template.replace('{7}',str(ICONSERVE))           # Energy conservation flag
-    template = template.replace('{8}',str(SURFALB))             # Surface albedo
-    template = template.replace('{9}',str(INSTELL))             # Instellation [S_Earth]
-    template = template.replace('{10}',"1.0")                   # Max CO2 mixing ratio
-    template = template.replace('{11}',str(IME))                # Methane/ethane flag
-    template = template.replace('{12}',str(DOEDDY).lower())     # Eddy flag
-    template = template.replace('{13}',str(FCLOUD))             # Fractional cloudiness
-    template = template.replace('{14}',str(KZ_MIN))             # Eddy diffusivity
-    template = template.replace('{15}',str(CRAINF))             # Rainout parameter
-    template = template.replace('{16}',str(CSIG))               # ???
-    template = template.replace('{17}',str(SUPERSAT))           # ???
-    template = template.replace('{18}',str(COLDTRAPMINMIX))     # Minimum mixing ratio above coldtrap
-    template = template.replace('{19}',str(FCMINF))             # See above
+    alts = data[:,0]
+    temps = data[:,2]
+    pres = data[:,1]*atm2Pa
 
-    f = writeOrCreate(CINPUT)
-    f.write(template)
-    f.close()
-
-def writeIncludeFile():
-    f = writeOrCreate(CINCLUDE)
-    f.write(f"""c---------------------------------------------------
-c Include file to contain common declarations
-c
-c JHM, 06-16-06
-c--------------------------------------------------
-        PARAMETER(ND={ND})
-        PARAMETER(RAD={RAD})
-        PARAMETER(TCONV={TCONV})
-        PARAMETER(MINSTEPS={NMINSTEPS})
-        PARAMETER(FIXH20={FIXH2O})
-        implicit real*8(A-H,O-Z)""")
+    f = writeOrCreate(f'{out_dir}/clima-out/ztp_{id}.dat')
+    f.write("Altitude [km]\tTemperature [K]\tPressure [Pa]\n")
+    for j in range(len(alts)):
+        p = np.format_float_positional(pres[j],precision=6,trim='k',unique=True,min_digits=6)
+        f.write(f"{alts[j]:.4f}\t\t\t{temps[j]:.4f}\t\t\t{p}\n")
     f.close()
 

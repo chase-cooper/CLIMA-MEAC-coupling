@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-import re
 import subprocess
 
+from compare_model_outputs_v2 import *
 from files import *
 from make_seed_concSTDfile import *
 from parameters import *
@@ -15,14 +15,13 @@ from plots import *
 
 CLIMAstepIntervals      = []                   # Step counts where MEAC runs occur
 surfTemps     = []               # Surface temperatures after each CLIMA step (not each loop)
-toaTemps         = []                  # TOA temperatures after each CLIMA step
 
 ##############################################################################################################
 ##############################################################################################################
 
-def updateCLIMA(firstloop:bool,stepnum:int):
+def updateCLIMA(firstloop:bool):
     """
-    Trying this
+    
     """
     subprocess.run(['cp',CLAST,f"{CINOUT}/clima_first.tab"])
     ### Getting mixing ratios from MEAC    
@@ -132,8 +131,6 @@ def updateCLIMA(firstloop:bool,stepnum:int):
         print(fH2O[i])
     inn.close()
 
-    plotAtmosphericComposition(conc_file=conc_file,out_dir=OUTPUT)
-
 def runCLIMA(stepnum:int):
     # Compile and run the cloudy-CLIMA model.
     os.chdir(CLIMAPATH)
@@ -142,11 +139,10 @@ def runCLIMA(stepnum:int):
     subprocess.run("./clima.run")
     os.chdir(PATH)
 
-    # Insert code to write profile 
-
+    writeCLIMAout(CLAST,OUTPUT,str(stepnum))
     plotTPprofile(CINOUT,OUTPUT)
 
-def updateMEAC(firstloop:bool,stepnum:int):
+def updateMEAC(firstloop:bool):
     """
     Write MEAC input files, and generate new ConcentrationSTD.dat file (code thanks to Sukrit)
     """
@@ -187,8 +183,8 @@ def updateMEAC(firstloop:bool,stepnum:int):
     # Plot params
     axes.set_xlim(left=1)
     axes.set_ylim(np.min(surfTemps)-1,np.max(surfTemps)+1)
-    axes.set_xlabel("CLIMA step")
-    axes.set_ylabel("Temperature")
+    axes.set_xlabel("CLIMA step",size='x-large')
+    axes.set_ylabel("Surface Temperature [K]",size='x-large')
     fig.set_figwidth(9)
     plt.tight_layout()
     plt.savefig(f"{OUTPUT}/surface temperatures",dpi=300)
@@ -239,7 +235,8 @@ def runMEAC(stepnum:int):
     subprocess.run('./main')                                # Run main
     os.chdir(PATH)                                          # Return to PATH
 
-    writeMEACout(MCONC,NAME,stepnum)
+    writeMEACout(MCONC,NAME,str(stepnum))
+    plotAtmosphericComposition(conc_file=MCONC,out_dir=OUTPUT)
 
 def resetMEAC():
     os.chdir(PATH)
@@ -249,6 +246,9 @@ def resetMEAC():
 
 # resetMEAC()
 # input()
+
+plotTPprofile(CINOUT,OUTPUT)
+input()
 
 # make output folder for run if it doesn't exist yet
 if not (NAME in os.listdir('outputs')):
@@ -261,11 +261,11 @@ writeParameters()
 writeIncludeFile()
 for i in range(NLOOPS):
     first = ((i==0) and not RESUMERUN)
-    updateCLIMA(first,i)
+    updateCLIMA(first)
     # input()
     runCLIMA(i)
     # # input()
-    updateMEAC(first,i)
+    updateMEAC(first)
     # input()
     runMEAC(i)
     # input()
