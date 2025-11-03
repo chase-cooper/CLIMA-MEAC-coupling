@@ -1,0 +1,1 @@
+IMODE=1 takes ~100k cycles. IMODE=4 thereafter is fast. 

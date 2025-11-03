@@ -1,0 +1,34 @@
+I've included the tag guide below, and here's also a youtube video where I talk about STAND + ARGO: https://www.youtube.com/watch?v=6wQZKLmrgZI. You still have access to the code + network through github (which has a text file with all this info, and more!), and I'd be happy to extend access to any of your group.
+ 
+I've also cc'd Tereza Constantinou, who has developed a wiki for STAND+ARGO.
+ 
+Best,
+Paul
+ 
+Here's the list of how things are coded:
+ 
+B = Neutral Termolecular and Thermal Decomposition Reactions
+BS = Neutral Termolecular and Thermal Decomposition Reactions (added to model Venus)
+BI = Neutral Termolecular and Thermal Decomposition Reactions (added to model Isoprene)
+G = Reverse Neutral Termolecular and Thermal Decomposition Reactions
+ 
+Q = Ion-Neutral Termolecular and Thermal Decomposition Reactions
+R = Reverse Ion-Neutral Termolecular and Thermal Decomposition Reactions
+ 
+T = Three-Body Recombination Reactions
+I = Thermal Ionization Reactions
+ 
+A = Neutral Bimolecular Reactions
+AS = Neutral Bimolecular Reactions (added to model Venus)
+AS = Neutral Bimolecular Reactions (added to model Isoprene)
+F = Reverse Neutral Bimolecular Reactions
+ 
+D = Ion-Neutral Bimolecular Reactions
+L = Reverse Ion-Neutral Bimolecular Reactions
+ 
+V = Photochemical Reactions
+EV = Condensation/Evaporation Reactions
+Z = Cosmic Ray Reactions (All of these are set equal zero for the Venus model)
+ 
+U = Dissociative Recombination Reactions
+RA = Radiative Association Reactions
