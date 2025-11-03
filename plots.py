@@ -156,7 +156,6 @@ def plotTPprofile(io_dir:str,out_dir:str=''):
     plt.yscale('log')
     plt.legend()
     plt.savefig(out_dir+'/CLIMA_TPprofile',dpi=250)
-    plt.show()
+    # plt.show()
     plt.close()
 
-plotTPprofile(CINOUT,OUTPUT)
