@@ -95,21 +95,6 @@ c--------------------------------------------------
         implicit real*8(A-H,O-Z)""")
     f.close()
 
-def writeScenarioFile():
-    # Substitute surface albedo and new ZTP profile into scenario file
-    ff = open(f"{MEACPATH}/{MSCENARIO}",'r')
-    basefile = ff.read()
-    ff.close()
-
-    newfile = re.sub(r'PSURFAB\W+....',r'PSURFAB\t\t\t\t'+str(SURFALB),basefile)    # Surf. albedo
-    newfile = re.sub(r'TPLIST\W+".+"',r'TPLIST\t\t\t\t"'+MZTP+'\"',newfile)         # ZTP profile
-    newMaxTime = np.format_float_scientific(NMAXT,precision=2,trim='k',unique=True,exp_digits=3,min_digits=2)
-    newfile = re.sub(r'NMAXT\W+.+/\*',r'NMAXT\t'+newMaxTime+r'\t/*',newfile)                # MEAC total timestep
-
-    ff = writeOrCreate(f"{MEACPATH}/{MSCENARIO}")
-    ff.write(newfile)
-    ff.close()
-
 def writeCLIMAinput():
     f = open('templates/clima_input.txt','r')
     template = f.read()
@@ -139,6 +124,18 @@ def writeCLIMAinput():
     f = writeOrCreate(CINPUT)
     f.write(template)
     f.close()
+
+def writeMEACmain():
+    f = open('templates/meac_main.txt','r')
+    text = f.read()
+    f.close()
+
+    text = text.replace('{1}',MSCENARIO)
+    text = text.replace('{2}',str(NMAXT))
+
+    o = open(MEACPATH+'/main.c','w')
+    o.write(text)
+    o.close()
 
 def writeMEACout(conc_file:str,out_dir:str='',id:str=''):
     # holy shit my code is ass

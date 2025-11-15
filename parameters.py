@@ -2,11 +2,11 @@ import os
 
 # Coupling parameters
 ND              =   101                     # CLIMA layer variables DONT TOUCH
-NLOOPS          =   20                       # Number of CLIMA-MEAC loops
+NLOOPS          =   16                       # Number of CLIMA-MEAC loops
 NMINSTEPS       =   500                      # Minimum number of CLIMA steps per loop
 NMAXSTEPS       =   500                      # Max Number of CLIMA steps per loops
 NMAXT           =   1e50                    # Max MEAC run cumulative timestep
-TCONV           =   1E-1                    # CLIMA convergence criterion, delta temperature
+TCONV           =   1E-2                    # CLIMA convergence criterion, delta temperature
 
 # Planet + atmosphere parameters
 MASS            =   5.9722e24               # Planet mass in kg
@@ -18,12 +18,12 @@ INSTELL         =   1.0                     # Planet instelation, relative to Ea
 P0              =   1e-5                    # Top-of-atmosphere pressure [atm]
 PSURF           =   1e+0                    # Surface pressure [atm]
 T0              =   200                     # Top-of-atmosphere temperature [K]
-TSURF           =   288                     # Surface temperature [K]
+TSURF           =   280                     # Surface temperature [K]
 TROPOPAUSE      =   22                      # CLIMA tropopause layer, default 22 (of 101)
 AR              =   2e-2                    # Argon mixing ratio
 RELHUM          =   0.7                     # Surface relative humidity
 FIXH2O          =   1                       # Fixed H2O flag. I really recommend leaving this on
-IO3             =   1                       # Ozone flag -- IO3=0 means ozone isn't read in
+IO3             =   0                       # Ozone flag -- IO3=0 means ozone isn't read in
 IME             =   1                       # Methane/ethane flag
 
 # Eddysed variables
@@ -41,6 +41,7 @@ RESUMERUN       =   0                       # Continue from most recent run
 ICONSERVE       =   1                       # CLIMA energy conservation flag, PLEASE KEEP ON
 RAINOUT         =   1                       # controls rainout in 'main.c'. not used yet
 ADIABATIC       =   0                       # tells CLIMA that atmosphere is dry adiabat  
+ZMAX            =   50                      # Upper altitude limit, WIP
 atm2Pa          =   101_325
 
 #######################
@@ -48,7 +49,7 @@ atm2Pa          =   101_325
 #######################
 
 # Paths
-NAME            =   'test'
+NAME            =   'N2'
 OUTPUT          =   "outputs/"+NAME
 PATH            =   os.getcwd()                                     # Path to this python file
 CLIMAPATH       =   f'{PATH}/cloudy_clima'                          # Path to the cloudy-CLIMA folder
@@ -73,10 +74,18 @@ C_H2O           =   f'{CINOUT}/Profiles/H2O.dat'                    # H2O  verti
 C_O3            =   f'{CINOUT}/Profiles/O3.dat'                     # O3   vertical profile
 
 # MEAC files
-MSCENARIONAME   =   "Earth"                                         # Name of MEAC scenario folder
+MSCENARIONAME   =   "Sun/N2-Full"                                   # Name of MEAC scenario folder
+
 MSCENARIOPATH   =   f'scenario_library/{MSCENARIONAME}'             # Path to MEAC scenario folder
-MCONV           =   f"{MEACPATH}/{MSCENARIOPATH}/ConcentrationSTD_base_Earth.dat"    # Conc. file from last convergence
-MSCENARIO       =   f'{MSCENARIOPATH}/planet_Earth_Full_T1986.h'    # MEAC scenario file with planet parameters
-MSPECIES        =   f'{MSCENARIOPATH}/species_Earth_Full.dat'       # MEAC atmosphere species file
-MCONC           =   f'{MEACPATH}/{MSCENARIOPATH}/ConcentrationSTD.dat'         # MEAC concentrations file
 MZTP            =   f'{MSCENARIOPATH}/TP.dat'                       # MEAC ztp profile
+for file in os.listdir(f"{MEACPATH}/{MSCENARIOPATH}"):              # Automatically identify key files
+    if 'base' in file: MCONV = f"{MEACPATH}/{MSCENARIOPATH}/{file}"                 # Converged "seed" concentration file
+    elif 'Concentration' in file: MCONC= f"{MEACPATH}/{MSCENARIOPATH}/{file}"       # Updated concentration file
+    if 'planet' in file: MSCENARIO = f"{MSCENARIOPATH}/{file}"                      # Planet scenario file
+    if 'species' in file: MSPECIES = f"{MSCENARIOPATH}/{file}"                      # Species file
+
+# MCONV           =   f"{MEACPATH}/{MSCENARIOPATH}/ConcentrationSTD_base.dat"    # Conc. file from last convergence
+# MSCENARIO       =   f'{MSCENARIOPATH}/planet_scenario_N2r.h'    # MEAC scenario file with planet parameters
+# MSPECIES        =   f'{MSCENARIOPATH}/species_scenario_N2r.dat'       # MEAC atmosphere species file
+# MCONC           =   f'{MEACPATH}/{MSCENARIOPATH}/ConcentrationSTD.dat'         # MEAC concentrations file
+# MZTP            =   f'{MSCENARIOPATH}/TP.dat'                       # MEAC ztp profile
