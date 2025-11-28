@@ -117,7 +117,7 @@ def plotAtmosphericComposition(conc_file:str,ref_file:str='',out_dir:str=''):
     # ax[0].set_xlabel("Number density",size='x-large')
     # ax[0].set_ylabel("Altitude [km]",size='x-large')
     # ax[0].legend()
-    ax.set_xlim(left=1e-10)
+    ax.set_xlim(left=1e-25)
     ax.set_ylim(bottom=0,top=max(alts))
     ax.set_xscale('log')
     ax.set_xlabel("Mixing ratio",size='x-large')
@@ -126,8 +126,8 @@ def plotAtmosphericComposition(conc_file:str,ref_file:str='',out_dir:str=''):
     if ref_file: fig.suptitle('New -> solid, ref -> dotted')
     fig.set_figwidth(5)
     plt.tight_layout()
-    # plt.show()
     plt.savefig(f"{out_dir}/MEAC_mixing_ratios",dpi=300)
+    # plt.show()
     plt.close()
 
 def plotAtmosphericEvolution(scen_name:str='',out_dir:str=''):         # WIP

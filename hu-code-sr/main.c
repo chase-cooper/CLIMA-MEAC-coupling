@@ -2,14 +2,14 @@
 #include <math.h>
 #include <stdlib.h>
 
-#include "./scenario_library/Earth/planet_Earth_Full_T1986.h"
+// #include "./scenario_library/Earth/planet_Earth_Full_T1986.h"
 // #include "./scenario_library/Mars/planet_Mars_Full.h"
 
 // #include "./scenario_library/Sun/CO2/planet_scenario_CO2r_emi.h"
 // #include "./scenario_library/Sun/H2/planet_scenario_H2N2r2.h"
 // #include "./scenario_library/Sun/N2/planet_scenario_N2r.h"
 
-// #include "./scenario_library/Sun/CO2-Full/planet_scenario_CO2r_emi.h"
+#include "./scenario_library/Sun/CO2-Full/planet_scenario_CO2r_emi.h"
 // #include "./scenario_library/Sun/H2-Full/planet_scenario_H2N2r2.h"
 // #include "./scenario_library/Sun/N2-Full/planet_scenario_N2r.h"
 

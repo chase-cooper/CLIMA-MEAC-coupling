@@ -13,7 +13,7 @@ Note: The parameters in this file can be modified to model different planets aro
 #define RADIUS_PLANET         6371000.0   /* m */ /* Earth */
 
 /* Planet Orbital Properties */
-#define ORBIT               1.3          /* AU */ /* Earth */
+#define ORBIT               1.0          /* AU */ /* Earth */
 #define STAR_SPEC           "Data/solar00.txt"
 #define FaintSun			1.0				/* Faint early Sun factor */
 #define TIDELOCK			0				/* If the planet is tidelly locked */
@@ -38,7 +38,7 @@ Note: The parameters in this file can be modified to model different planets aro
 /* Planet Temperature-Pressure Preofile*/
 #define TPMODE                 1            /* 1: import data from a ZTP list; 
                                                0: calculate TP profile from the parametized formula*/
-#define TPLIST                 "Data/TPStd175288CO2N2_extended.dat"
+#define TPLIST                 "scenario_library/Sun/CO2-Full/tp_ref.dat"
 #define PTOP                   1.0E-8            /* Pressure at the top of atmosphere in bar */
 #define TTOP				   500.0            /* Temperature at the top of atmosphere */
 #define TSTR                   550.0            /* Temperature at the top of stratosphere */
@@ -52,7 +52,7 @@ Note: The parameters in this file can be modified to model different planets aro
 #define TINTSET				   10			/* Temperature equivalent to the internal heating at 1 AU */
 
 /* Calculation Grids*/
-#define zbin 100 /*How many altitude bin?*/
+#define zbin 50 /*How many altitude bin?*/
 #define zmax 100.0 /*Maximum altitude in km*/
 #define zmin 0.0 /*Maximum altitude in km*/
 #define WaveBin 9999 /*How many wavelength bin?*/
@@ -80,9 +80,9 @@ Note: The parameters in this file can be modified to model different planets aro
 /* Molecular Species */
 #define NSP 111 /*Number of species in the standard list*/
 #define SPECIES_LIST "scenario_library/Sun/CO2-Full/species_scenario_CO2N2r_emi.dat"
-#define AIRM 42.4 /*Average molecular mass of atmosphere, in atomic mass unit*/
-#define AIRVIS	1.5E-5	/* Dynamic viscosity in SI*/
-#define RefIdxType 1	/* Type of Refractive Index: 0=Air, 1=CO2, 2=He, 3=N2, 4=NH3, 5=CH4, 6=H2, 7=O2 */
+#define AIRM 29.6 /*Average molecular mass of atmosphere, in atomic mass unit*/
+#define AIRVIS	1.66E-5	/* Dynamic viscosity in SI*/
+#define RefIdxType 3	/* Type of Refractive Index: 0=Air, 1=CO2, 2=He, 3=N2, 4=NH3, 5=CH4, 6=H2, 7=O2 */
 
 /* Aerosol Species */
 #define	AERSIZE	1.0E-7	/* diameter in m */
@@ -94,7 +94,7 @@ Note: The parameters in this file can be modified to model different planets aro
 #define AERRADFILE2 "Data/S8AER_CrossM_01.dat"	/* radiative properties of S8 */
 
 /* Initial Concentration Setting */
-#define IMODE 4					/* 1: Import from SPECIES_LIST; 
+#define IMODE 1					/* 1: Import from SPECIES_LIST; 
                                 0: Calculate initial concentrations from chemical equilibrium sub-routines (not rad);
                                 3: Calculate initial concentrations from simplied chemical equilibrium formula (not rad);
                                 2: Import from results of previous calculations
@@ -124,7 +124,7 @@ Note: The parameters in this file can be modified to model different planets aro
 #define Tback 1E+4
 #define KET1 1.0E+6
 #define KEH1 1.0E+8
-#define EDDYIMPORT	"Data/EddyCO2N2Extended.dat"
+#define EDDYIMPORT	"scenario_library/Sun/CO2-Full/kzz.dat"
 #define MDIFF_H_1	3.87
 #define MDIFF_H_2	0.75
 #define MDIFF_H2_1	2.15

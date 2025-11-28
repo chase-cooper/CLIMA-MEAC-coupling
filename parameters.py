@@ -18,12 +18,12 @@ INSTELL         =   1.0                     # Planet instelation, relative to Ea
 P0              =   1e-5                    # Top-of-atmosphere pressure [atm]
 PSURF           =   1e+0                    # Surface pressure [atm]
 T0              =   200                     # Top-of-atmosphere temperature [K]
-TSURF           =   280                     # Surface temperature [K]
+TSURF           =   300                     # Surface temperature [K]
 TROPOPAUSE      =   22                      # CLIMA tropopause layer, default 22 (of 101)
 AR              =   2e-2                    # Argon mixing ratio
 RELHUM          =   0.7                     # Surface relative humidity
 FIXH2O          =   1                       # Fixed H2O flag. I really recommend leaving this on
-IO3             =   0                       # Ozone flag -- IO3=0 means ozone isn't read in
+IO3             =   1                       # Ozone flag -- IO3=0 means ozone isn't read in
 IME             =   1                       # Methane/ethane flag
 
 # Eddysed variables
@@ -49,7 +49,7 @@ atm2Pa          =   101_325
 #######################
 
 # Paths
-NAME            =   'N2'
+NAME            =   'CO2'
 OUTPUT          =   "outputs/"+NAME
 PATH            =   os.getcwd()                                     # Path to this python file
 CLIMAPATH       =   f'{PATH}/cloudy_clima'                          # Path to the cloudy-CLIMA folder
@@ -74,7 +74,7 @@ C_H2O           =   f'{CINOUT}/Profiles/H2O.dat'                    # H2O  verti
 C_O3            =   f'{CINOUT}/Profiles/O3.dat'                     # O3   vertical profile
 
 # MEAC files
-MSCENARIONAME   =   "Sun/N2-Full"                                   # Name of MEAC scenario folder
+MSCENARIONAME   =   "Sun/CO2-Full"                                   # Name of MEAC scenario folder
 
 MSCENARIOPATH   =   f'scenario_library/{MSCENARIONAME}'             # Path to MEAC scenario folder
 MZTP            =   f'{MSCENARIOPATH}/TP.dat'                       # MEAC ztp profile
