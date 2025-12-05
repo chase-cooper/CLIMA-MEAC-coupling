@@ -114,7 +114,7 @@ Note: The parameters in this file can be modified to model different planets aro
 #define NKinM 90  /*Number of Thermolecular Reaction in the standard list*/
 #define NKinT 93  /*Number of Thermal Dissociation Reaction in the standard list*/
 #define NPho 73   /*Number of Photochemical Reaction in the standard list*/
-#define	THREEBODY	2.5	/* Enhancement of THREEBODY Reaction when CO2 dominant */
+#define	THREEBODY	1.0	/* Enhancement of THREEBODY Reaction when CO2 dominant */
 
 /* Parametization of Eddy Diffusion Coefficient */
 #define EDDYPARA 2	/* =1 from Parametization, =2 from imported list */

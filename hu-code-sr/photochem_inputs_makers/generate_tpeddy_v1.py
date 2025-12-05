@@ -253,8 +253,11 @@ def make_new_ztpkzz(z_list_km, mr_co2, mr_n2, mr_h2,mr_o2, P_0_bar, T_0, T_strat
     plt.savefig('./Plots/newzTPKzz_'+filename+'.pdf', orientation='portrait', format='pdf')
 
 ### make_new_ztpkzz(z_list_km_0, 0.0, 1.0, 0.0,0.0, 1.0, 288.0, 200.0, grav_0, 'test')
-# z_list_km_0=np.linspace(0.0, 150.0, num=151)
-# grav_0=G_const*(0.772*M_earth)/(0.910*R_earth)**2.0
+z_list_km_0=np.linspace(0.0, 150.0, num=151)
+grav_0=G_const*(1.0*M_earth)/(1.0*R_earth)**2.0
+
+make_new_ztpkzz(z_list_km_0, 0.2, 0.8, 0,0, 1.0, 300.0, 180.0, grav_0, 'N2CO2')
+
 
 # pCO2_list=np.array([0.01, 1.0, 0.3])
 # pN2_list=np.array([0.99, 0.1, 1.0])
@@ -271,8 +274,41 @@ def make_new_ztpkzz(z_list_km, mr_co2, mr_n2, mr_h2,mr_o2, P_0_bar, T_0, T_strat
 #     make_new_ztpkzz(z_list_km_0, pCO2/ptot, pN2/ptot, pH2/ptot,pO2/ptot, ptot, 288.0, 180.0, grav_0, 'T1e_pCO2={0}_pN2={1}_pH2={2}_pO2={3}_Tstrat=180K'.format(pCO2, pN2, pH2, pO2))
 
 alts = np.linspace(1,100,100)
-f = open('hu-code-sr/scenario_library/Sun/CO2-Full/kzz.dat','w+')
+f = open('../scenario_library/Sun/N2_CO2-Full/kzz.dat','w+')
 for i in range(100):
     zz = np.format_float_positional(alts[i],6,min_digits=6)
-    f.write(' '.join([zz,'100000'])+'\n')
+    f.write(' '.join([zz,'1000000'])+'\n')
 f.close()
+
+def waterpressure(T):
+    """
+    Calculate water saturation pressure.
+    
+    Parameters
+    ----------
+    T : float or array-like
+        Temperature in Kelvin
+    
+    Returns
+    -------
+    P : float or ndarray
+        Saturation pressure in bar
+    """
+    T = np.atleast_1d(np.asarray(T, dtype=float))
+    P = np.empty_like(T)
+    
+    # Over ice (T < 273.16 K)
+    # Formulation from Murphy & Koop (2005)
+    ice = T < 273.16
+    P[ice] = np.exp(9.550426 - 5723.265/T[ice] + 3.53068*np.log(T[ice]) - 0.00728332*T[ice])
+    
+    # Over water (T >= 273.16 K)
+    # Formulation from Seinfeld & Pandis (2006)
+    water = ~ice
+    a = 1 - 373.15/T[water]
+    P[water] = 101325 * np.exp(13.3185*a - 1.97*a**2 - 0.6445*a**3 - 0.1229*a**4)
+    P*=Pa2bar
+    return P[0] if P.size == 1 else P
+
+print(waterpressure(288.0)*0.6)
+print(waterpressure(300.0)*0.6)
