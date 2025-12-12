@@ -52,7 +52,7 @@ Note: The parameters in this file can be modified to model different planets aro
 #define TINTSET				   10			/* Temperature equivalent to the internal heating at 1 AU */
 
 /* Calculation Grids*/
-#define zbin 100 /*How many altitude bin?*/
+#define zbin {7} /*How many altitude bin?*/
 #define zmax {3} /*Maximum altitude in km*/
 #define zmin 0.0 /*Maximum altitude in km*/
 #define WaveBin 9999 /*How many wavelength bin?*/

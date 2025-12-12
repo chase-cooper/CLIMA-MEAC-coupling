@@ -20,7 +20,7 @@ zmax = ZMAX
 ##############################################################################################################
 ##############################################################################################################
 
-def writeScenarioFile(zmax:str='50.0'):
+def writeScenarioFile(zmax:str='100.0'):
     f = open('templates/meac_scenario.txt','r')
     text = f.read()
     f.close()
@@ -31,10 +31,13 @@ def writeScenarioFile(zmax:str='50.0'):
     text = text.replace('{4}',str(NMAXT))
     text = text.replace('{5}',MSPECIES)
     text = text.replace('{6}',MSCENARIOPATH)
+    text = text.replace('{7}',str(NBIN))
 
     o = open(MEACPATH + '/' + MSCENARIO,'w')
     o.write(text)
     o.close()
+
+    print("ENSURE # OF BINS IS PROPERLY SET")
 
 def updateCLIMA(firstloop:bool):
     """
@@ -122,7 +125,7 @@ def updateCLIMA(firstloop:bool):
     f.write(text)
     f.close()
     # The rest of necessary CLIMA input
-    writeCLIMAinput()
+    writeCLIMAinput(firstloop)
 
     ### Writing TempIn.dat
     temps = []
@@ -198,7 +201,7 @@ def updateMEAC():
     pres = np.interp(i,z,np.log10(p))
     delta_p = np.interp(i,z,np.log10(p)) - np.interp(i-zmax/100,z,np.log10(p))
     print("delta_p: ",delta_p)
-    while i < 86:
+    while i < 100:
         i += zmax/100
         pres += delta_p
         f.write(f"{i:.6f} {pres:.6f} {np.interp(i,z,t):.6f}\n")
@@ -208,7 +211,7 @@ def updateMEAC():
     print(zmax)
     val = np.format_float_positional(zmax,precision=1,trim='k',unique=True,min_digits=1)
     print(val)
-    writeScenarioFile(val)             
+    writeScenarioFile()             
 
     # Plot surface temperature evolution
     plotSurfaceTemperature(f"{OUTPUT}/surftemps.dat",runBreaks=CLIMAstepIntervals,out_dir=OUTPUT)
@@ -234,8 +237,8 @@ def resetMEAC():
 ##############################
 
 # resetMEAC()
-plotAtmosphericComposition(MCONC,out_dir=OUTPUT)
-input()
+# plotAtmosphericComposition(MCONC,out_dir=OUTPUT)
+# input()
 
 # make output folder for run if it doesn't exist yet
 if not (NAME in os.listdir('outputs')):

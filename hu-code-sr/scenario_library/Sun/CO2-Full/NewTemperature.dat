@@ -1,51 +1,101 @@
-0.000000	0.000000	478.843665
-2.000000	-0.063046	478.843365
-4.000000	-0.126174	477.598495
-6.000000	-0.189451	476.587994
-8.000000	-0.252849	475.790168
-10.000000	-0.316340	475.186592
-12.000000	-0.379900	474.757424
-14.000000	-0.443507	474.478061
-16.000000	-0.507144	474.309474
-18.000000	-0.570800	474.209270
-20.000000	-0.634466	474.150009
-22.000000	-0.698138	474.115752
-24.000000	-0.762640	461.961699
-26.000000	-0.829425	442.106254
-28.000000	-0.899278	422.250809
-30.000000	-0.972496	402.395363
-32.000000	-1.049417	382.539918
-34.000000	-1.130437	362.684473
-36.000000	-1.216018	342.829028
-38.000000	-1.306703	322.973583
-40.000000	-1.403140	303.118138
-42.000000	-1.506108	283.262693
-44.000000	-1.616555	263.407248
-46.000000	-1.735194	245.519075
-48.000000	-1.860542	236.168320
-50.000000	-1.990085	229.918783
-52.000000	-2.122531	225.950261
-54.000000	-2.256860	223.531349
-56.000000	-2.392344	222.117524
-58.000000	-2.528503	221.323859
-60.000000	-2.665061	220.820234
-62.000000	-2.801873	220.502864
-64.000000	-2.938845	220.304365
-66.000000	-3.075919	220.177207
-68.000000	-3.213056	220.099846
-70.000000	-3.350232	220.051708
-72.000000	-3.487433	220.021103
-74.000000	-3.624650	220.001709
-76.000000	-3.761876	219.989479
-78.000000	-3.899108	219.981841
-80.000000	-4.036345	219.977045
-82.000000	-4.173583	219.973974
-84.000000	-4.310824	219.972010
-86.000000	-4.448065	219.970758
-88.000000	-4.585307	219.969962
-90.000000	-4.722550	219.969458
-92.000000	-4.859792	219.969135
-94.000000	-4.997035	219.968928
-96.000000	-5.134278	219.968795
-98.000000	-5.271521	219.968710
-100.000000	-5.408764	219.968656
+The new temperature at altitude 0.000000 km is nan K
+The new temperature at altitude 0.469000 km is nan K
+The new temperature at altitude 0.938000 km is nan K
+The new temperature at altitude 1.407000 km is nan K
+The new temperature at altitude 1.876000 km is nan K
+The new temperature at altitude 2.345000 km is nan K
+The new temperature at altitude 2.814000 km is nan K
+The new temperature at altitude 3.283000 km is nan K
+The new temperature at altitude 3.752000 km is nan K
+The new temperature at altitude 4.221000 km is nan K
+The new temperature at altitude 4.690000 km is nan K
+The new temperature at altitude 5.159000 km is nan K
+The new temperature at altitude 5.628000 km is nan K
+The new temperature at altitude 6.097000 km is nan K
+The new temperature at altitude 6.566000 km is nan K
+The new temperature at altitude 7.035000 km is nan K
+The new temperature at altitude 7.504000 km is nan K
+The new temperature at altitude 7.973000 km is nan K
+The new temperature at altitude 8.442000 km is nan K
+The new temperature at altitude 8.911000 km is nan K
+The new temperature at altitude 9.380000 km is nan K
+The new temperature at altitude 9.849000 km is nan K
+The new temperature at altitude 10.318000 km is nan K
+The new temperature at altitude 10.787000 km is nan K
+The new temperature at altitude 11.256000 km is nan K
+The new temperature at altitude 11.725000 km is nan K
+The new temperature at altitude 12.194000 km is nan K
+The new temperature at altitude 12.663000 km is nan K
+The new temperature at altitude 13.132000 km is nan K
+The new temperature at altitude 13.601000 km is nan K
+The new temperature at altitude 14.070000 km is nan K
+The new temperature at altitude 14.539000 km is nan K
+The new temperature at altitude 15.008000 km is nan K
+The new temperature at altitude 15.477000 km is nan K
+The new temperature at altitude 15.946000 km is nan K
+The new temperature at altitude 16.415000 km is nan K
+The new temperature at altitude 16.884000 km is nan K
+The new temperature at altitude 17.353000 km is nan K
+The new temperature at altitude 17.822000 km is nan K
+The new temperature at altitude 18.291000 km is nan K
+The new temperature at altitude 18.760000 km is nan K
+The new temperature at altitude 19.229000 km is nan K
+The new temperature at altitude 19.698000 km is nan K
+The new temperature at altitude 20.167000 km is nan K
+The new temperature at altitude 20.636000 km is nan K
+The new temperature at altitude 21.105000 km is nan K
+The new temperature at altitude 21.574000 km is nan K
+The new temperature at altitude 22.043000 km is nan K
+The new temperature at altitude 22.512000 km is nan K
+The new temperature at altitude 22.981000 km is nan K
+The new temperature at altitude 23.450000 km is nan K
+The new temperature at altitude 23.919000 km is nan K
+The new temperature at altitude 24.388000 km is nan K
+The new temperature at altitude 24.857000 km is nan K
+The new temperature at altitude 25.326000 km is nan K
+The new temperature at altitude 25.795000 km is nan K
+The new temperature at altitude 26.264000 km is nan K
+The new temperature at altitude 26.733000 km is nan K
+The new temperature at altitude 27.202000 km is nan K
+The new temperature at altitude 27.671000 km is nan K
+The new temperature at altitude 28.140000 km is nan K
+The new temperature at altitude 28.609000 km is nan K
+The new temperature at altitude 29.078000 km is nan K
+The new temperature at altitude 29.547000 km is nan K
+The new temperature at altitude 30.016000 km is nan K
+The new temperature at altitude 30.485000 km is nan K
+The new temperature at altitude 30.954000 km is nan K
+The new temperature at altitude 31.423000 km is nan K
+The new temperature at altitude 31.892000 km is nan K
+The new temperature at altitude 32.361000 km is nan K
+The new temperature at altitude 32.830000 km is nan K
+The new temperature at altitude 33.299000 km is nan K
+The new temperature at altitude 33.768000 km is nan K
+The new temperature at altitude 34.237000 km is nan K
+The new temperature at altitude 34.706000 km is nan K
+The new temperature at altitude 35.175000 km is nan K
+The new temperature at altitude 35.644000 km is nan K
+The new temperature at altitude 36.113000 km is nan K
+The new temperature at altitude 36.582000 km is nan K
+The new temperature at altitude 37.051000 km is nan K
+The new temperature at altitude 37.520000 km is nan K
+The new temperature at altitude 37.989000 km is nan K
+The new temperature at altitude 38.458000 km is nan K
+The new temperature at altitude 38.927000 km is nan K
+The new temperature at altitude 39.396000 km is nan K
+The new temperature at altitude 39.865000 km is nan K
+The new temperature at altitude 40.334000 km is nan K
+The new temperature at altitude 40.803000 km is nan K
+The new temperature at altitude 41.272000 km is nan K
+The new temperature at altitude 41.741000 km is nan K
+The new temperature at altitude 42.210000 km is nan K
+The new temperature at altitude 42.679000 km is nan K
+The new temperature at altitude 43.148000 km is nan K
+The new temperature at altitude 43.617000 km is nan K
+The new temperature at altitude 44.086000 km is nan K
+The new temperature at altitude 44.555000 km is nan K
+The new temperature at altitude 45.024000 km is nan K
+The new temperature at altitude 45.493000 km is nan K
+The new temperature at altitude 45.962000 km is nan K
+The new temperature at altitude 46.431000 km is nan K
+The new temperature at altitude 46.900000 km is nan K

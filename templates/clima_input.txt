@@ -14,7 +14,7 @@ PGO=       {4}	        ! Surface pressure (bar)
 G=         {5}              ! Gravity (cgs) (Mars=373., Earth=980.) 
 FAC=       4.0
 IO3=       {6}   		    ! Ozone flag
-IUP=       0                ! 1 means that it starts a new run and doesn't read TempIn.dat
+IUP=       {20}                ! 1 means that it starts a new run and doesn't read TempIn.dat
 TG0=       288	        ! Surface temperature for IUP=1   
 TSTRAT=    210             ! Stratospheric temperature for IUP=1
 STARR=     "Sun"	        ! What star?
@@ -22,7 +22,7 @@ ICONSERV=  {7}      ! Type of energy conservation
 ICOUPLE=   0                ! Photochem coupling flag
 SRFALB=    {8}        ! Planetary surface albedo
 SOLCON=    {9}	    ! Instellation relative to Earth
-dtmax=     5.e4		        ! Max timestep in seconds, default 1e4
+dtmax=     1.e4		        ! Max timestep in seconds, default 1e4
 CO2MAX=    {10}         ! Max CO2 mixing ratio
 IMET=      {11}            ! Methane flag. If "1" then methane is turned on. (does not turn on ethane)
 IMETETH=   {11}            ! ethane flag.  If 1 then both methane and ethane turned on

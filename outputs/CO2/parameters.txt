@@ -1,8 +1,8 @@
 ###    MODEL PARAMETERS
 ND                    =   101
 NLOOPS                =   16
-NMINSTEPS             =   500
-NMAXSTEPS             =   500
+NMINSTEPS             =   100
+NMAXSTEPS             =   100
 TCONV                 =   0.01
 Resuming from previous?   False
 
@@ -37,26 +37,26 @@ Min cold trap fH2O    =   4e-10
 Min upper atm. FC frac=   0.01
 
 ###    FILE PATHS
-Python File Path      =   /Users/cooper/Documents/CLIMA-MEAC-coupling
-Cloudy CLIMA Path     =   /Users/cooper/Documents/CLIMA-MEAC-coupling/cloudy_clima
-MEAC Path             =   /Users/cooper/Documents/CLIMA-MEAC-coupling/hu-code-sr
+Python File Path      =   /Users/cooper/Documents/GitHub/CLIMA-MEAC-coupling
+Cloudy CLIMA Path     =   /Users/cooper/Documents/GitHub/CLIMA-MEAC-coupling/cloudy_clima
+MEAC Path             =   /Users/cooper/Documents/GitHub/CLIMA-MEAC-coupling/hu-code-sr
 
 ###    CLIMA FILE PATHS
-CLIMA IO Folder       =   /Users/cooper/Documents/CLIMA-MEAC-coupling/cloudy_clima/CLIMA/IO
-CLIMA header file     =   /Users/cooper/Documents/CLIMA-MEAC-coupling/cloudy_clima/CLIMA/INCLUDE/header.inc
-CLIMA Input File      =   /Users/cooper/Documents/CLIMA-MEAC-coupling/cloudy_clima/CLIMA/IO/input_clima.dat
-CLIMA Mixing Ratios   =   /Users/cooper/Documents/CLIMA-MEAC-coupling/cloudy_clima/CLIMA/IO/mixing_ratios.dat
-CLIMA Last Step Output=   /Users/cooper/Documents/CLIMA-MEAC-coupling/cloudy_clima/CLIMA/IO/clima_last.tab
-CLIMA Allout File     =   /Users/cooper/Documents/CLIMA-MEAC-coupling/cloudy_clima/CLIMA/IO/clima_allout.tab
-CLIMA TempIn File     =   /Users/cooper/Documents/CLIMA-MEAC-coupling/cloudy_clima/CLIMA/IO/TempIn.dat
-CLIMA Tempout File    =   /Users/cooper/Documents/CLIMA-MEAC-coupling/cloudy_clima/CLIMA/IO/TempOut.dat
-CLIMA Profiles Folder =   /Users/cooper/Documents/CLIMA-MEAC-coupling/cloudy_clima/CLIMA/IO/Profiles
+CLIMA IO Folder       =   /Users/cooper/Documents/GitHub/CLIMA-MEAC-coupling/cloudy_clima/CLIMA/IO
+CLIMA header file     =   /Users/cooper/Documents/GitHub/CLIMA-MEAC-coupling/cloudy_clima/CLIMA/INCLUDE/header.inc
+CLIMA Input File      =   /Users/cooper/Documents/GitHub/CLIMA-MEAC-coupling/cloudy_clima/CLIMA/IO/input_clima.dat
+CLIMA Mixing Ratios   =   /Users/cooper/Documents/GitHub/CLIMA-MEAC-coupling/cloudy_clima/CLIMA/IO/mixing_ratios.dat
+CLIMA Last Step Output=   /Users/cooper/Documents/GitHub/CLIMA-MEAC-coupling/cloudy_clima/CLIMA/IO/clima_last.tab
+CLIMA Allout File     =   /Users/cooper/Documents/GitHub/CLIMA-MEAC-coupling/cloudy_clima/CLIMA/IO/clima_allout.tab
+CLIMA TempIn File     =   /Users/cooper/Documents/GitHub/CLIMA-MEAC-coupling/cloudy_clima/CLIMA/IO/TempIn.dat
+CLIMA Tempout File    =   /Users/cooper/Documents/GitHub/CLIMA-MEAC-coupling/cloudy_clima/CLIMA/IO/TempOut.dat
+CLIMA Profiles Folder =   /Users/cooper/Documents/GitHub/CLIMA-MEAC-coupling/cloudy_clima/CLIMA/IO/Profiles
 
 ###    MEAC FILE PATHS
 MEAC Scenario Name    =   Sun/CO2-Full
 MEAC Scenario Path    =   scenario_library/Sun/CO2-Full
-MEAC Converged File   =   /Users/cooper/Documents/CLIMA-MEAC-coupling/hu-code-sr/scenario_library/Sun/CO2-Full/ConcentrationSTD_base.dat
+MEAC Converged File   =   /Users/cooper/Documents/GitHub/CLIMA-MEAC-coupling/hu-code-sr/scenario_library/Sun/CO2-Full/ConcentrationSTD_base.dat
 MEAC Scenario File    =   scenario_library/Sun/CO2-Full/planet_scenario_CO2r_emi.h
 MEAC Species File     =   scenario_library/Sun/CO2-Full/species_scenario_CO2N2r_emi.dat
-MEAC ConcentrationFile=   /Users/cooper/Documents/CLIMA-MEAC-coupling/hu-code-sr/scenario_library/Sun/CO2-Full/ConcentrationSTD.dat
+MEAC ConcentrationFile=   /Users/cooper/Documents/GitHub/CLIMA-MEAC-coupling/hu-code-sr/scenario_library/Sun/CO2-Full/ConcentrationSTD.dat
 MEAC T-P Profile      =   scenario_library/Sun/CO2-Full/TP.dat

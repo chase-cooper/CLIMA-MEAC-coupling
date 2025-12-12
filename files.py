@@ -95,7 +95,7 @@ c--------------------------------------------------
         implicit real*8(A-H,O-Z)""")
     f.close()
 
-def writeCLIMAinput():
+def writeCLIMAinput(first:bool):
     f = open('templates/clima_input.txt','r')
     template = f.read()
     f.close()
@@ -120,6 +120,7 @@ def writeCLIMAinput():
     template = template.replace('{17}',str(SUPERSAT))           # ???
     template = template.replace('{18}',str(COLDTRAPMINMIX))     # Minimum mixing ratio above coldtrap
     template = template.replace('{19}',str(FCMINF))             # See above
+    template = template.replace('{20}',str(int(first)))         # Using previous run outputs flag
 
     f = writeOrCreate(CINPUT)
     f.write(template)

@@ -229,7 +229,7 @@ def plot_comparison(base_file, new_file, name):
 ###############################
 
     
-# plot_comparison('./scenario_library/Sun/CO2/ConcentrationSTD_base.dat', './scenario_library/Sun/CO2/ConcentrationSTD.dat', 'Sun_CO2_updates')
+# plot_comparison('hu-code-sr/scenario_library/Sun/N2_CO2-Full/ConcentrationSTD_base.dat', 'hu-code-sr/scenario_library/Sun/N2_CO2-Full/ConcentrationSTD.dat', 'Sun_N2CO2_updates')
 # plot_comparison('./scenario_library/Sun/H2/ConcentrationSTD_base.dat', './scenario_library/Sun/H2/ConcentrationSTD.dat', 'Sun_H2_updates')
 # plot_comparison('./scenario_library/Sun/N2/ConcentrationSTD_base.dat', './scenario_library/Sun/N2/ConcentrationSTD.dat', 'Sun_N2_updates')
 

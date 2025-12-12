@@ -3,7 +3,7 @@
 * Write the value AFTER the 11th space
 *VARIABLE  VALUE        NOTES
 
-NSTEPS=    500    ! step number (200 recommended for coupling)
+NSTEPS=    100    ! step number (200 recommended for coupling)
 IMW=       0         
 RSURF=     0.7       	    ! Relative surface humidity     
 ZY=        60.     	        ! Solar zenith angle (degrees)

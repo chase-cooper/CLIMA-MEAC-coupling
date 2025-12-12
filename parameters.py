@@ -2,10 +2,11 @@ import os
 
 # Coupling parameters
 ND              =   101                     # CLIMA layer variables DONT TOUCH
+NBIN            =   50                      # MEAC number of vertical bins, MUST MATCH ORIGINAL SCENARIO FILE (Earth --> 43)
 NLOOPS          =   16                       # Number of CLIMA-MEAC loops
-NMINSTEPS       =   500                      # Minimum number of CLIMA steps per loop
-NMAXSTEPS       =   500                      # Max Number of CLIMA steps per loops
-NMAXT           =   1e50                    # Max MEAC run cumulative timestep
+NMINSTEPS       =   100                      # Minimum number of CLIMA steps per loop
+NMAXSTEPS       =   100                      # Max Number of CLIMA steps per loops
+NMAXT           =   1e100                    # Max MEAC run cumulative timestep
 TCONV           =   1E-2                    # CLIMA convergence criterion, delta temperature
 
 # Planet + atmosphere parameters
@@ -17,8 +18,8 @@ SURFALB         =   0.23                     # Planet surface albedo
 INSTELL         =   1.0                     # Planet instelation, relative to Earth
 P0              =   1e-5                    # Top-of-atmosphere pressure [atm]
 PSURF           =   1e+0                    # Surface pressure [atm]
-T0              =   200                     # Top-of-atmosphere temperature [K]
-TSURF           =   300                     # Surface temperature [K]
+T0              =   210                     # Top-of-atmosphere temperature [K]
+TSURF           =   288                     # Surface temperature [K]
 TROPOPAUSE      =   22                      # CLIMA tropopause layer, default 22 (of 101)
 AR              =   2e-2                    # Argon mixing ratio
 RELHUM          =   0.7                     # Surface relative humidity
@@ -49,7 +50,7 @@ atm2Pa          =   101_325
 #######################
 
 # Paths
-NAME            =   'CO2'
+NAME            =   'N2CO2'
 OUTPUT          =   "outputs/"+NAME
 PATH            =   os.getcwd()                                     # Path to this python file
 CLIMAPATH       =   f'{PATH}/cloudy_clima'                          # Path to the cloudy-CLIMA folder
@@ -74,7 +75,7 @@ C_H2O           =   f'{CINOUT}/Profiles/H2O.dat'                    # H2O  verti
 C_O3            =   f'{CINOUT}/Profiles/O3.dat'                     # O3   vertical profile
 
 # MEAC files
-MSCENARIONAME   =   "Sun/CO2-Full"                                   # Name of MEAC scenario folder
+MSCENARIONAME   =   "Sun/N2_CO2-Full"                                   # Name of MEAC scenario folder
 
 MSCENARIOPATH   =   f'scenario_library/{MSCENARIONAME}'             # Path to MEAC scenario folder
 MZTP            =   f'{MSCENARIOPATH}/TP.dat'                       # MEAC ztp profile
