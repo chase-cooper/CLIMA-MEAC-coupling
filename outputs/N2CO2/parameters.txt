@@ -1,10 +1,11 @@
 ###    MODEL PARAMETERS
 ND                    =   101
+NBIN                  =   50
 NLOOPS                =   16
-NMINSTEPS             =   100
-NMAXSTEPS             =   100
+NMINSTEPS             =   500
+NMAXSTEPS             =   500
 TCONV                 =   0.01
-Resuming from previous?   False
+Resuming from previous?   True
 
 ### PLANET/ATMOSPHERE PARAMETERS
 Radius [km]           =   6371.0

@@ -129,6 +129,8 @@ def plot_comparison(base_file, new_file, name):
     ###Get molar concentrations
     n_z_new=np.sum(n_z_s_new,1) #sum number densities across species. This is a profile for the whole atmosphere.
     n_z_bulkatm_new=P_z_new/(k*T_z_new)
+    # print(n_z_new)
+    # print(n_z_bulkatm_new)
     
     mc_z_s_new=np.zeros(np.shape(n_z_s_new))
     mr_z_s_new=np.zeros(np.shape(n_z_s_new))
@@ -144,12 +146,12 @@ def plot_comparison(base_file, new_file, name):
 ##    ########################        
 #
 #    
-    print('Column-Averaged Mixing Ratios: Photochemical Products')
+    # print('Column-Averaged Mixing Ratios: Photochemical Products')
 ##    ##CO2-vale
     # print('CO (base): {0:1.1e}'.format((np.sum(mr_z_s_base[:,ind_co]*n_z_bulkatm_base)/np.sum(n_z_bulkatm_base))))
     # print('CO (new): {0:1.1e}'.format((np.sum(mr_z_s_new[:,ind_co]*n_z_bulkatm_new)/np.sum(n_z_bulkatm_new))))
-    print('CHO2 (base): {0:1.1e}'.format((np.sum(mr_z_s_base[:,ind_cho2]*n_z_bulkatm_base)/np.sum(n_z_bulkatm_base))))
-    print('CHO2 (new): {0:1.1e}'.format((np.sum(mr_z_s_new[:,ind_cho2]*n_z_bulkatm_new)/np.sum(n_z_bulkatm_new))))
+    # print('CHO2 (base): {0:1.1e}'.format((np.sum(mr_z_s_base[:,ind_cho2]*n_z_bulkatm_base)/np.sum(n_z_bulkatm_base))))
+    # print('CHO2 (new): {0:1.1e}'.format((np.sum(mr_z_s_new[:,ind_cho2]*n_z_bulkatm_new)/np.sum(n_z_bulkatm_new))))
     # print('Surface Mixing Ratios: Photochemical Products')
     # print('CO (base): {0:1.1e}'.format(mr_z_s_base[0,ind_co]))
     # print('O2 (base): {0:1.1e}'.format(mr_z_s_base[0,ind_o2]))
@@ -181,7 +183,7 @@ def plot_comparison(base_file, new_file, name):
     ax[0].plot(mr_z_s_new[:,ind_h2s], z_center_new, linewidth=2, linestyle=linestyles[1], color='yellow')
     ax[0].plot(mr_z_s_new[:,ind_so2], z_center_new, linewidth=2, linestyle=linestyles[1], color='orange')
     ax[0].plot(mr_z_s_new[:,ind_no], z_center_new, linewidth=2, linestyle=linestyles[1], color='black')
-
+    print(n_z_s_new[:,ind_co2])
     
     ax[0].set_title(name)
     ax[0].set_yscale('linear')

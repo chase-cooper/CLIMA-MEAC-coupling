@@ -4,8 +4,8 @@ import os
 ND              =   101                     # CLIMA layer variables DONT TOUCH
 NBIN            =   50                      # MEAC number of vertical bins, MUST MATCH ORIGINAL SCENARIO FILE (Earth --> 43)
 NLOOPS          =   16                       # Number of CLIMA-MEAC loops
-NMINSTEPS       =   100                      # Minimum number of CLIMA steps per loop
-NMAXSTEPS       =   100                      # Max Number of CLIMA steps per loops
+NMINSTEPS       =   500                      # Minimum number of CLIMA steps per loop
+NMAXSTEPS       =   500                      # Max Number of CLIMA steps per loops
 NMAXT           =   1e100                    # Max MEAC run cumulative timestep
 TCONV           =   1E-2                    # CLIMA convergence criterion, delta temperature
 
@@ -50,7 +50,7 @@ atm2Pa          =   101_325
 #######################
 
 # Paths
-NAME            =   'N2CO2'
+NAME            =   'N2CO2_noS'
 OUTPUT          =   "outputs/"+NAME
 PATH            =   os.getcwd()                                     # Path to this python file
 CLIMAPATH       =   f'{PATH}/cloudy_clima'                          # Path to the cloudy-CLIMA folder

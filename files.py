@@ -4,6 +4,7 @@ import re
 from parameters import *
 
 def writeOrCreate(file:str):
+    # This needs to go at some point
     try:
         f = open(file,'x')
     except FileExistsError:
@@ -17,6 +18,7 @@ def writeParameters():
     f = writeOrCreate(f'{OUTPUT}/parameters.txt')
     f.write("###    MODEL PARAMETERS\n")
     f.write(f"ND                    =   {ND}\n")
+    f.write(f"NBIN                  =   {NBIN}\n")
     f.write(f"NLOOPS                =   {NLOOPS}\n")
     f.write(f"NMINSTEPS             =   {NMINSTEPS}\n")
     f.write(f"NMAXSTEPS             =   {NMAXSTEPS}\n")
@@ -202,4 +204,22 @@ def writeCLIMAout(clima_last:str,out_dir:str='',id:str=''):
         p = np.format_float_positional(pres[j],precision=6,trim='k',unique=True,min_digits=6)
         f.write(f"{alts[j]:.4f}\t\t\t{temps[j]:.4f}\t\t\t{p}\n")
     f.close()
+
+# file = open(MCONC,'r')
+# n_base = file.read().replace('#','').split()[121:]
+# n_base = np.asarray(n_base,dtype=np.float32).reshape(len(n_base)//116,116)
+# file.close()
+
+# file = open(MCONC,'r')
+# n_new = file.read().replace('#','').split()[121:]
+# n_new = np.asarray(n_new,dtype=np.float32).reshape(len(n_new)//116,116)
+# file.close()
+
+# print(MCONC)
+# print(n_new[:,59])
+# print(MCONV)
+# print(n_base[:,59])
+# print(n_new[:,59]-n_base[:,59])
+
+
 

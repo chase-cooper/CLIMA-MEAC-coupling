@@ -2,6 +2,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+import re
 
 from parameters import *
 
@@ -41,7 +42,7 @@ plt.rcParams['xtick.minor.width'] = tlinewidth
 plt.rcParams['ytick.minor.width'] = tlinewidth
 cmap = plt. get_cmap('tab20b')
 
-def plotAtmosphericComposition(conc_file:str,ref_file:str='',out_dir:str=''):
+def plotAtmosphericComposition(conc_file:str,id:str,ref_file:str='',out_dir:str=''):
     """
     Plot relevant mixing ratios from MEAC concentration file
     """
@@ -69,7 +70,7 @@ def plotAtmosphericComposition(conc_file:str,ref_file:str='',out_dir:str=''):
     # Writing mixing ratio profiles
     nd_profiles =   [ndC2H6,ndCH4,ndCO2,ndH2,ndH2O,ndN2,ndO2,ndO3]
     mr_profiles =   [mrC2H6,mrCH4,mrCO2,mrH2,mrH2O,mrN2,mrO2,mrO3]
-    colors      =   ['yellow','orange','red','purple','cyan','green','cornflowerblue','blue']
+    colors      =   ['gold','orange','red','purple','cyan','green','cornflowerblue','blue']
     labels      =   ['C2H6','CH4','CO2','H2','H2O','N2','O2','O3']
 
     # Plot outputs
@@ -103,7 +104,7 @@ def plotAtmosphericComposition(conc_file:str,ref_file:str='',out_dir:str=''):
         # Writing mixing ratio profiles
         nd_profiles =   [ndC2H6,ndCH4,ndCO2,ndH2,ndH2O,ndN2,ndO2,ndO3]
         mr_profiles =   [mrC2H6,mrCH4,mrCO2,mrH2,mrH2O,mrN2,mrO2,mrO3]
-        colors      =   ['yellow','orange','red','purple','cyan','green','cornflowerblue','blue']
+        colors      =   ['gold','orange','red','purple','cyan','green','cornflowerblue','blue']
         labels      =   ['C2H6','CH4','CO2','H2','H2O','N2','O2','O3']
 
         # Plot outputs
@@ -124,9 +125,9 @@ def plotAtmosphericComposition(conc_file:str,ref_file:str='',out_dir:str=''):
     ax.set_ylabel("Altitude [km]",size='x-large')
     ax.legend()
     if ref_file: fig.suptitle('New -> solid, ref -> dotted')
-    fig.set_figwidth(5)
+    fig.set_figwidth(11)
     plt.tight_layout()
-    plt.savefig(f"{out_dir}/MEAC_mixing_ratios",dpi=300)
+    plt.savefig(f"{out_dir}/mr/MEAC_mixing_ratios_{id}",dpi=300)
     # plt.show()
     plt.close()
 
@@ -138,7 +139,7 @@ def plotAtmosphericEvolution(scen_name:str='',out_dir:str=''):         # WIP
     axes = axes.flatten()
     
     files       =   os.listdir(f"outputs/{scen_name}/meac-out/")
-    files.sort()
+    files.sort(key = lambda x: int(re.search(r"[0-9]+",x)[0]))
     colors      =   ['Greys','Oranges','Reds','Purples','Blues','Greens','GnBu','Blues']
     labels      =   ['C2H6','CH4','CO2','H2','H2O','N2','O2','O3']
 
@@ -160,7 +161,8 @@ def plotAtmosphericEvolution(scen_name:str='',out_dir:str=''):         # WIP
         
     for k in range(len(axes)):
         ax = axes[k]
-        if k not in [2,5,6]: ax.set_xscale('log')
+        ax.set_xscale('log')
+        # if k not in [2,5,6]: ax.set_xscale('log')
     fig.set_figwidth(15)
     fig.set_figheight(8)
     plt.tight_layout()
@@ -168,7 +170,7 @@ def plotAtmosphericEvolution(scen_name:str='',out_dir:str=''):         # WIP
     plt.savefig(f"{out_dir}/MEAC_mr_evolution.png",dpi=250)
     plt.show()
     
-def plotTPprofile(clast:str,meac_conv:str='',out_dir:str=''):
+def plotTPprofile(clast:str,id:str,meac_conv:str='',out_dir:str=''):
     """
     stuff here
     """
@@ -199,6 +201,11 @@ def plotTPprofile(clast:str,meac_conv:str='',out_dir:str=''):
     plt.tight_layout()
     plt.savefig(f'{out_dir}/TPprofile',dpi=200)
     plt.close()
+
+def plotTPevolution(scen_name:str,out_dir:str):
+
+    files = os.listdir(f"outputs/{scen_name}/clima-out/")
+    files.sort(key = lambda x: int(re.search(r"[0-9]+",x)[0]))
 
 def plotChemTP(conc_file:str,clast:str,ref_meac_file:str,out_dir:str=''):
     fig,axes = plt.subplots(ncols=2)
@@ -253,7 +260,7 @@ def plotChemTP(conc_file:str,clast:str,ref_meac_file:str,out_dir:str=''):
     # Writing mixing ratio profiles
     nd_profiles =   [ndC2H6,ndCH4,ndCO2,ndH2,ndH2O,ndN2,ndO2,ndO3]
     mr_profiles =   [mrC2H6,mrCH4,mrCO2,mrH2,mrH2O,mrN2,mrO2,mrO3]
-    colors      =   ['yellow','orange','red','purple','cyan','green','cornflowerblue','blue']
+    colors      =   ['gold','orange','red','purple','cyan','green','cornflowerblue','blue']
     labels      =   ['C2H6','CH4','CO2','H2','H2O','N2','O2','O3']
 
     # Plot outputs
@@ -286,7 +293,7 @@ def plotChemTP(conc_file:str,clast:str,ref_meac_file:str,out_dir:str=''):
         # Writing mixing ratio profiles
         nd_profiles =   [ndC2H6,ndCH4,ndCO2,ndH2,ndH2O,ndN2,ndO2,ndO3]
         mr_profiles =   [mrC2H6,mrCH4,mrCO2,mrH2,mrH2O,mrN2,mrO2,mrO3]
-        colors      =   ['yellow','orange','red','purple','cyan','green','cornflowerblue','blue']
+        colors      =   ['gold','orange','red','purple','cyan','green','cornflowerblue','blue']
         labels      =   ['C2H6','CH4','CO2','H2','H2O','N2','O2','O3']
 
         # Plot outputs
@@ -328,9 +335,11 @@ def plotSurfaceTemperature(temps_file:str,runBreaks:list[int]=[],out_dir:str='')
     ax.set_ylabel("Surface Temperature [K]",size='x-large')
     fig.set_figwidth(9)
     fig.set_figheight(6)
-    plt.savefig(f"{out_dir}/surfTemps",dpi=200)
+    plt.savefig(f"{out_dir}/Surface Temperature",dpi=200)
     # plt.show()
 
 # plotSurfaceTemperature('outputs/test/surftemps.dat',out_dir=OUTPUT)
 # plotAtmosphericComposition(MCONC,MCONV,OUTPUT)
 # plotChemTP(MCONC,CLAST,MCONV,OUTPUT)
+# plotAtmosphericEvolution("N2CO2_noS",OUTPUT)
+# plotTPevolution("N2CO2_noS",OUTPUT)

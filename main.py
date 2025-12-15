@@ -159,7 +159,7 @@ def runCLIMA(stepnum:int):
     os.chdir(PATH)
 
     writeCLIMAout(CLAST,OUTPUT,str(stepnum))
-    plotTPprofile(CLAST,MCONV,OUTPUT)
+    plotTPprofile(CLAST,str(stepnum),MCONV,OUTPUT)
 
 def updateMEAC():
     """
@@ -228,7 +228,7 @@ def runMEAC(stepnum:int):
     os.chdir(PATH)                                          # Return to PATH
 
     writeMEACout(MCONC,NAME,str(stepnum))
-    plotAtmosphericComposition(conc_file=MCONC,ref_file=MCONV,out_dir=OUTPUT)
+    plotAtmosphericComposition(conc_file=MCONC,id=str(stepnum),ref_file=MCONV,out_dir=OUTPUT)
 
 def resetMEAC():
     os.chdir(PATH)
@@ -236,16 +236,13 @@ def resetMEAC():
 
 ##############################
 
-# resetMEAC()
-# plotAtmosphericComposition(MCONC,out_dir=OUTPUT)
-# input()
-
 # make output folder for run if it doesn't exist yet
 if not (NAME in os.listdir('outputs')):
     os.mkdir(OUTPUT)
     os.chdir(OUTPUT)
     os.mkdir('clima-out')
     os.mkdir('meac-out')
+    os.mkdir('mr')
     os.chdir(PATH)
 else:
     clearDirectory = input("Do you want to clear this directory? [y/n]\n")
@@ -255,6 +252,7 @@ else:
         os.chdir(OUTPUT)
         os.mkdir('clima-out')
         os.mkdir('meac-out')
+        os.mkdir('mr')
         os.chdir(PATH)
 
 writeParameters()
@@ -270,4 +268,3 @@ for i in range(NLOOPS):
     runMEAC(i)
     # input()
     os.system('clear')
-plotAtmosphericComposition(MCONC,MCONV,OUTPUT)
