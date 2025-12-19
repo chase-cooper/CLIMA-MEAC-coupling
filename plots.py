@@ -339,7 +339,8 @@ def plotSurfaceTemperature(temps_file:str,runBreaks:list[int]=[],out_dir:str='')
     # plt.show()
 
 # plotSurfaceTemperature('outputs/test/surftemps.dat',out_dir=OUTPUT)
-# plotAtmosphericComposition(MCONC,MCONV,OUTPUT)
+# plotAtmosphericComposition("hu-code-sr/scenario_library/Sun/N2_CO2-Full/ConcentrationSTD_base.dat",id='test',\
+#                            ref_file="hu-code-sr/scenario_library/Sun/N2_CO2_1e-1-Full/ConcentrationSTD_base.dat",out_dir="outputs/test")
 # plotChemTP(MCONC,CLAST,MCONV,OUTPUT)
 # plotAtmosphericEvolution("N2CO2_noS",OUTPUT)
 # plotTPevolution("N2CO2_noS",OUTPUT)

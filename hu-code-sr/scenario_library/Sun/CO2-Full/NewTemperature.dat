@@ -1,101 +1,101 @@
-The new temperature at altitude 0.000000 km is nan K
-The new temperature at altitude 0.469000 km is nan K
-The new temperature at altitude 0.938000 km is nan K
-The new temperature at altitude 1.407000 km is nan K
-The new temperature at altitude 1.876000 km is nan K
-The new temperature at altitude 2.345000 km is nan K
-The new temperature at altitude 2.814000 km is nan K
-The new temperature at altitude 3.283000 km is nan K
-The new temperature at altitude 3.752000 km is nan K
-The new temperature at altitude 4.221000 km is nan K
-The new temperature at altitude 4.690000 km is nan K
-The new temperature at altitude 5.159000 km is nan K
-The new temperature at altitude 5.628000 km is nan K
-The new temperature at altitude 6.097000 km is nan K
-The new temperature at altitude 6.566000 km is nan K
-The new temperature at altitude 7.035000 km is nan K
-The new temperature at altitude 7.504000 km is nan K
-The new temperature at altitude 7.973000 km is nan K
-The new temperature at altitude 8.442000 km is nan K
-The new temperature at altitude 8.911000 km is nan K
-The new temperature at altitude 9.380000 km is nan K
-The new temperature at altitude 9.849000 km is nan K
-The new temperature at altitude 10.318000 km is nan K
-The new temperature at altitude 10.787000 km is nan K
-The new temperature at altitude 11.256000 km is nan K
-The new temperature at altitude 11.725000 km is nan K
-The new temperature at altitude 12.194000 km is nan K
-The new temperature at altitude 12.663000 km is nan K
-The new temperature at altitude 13.132000 km is nan K
-The new temperature at altitude 13.601000 km is nan K
-The new temperature at altitude 14.070000 km is nan K
-The new temperature at altitude 14.539000 km is nan K
-The new temperature at altitude 15.008000 km is nan K
-The new temperature at altitude 15.477000 km is nan K
-The new temperature at altitude 15.946000 km is nan K
-The new temperature at altitude 16.415000 km is nan K
-The new temperature at altitude 16.884000 km is nan K
-The new temperature at altitude 17.353000 km is nan K
-The new temperature at altitude 17.822000 km is nan K
-The new temperature at altitude 18.291000 km is nan K
-The new temperature at altitude 18.760000 km is nan K
-The new temperature at altitude 19.229000 km is nan K
-The new temperature at altitude 19.698000 km is nan K
-The new temperature at altitude 20.167000 km is nan K
-The new temperature at altitude 20.636000 km is nan K
-The new temperature at altitude 21.105000 km is nan K
-The new temperature at altitude 21.574000 km is nan K
-The new temperature at altitude 22.043000 km is nan K
-The new temperature at altitude 22.512000 km is nan K
-The new temperature at altitude 22.981000 km is nan K
-The new temperature at altitude 23.450000 km is nan K
-The new temperature at altitude 23.919000 km is nan K
-The new temperature at altitude 24.388000 km is nan K
-The new temperature at altitude 24.857000 km is nan K
-The new temperature at altitude 25.326000 km is nan K
-The new temperature at altitude 25.795000 km is nan K
-The new temperature at altitude 26.264000 km is nan K
-The new temperature at altitude 26.733000 km is nan K
-The new temperature at altitude 27.202000 km is nan K
-The new temperature at altitude 27.671000 km is nan K
-The new temperature at altitude 28.140000 km is nan K
-The new temperature at altitude 28.609000 km is nan K
-The new temperature at altitude 29.078000 km is nan K
-The new temperature at altitude 29.547000 km is nan K
-The new temperature at altitude 30.016000 km is nan K
-The new temperature at altitude 30.485000 km is nan K
-The new temperature at altitude 30.954000 km is nan K
-The new temperature at altitude 31.423000 km is nan K
-The new temperature at altitude 31.892000 km is nan K
-The new temperature at altitude 32.361000 km is nan K
-The new temperature at altitude 32.830000 km is nan K
-The new temperature at altitude 33.299000 km is nan K
-The new temperature at altitude 33.768000 km is nan K
-The new temperature at altitude 34.237000 km is nan K
-The new temperature at altitude 34.706000 km is nan K
-The new temperature at altitude 35.175000 km is nan K
-The new temperature at altitude 35.644000 km is nan K
-The new temperature at altitude 36.113000 km is nan K
-The new temperature at altitude 36.582000 km is nan K
-The new temperature at altitude 37.051000 km is nan K
-The new temperature at altitude 37.520000 km is nan K
-The new temperature at altitude 37.989000 km is nan K
-The new temperature at altitude 38.458000 km is nan K
-The new temperature at altitude 38.927000 km is nan K
-The new temperature at altitude 39.396000 km is nan K
-The new temperature at altitude 39.865000 km is nan K
-The new temperature at altitude 40.334000 km is nan K
-The new temperature at altitude 40.803000 km is nan K
-The new temperature at altitude 41.272000 km is nan K
-The new temperature at altitude 41.741000 km is nan K
-The new temperature at altitude 42.210000 km is nan K
-The new temperature at altitude 42.679000 km is nan K
-The new temperature at altitude 43.148000 km is nan K
-The new temperature at altitude 43.617000 km is nan K
-The new temperature at altitude 44.086000 km is nan K
-The new temperature at altitude 44.555000 km is nan K
-The new temperature at altitude 45.024000 km is nan K
-The new temperature at altitude 45.493000 km is nan K
-The new temperature at altitude 45.962000 km is nan K
-The new temperature at altitude 46.431000 km is nan K
-The new temperature at altitude 46.900000 km is nan K
+0.000000	5.000000	410.670806
+1.000000	4.947317	410.169078
+2.000000	4.894576	409.754717
+3.000000	4.841786	409.409258
+4.000000	4.788955	409.125496
+5.000000	4.736091	408.897906
+6.000000	4.683201	408.720719
+7.000000	4.630291	408.588807
+8.000000	4.577366	408.494987
+9.000000	4.524431	408.431515
+10.000000	4.471489	408.391223
+11.000000	4.418543	408.367709
+12.000000	4.365333	404.328505
+13.000000	4.311109	393.177688
+14.000000	4.255325	382.026870
+15.000000	4.197889	370.876053
+16.000000	4.138699	359.725236
+17.000000	4.077646	348.574419
+18.000000	4.014608	337.423602
+19.000000	3.949452	326.272785
+20.000000	3.882030	315.121968
+21.000000	3.812180	303.971151
+22.000000	3.739719	292.820334
+23.000000	3.664445	281.669517
+24.000000	3.586131	270.518700
+25.000000	3.504522	259.367883
+26.000000	3.419326	248.217066
+27.000000	3.330215	237.066249
+28.000000	3.237011	226.903697
+29.000000	3.139941	218.587717
+30.000000	3.039511	212.002696
+31.000000	2.936283	206.912709
+32.000000	2.830818	203.116436
+33.000000	2.723642	200.369183
+34.000000	2.615200	198.408227
+35.000000	2.505846	197.039124
+36.000000	2.395824	196.009555
+37.000000	2.285296	195.240165
+38.000000	2.174388	194.668382
+39.000000	2.063197	194.245680
+40.000000	1.951795	193.934922
+41.000000	1.840237	193.699972
+42.000000	1.728562	193.532420
+43.000000	1.616804	193.411113
+44.000000	1.504985	193.319178
+45.000000	1.393119	193.250738
+46.000000	1.281219	193.199862
+47.000000	1.169293	193.162104
+48.000000	1.057348	193.134139
+49.000000	0.945389	193.113486
+50.000000	0.833419	193.098303
+51.000000	0.721442	193.087154
+52.000000	0.609459	193.078828
+53.000000	0.497472	193.072614
+54.000000	0.385482	193.067983
+55.000000	0.273489	193.064534
+56.000000	0.161495	193.061969
+57.000000	0.049500	193.060066
+58.000000	-0.062497	193.058658
+59.000000	-0.174494	193.057620
+60.000000	-0.286492	193.056847
+61.000000	-0.398490	193.056273
+62.000000	-0.510488	193.055848
+63.000000	-0.622487	193.055532
+64.000000	-0.734486	193.055299
+65.000000	-0.846485	193.055126
+66.000000	-0.958484	193.054999
+67.000000	-1.070483	193.054906
+68.000000	-1.182482	193.054837
+69.000000	-1.294481	193.054786
+70.000000	-1.406480	193.054749
+71.000000	-1.518480	193.054721
+72.000000	-1.630479	193.054701
+73.000000	-1.742478	193.054686
+74.000000	-1.854477	193.054675
+75.000000	-1.966476	193.054668
+76.000000	-2.078476	193.054662
+77.000000	-2.190475	193.054657
+78.000000	-2.302474	193.054654
+79.000000	-2.414473	193.054652
+80.000000	-2.526473	193.054650
+81.000000	-2.638472	193.054649
+82.000000	-2.750471	193.054648
+83.000000	-2.862470	193.054648
+84.000000	-2.974470	193.054647
+85.000000	-3.086469	193.054647
+86.000000	-3.198468	193.054647
+87.000000	-3.310467	193.054647
+88.000000	-3.422467	193.054646
+89.000000	-3.534466	193.054646
+90.000000	-3.646465	193.054646
+91.000000	-3.758464	193.054646
+92.000000	-3.870464	193.054646
+93.000000	-3.982463	193.054646
+94.000000	-4.094462	193.054646
+95.000000	-4.206461	193.054646
+96.000000	-4.318461	193.054646
+97.000000	-4.430460	193.054646
+98.000000	-4.542459	193.054646
+99.000000	-4.654458	193.054646
+100.000000	-4.766458	193.054646

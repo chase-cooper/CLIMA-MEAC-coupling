@@ -50,7 +50,7 @@ atm2Pa          =   101_325
 #######################
 
 # Paths
-NAME            =   'N2CO2_noS'
+NAME            =   'N2CO2_1e-3'
 OUTPUT          =   "outputs/"+NAME
 PATH            =   os.getcwd()                                     # Path to this python file
 CLIMAPATH       =   f'{PATH}/cloudy_clima'                          # Path to the cloudy-CLIMA folder
@@ -75,7 +75,7 @@ C_H2O           =   f'{CINOUT}/Profiles/H2O.dat'                    # H2O  verti
 C_O3            =   f'{CINOUT}/Profiles/O3.dat'                     # O3   vertical profile
 
 # MEAC files
-MSCENARIONAME   =   "Sun/N2_CO2-Full"                                   # Name of MEAC scenario folder
+MSCENARIONAME   =   "Sun/N2_CO2_1e-3-Full"                                   # Name of MEAC scenario folder
 
 MSCENARIOPATH   =   f'scenario_library/{MSCENARIONAME}'             # Path to MEAC scenario folder
 MZTP            =   f'{MSCENARIOPATH}/TP.dat'                       # MEAC ztp profile

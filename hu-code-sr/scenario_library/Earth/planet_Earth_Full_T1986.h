@@ -13,21 +13,21 @@ Note: The parameters in this file can be modified to model different planets aro
 #define RADIUS_PLANET         6371000.0   /* m */ /* Earth */
 
 /* Planet Orbital Properties */
-#define ORBIT               1.00          /* AU */ /* Earth */
-#define STAR_SPEC           "Data/solar00.txt"
+#define ORBIT               1.00          /* AU */ /* Mars */
+#define STAR_SPEC           "Data/solar0.txt"
 #define FaintSun			1.0				/* Faint early Sun factor */
 #define TIDELOCK			0				/* If the planet is tidelly locked */
 #define STAR_TEMP			394.109	   /* Irradiance Temperature at 1 AU */
-#define THETAREF			1			/* Slant Path Angle in radian */
-#define PAB					0.25				/* Planet Bond Albedo */
+#define THETAREF			1.0			/* Slant Path Angle in radian */
+#define PAB					0.3				/* Planet Bond Albedo */
 #define FADV				0.25			/* Advection factor: 0.25=uniformly distributed, 0.6667=no Advection */
-#define PSURFAB				0.23			/* Planet Surface Albedo */
-#define PSURFEM				1.0			/* Planet Surface Emissivity */
+#define PSURFAB				0.25			/* Planet Surface Albedo */
+#define PSURFEM				0.82			/* Planet Surface Emissivity */
 #define DELADJUST           1			/* Whether use the delta adjustment in the 2-stream diffuse radiation */
 #define TAUTHRESHOLD		10.0			/* Optical Depth Threshold for multi-layer diffuse radiation */
 #define TAUMAX				1000.0
 #define TAUMAX1				1000.0		/* Maximum optical Depth in the diffuse radiation */
-#define TAUMAX2				1000000.0
+#define TAUMAX2				10000000.0
 #define IFDIFFUSE			1			/* Set to 1 if want to include diffuse solar radiation into the photolysis rate */
 
 #define IFUVMULT			0			/* Whether do the UV Multiplying */
@@ -38,7 +38,7 @@ Note: The parameters in this file can be modified to model different planets aro
 /* Planet Temperature-Pressure Preofile*/
 #define TPMODE                 1            /* 1: import data from a ZTP list; 
                                                0: calculate TP profile from the parametized formula*/
-#define TPLIST                 "scenario_library/Earth/TP.dat"
+#define TPLIST                 "Data/TP1986.dat"
 #define PTOP                   1.0E-8            /* Pressure at the top of atmosphere in bar */
 #define TTOP				   500.0            /* Temperature at the top of atmosphere */
 #define TSTR                   550.0            /* Temperature at the top of stratosphere */
@@ -49,11 +49,11 @@ Note: The parameters in this file can be modified to model different planets aro
 #define PBOTTOM				   1.0E+0            /* Pressure at the bottom of stratosphere */
 #define TBOTTOM				   600.0            /* Temperature at the bottom of stratosphere  */
 #define PPOFFSET			   0.0			/* Pressure offset in log [Pa] */
-#define TINTSET				   10			/* Temperature equivalent to the internal heating at 1 AU */
+#define TINTSET				   40.0			/* Temperature equivalent to the internal heating at 1 AU */
 
 /* Calculation Grids*/
-#define zbin {7} /*How many altitude bin?*/
-#define zmax 77.3 /*Maximum altitude in km*/
+#define zbin 43 /*How many altitude bin?*/
+#define zmax 86.0 /*Maximum altitude in km*/
 #define zmin 0.0 /*Maximum altitude in km*/
 #define WaveBin 9999 /*How many wavelength bin?*/
 #define WaveMin 1.0 /*Minimum Wavelength in nm*/
@@ -74,19 +74,19 @@ Note: The parameters in this file can be modified to model different planets aro
 #define TMIN 1.0E-5 /* Minimum of time step */
 #define TSPEED	1.0E+200 /* Speed up factor */
 #define NMAX 1E+8 /* Maximum iteration cycles */
-#define NMAXT	1e+100 /* Maximum iteration cumulative time in seconds */
+#define NMAXT	1.0E+202 /* Maximum iteration cumulative time in seconds */
 #define MINNUM 1.0E-0 /* Minimum number density in denominator */
 
 /* Molecular Species */
 #define NSP 111 /*Number of species in the standard list*/
 #define SPECIES_LIST "scenario_library/Earth/species_Earth_Full.dat"
-#define AIRM 28.0 /*Average molecular mass of atmosphere, in atomic mass unit*/
-#define AIRVIS	1.6E-5	/* Dynamic viscosity in SI*/
-#define RefIdxType 3	/* Type of Refractive Index: 0=Air, 1=CO2, 2=He, 3=N2, 4=NH3, 5=CH4, 6=H2, 7=O2 */
+#define AIRM 28.8 /*Average molecular mass of atmosphere, in atomic mass unit*/
+#define AIRVIS	1.5E-5	/* Dynamic viscosity in SI*/
+#define RefIdxType 0	/* Type of Refractive Index: 0=Air, 1=CO2, 2=He, 3=N2, 4=NH3, 5=CH4, 6=H2, 7=O2 */
 
 /* Aerosol Species */
 #define	AERSIZE	1.0E-7	/* diameter in m */
-#define AERDEN	2.0E+3	/* density in SI */
+#define AERDEN	1.84E+3	/* density in SI */
 #define	NCONDEN	1	/* Calculate the condensation every NCONDEN iterations */
 #define IFGREYAER	0	/* Contribute to the grey atmosphere Temperature? 0=no, 1=yes */
 #define SATURATIONREDUCTION	0.2 /* Ad hoc reduction factor for saturation pressure of water */
@@ -103,13 +103,13 @@ Note: The parameters in this file can be modified to model different planets aro
 #define NMOLECULES 172       /* Number of molecules for chemical equil */
 #define MOL_DATA_FILE "Data/molecules_all.dat" /* Data file for chemical equilibrium calculation */
 #define ATOM_ABUN_FILE "Data/atom_solar.dat" /* Data file for chemical equilibrium calculation */
-#define IMPORTFILEX "scenario_library/Earth/Conx.dat" /* File of concentrations X to be imported */
-#define IMPORTFILEF "scenario_library/Earth/Conf.dat" /* File of concentrations F to be imported */       
+#define IMPORTFILEX "scenario_library/Earth/Conx_i.dat" /* File of concentrations X to be imported */
+#define IMPORTFILEF "scenario_library/Earth/Conf_i.dat" /* File of concentrations F to be imported */       
 #define IFIMPORTH2O 0		/* When H2O is set to constant, 1=import mixing ratios */
 #define IFIMPORTCO2 0		/* When H2O is set to constant, 1=import mixing ratios */
 
 /* Reaction Zones */
-#define REACTION_LIST "Data/zone_Exoplanet_Full.dat"
+#define REACTION_LIST "Data/zone_Earth_Full.dat"
 #define NKin 645   /*Number of Regular Chemical Reaction in the standard list*/
 #define NKinM 90  /*Number of Thermolecular Reaction in the standard list*/
 #define NKinT 93  /*Number of Thermal Dissociation Reaction in the standard list*/
@@ -124,12 +124,12 @@ Note: The parameters in this file can be modified to model different planets aro
 #define Tback 1E+4
 #define KET1 1.0E+6
 #define KEH1 1.0E+8
-#define EDDYIMPORT	"Data/EddyN2.dat"
+#define EDDYIMPORT	"Data/EddyEarth.dat"
 #define MDIFF_H_1	4.87
 #define MDIFF_H_2	0.698
 #define MDIFF_H2_1	2.80
 #define MDIFF_H2_2	0.740
-#define MDIFF_H2_F	1.0
+#define MDIFF_H2_F	1.8
 
 /* Parameters of rainout rates */
 #define	RainF	1.0	/* Rainout factor, 0 for no rainout, 1 for earthlike normal rainout, <1 for reduced rainout */
@@ -171,16 +171,15 @@ Note: The parameters in this file can be modified to model different planets aro
 #define LAMBDATYPE 1        /* LAMBDATYPE=1 -> constant resolution    */
 							/* LAMBDATYPE=2 -> constant wave step     */
 
-
 /* IR emission spectra output options */
 
 #define IRLamMin	1.0		/* Minimum wavelength in the IR emission output, in microns */
 #define IRLamMax	100.0	/* Maximum wavelength in the IR emission output, in microns */
 #define IRLamBin	9999		/* Number of wavelength bin in the IR emission spectra */
-#define Var1STD			7
-#define	Var2STD			52
+#define Var1STD			2
+#define	Var2STD			7
 #define Var3STD			21
-#define	Var4STD			20
+#define	Var4STD			52
 #define Var1RATIO		0.0
 #define	Var2RATIO		0.0
 #define Var3RATIO		0.0
@@ -209,6 +208,7 @@ Note: The parameters in this file can be modified to model different planets aro
 #define IRFILEVar3		"scenario_library/Earth/EmissionVar3.dat"	 /* Output spectrum file name */
 #define IRFILEVar4		"scenario_library/Earth/EmissionVar4.dat"	 /* Output spectrum file name */
 #define IRCLOUDFILE		"scenario_library/Earth/CloudTopE.dat"      /* Output emission cloud top file name */
+
 
 /* Cloud Top Determination */
 #define OptCloudTop	1.0	/* Optical Depth of the Cloud Top */

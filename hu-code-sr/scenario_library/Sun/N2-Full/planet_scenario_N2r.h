@@ -94,7 +94,7 @@ Note: The parameters in this file can be modified to model different planets aro
 #define AERRADFILE2 "Data/S8AER_CrossM_01.dat"	/* radiative properties of S8 */
 
 /* Initial Concentration Setting */
-#define IMODE 1              /* 1: Import from SPECIES_LIST; 
+#define IMODE 4              /* 1: Import from SPECIES_LIST; 
                                 0: Calculate initial concentrations from chemical equilibrium sub-routines (not rad);
                                 3: Calculate initial concentrations from simplied chemical equilibrium formula (not rad);
                                 2: Import from results of previous calculations

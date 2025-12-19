@@ -82,6 +82,25 @@ def writeParameters():
 
     f.close()
 
+def writeScenarioFile(zmax:str='100.0'):
+    f = open('templates/meac_scenario.txt','r')
+    text = f.read()
+    f.close()
+
+    text = text.replace('{1}',str(SURFALB))
+    text = text.replace('{2}',MZTP)
+    text = text.replace('{3}',zmax)
+    text = text.replace('{4}',str(NMAXT))
+    text = text.replace('{5}',MSPECIES)
+    text = text.replace('{6}',MSCENARIOPATH)
+    text = text.replace('{7}',str(NBIN))
+
+    o = open(MEACPATH + '/' + MSCENARIO,'w')
+    o.write(text)
+    o.close()
+
+    print("ENSURE # OF BINS IS PROPERLY SET")
+
 def writeIncludeFile():
     f = writeOrCreate(CINCLUDE)
     f.write(f"""c---------------------------------------------------

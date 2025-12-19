@@ -21,7 +21,7 @@ Note: The parameters in this file can be modified to model different planets aro
 #define THETAREF			1			/* Slant Path Angle in radian */
 #define PAB					0.25				/* Planet Bond Albedo */
 #define FADV				0.25			/* Advection factor: 0.25=uniformly distributed, 0.6667=no Advection */
-#define PSURFAB				0.23			/* Planet Surface Albedo */
+#define PSURFAB				0.0			/* Planet Surface Albedo */
 #define PSURFEM				1.0			/* Planet Surface Emissivity */
 #define DELADJUST           1			/* Whether use the delta adjustment in the 2-stream diffuse radiation */
 #define TAUTHRESHOLD		10.0			/* Optical Depth Threshold for multi-layer diffuse radiation */
@@ -38,7 +38,7 @@ Note: The parameters in this file can be modified to model different planets aro
 /* Planet Temperature-Pressure Preofile*/
 #define TPMODE                 1            /* 1: import data from a ZTP list; 
                                                0: calculate TP profile from the parametized formula*/
-#define TPLIST                 "scenario_library/Sun/N2_CO2-Full/TP.dat"
+#define TPLIST                 "scenario_library/Sun/N2_CO2-Full/TP_N2CO2.dat"
 #define PTOP                   1.0E-8            /* Pressure at the top of atmosphere in bar */
 #define TTOP				   500.0            /* Temperature at the top of atmosphere */
 #define TSTR                   550.0            /* Temperature at the top of stratosphere */
@@ -74,13 +74,13 @@ Note: The parameters in this file can be modified to model different planets aro
 #define TMIN 1.0E-5 /* Minimum of time step */
 #define TSPEED	1.0E+200 /* Speed up factor */
 #define NMAX 1E+8 /* Maximum iteration cycles */
-#define NMAXT	1e+100 /* Maximum iteration cumulative time in seconds */
+#define NMAXT	1.0E+202 /* Maximum iteration cumulative time in seconds */
 #define MINNUM 1.0E-0 /* Minimum number density in denominator */
 
 /* Molecular Species */
 #define NSP 111 /*Number of species in the standard list*/
 #define SPECIES_LIST "scenario_library/Sun/N2_CO2-Full/species_scenario_N2r.dat"
-#define AIRM 28.0 /*Average molecular mass of atmosphere, in atomic mass unit*/
+#define AIRM 31.2 /*Average molecular mass of atmosphere, in atomic mass unit*/
 #define AIRVIS	1.6E-5	/* Dynamic viscosity in SI*/
 #define RefIdxType 3	/* Type of Refractive Index: 0=Air, 1=CO2, 2=He, 3=N2, 4=NH3, 5=CH4, 6=H2, 7=O2 */
 
@@ -124,7 +124,7 @@ Note: The parameters in this file can be modified to model different planets aro
 #define Tback 1E+4
 #define KET1 1.0E+6
 #define KEH1 1.0E+8
-#define EDDYIMPORT	"Data/EddyN2.dat"
+#define EDDYIMPORT	"scenario_library/Sun/N2_CO2-Full/kzz.dat"
 #define MDIFF_H_1	4.87
 #define MDIFF_H_2	0.698
 #define MDIFF_H2_1	2.80
