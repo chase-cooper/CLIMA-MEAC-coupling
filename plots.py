@@ -338,6 +338,73 @@ def plotSurfaceTemperature(temps_file:str,runBreaks:list[int]=[],out_dir:str='')
     plt.savefig(f"{out_dir}/Surface Temperature",dpi=200)
     # plt.show()
 
+def compareScenarios():
+    """
+    Compare final TP profiles and mixing ratios of the four N2CO2 scenarios
+    """
+    fig,axes = plt.subplots(ncols=3,nrows=3,gridspec_kw={'wspace':0.1,'hspace':0.3})
+    axes = axes.flatten()
+
+
+    colors = ['mediumspringgreen','darkturquoise','cornflowerblue','slateblue']
+    labels = ['C2H6','CH4','CO2','H2','H2O','N2','O2','O3']
+    for j in range(len(labels)):
+        axes[j+1].set_title(r"$f_{\rm "+labels[j]+r"}$",size='x-large')
+
+    maxt,maxp = 0,0
+    mint,minp = 300,100
+
+    for i in range(4):
+        scen_name = f"N2CO2_1e-{i+1}"
+        color = colors[i]
+
+        # Temperature-pressure profiles
+        temps = os.listdir(f"outputs/{scen_name}/meac-in/")
+        temps.sort(key = lambda x: int(re.search(r"[0-9]+",x)[0]))
+        temp = open(f"outputs/{scen_name}/meac-in/{temps[-1]}",'r')
+        t, p= [],[]
+        data = temp.readlines()[2:-1]
+        for line in data:
+            line = line.split()
+            t.append(float(line[3]))
+            p.append(float(line[4]))
+        axes[0].plot(t,p,c=color,label="pCO2 = $10^{-"+str(i+1)+"}$")
+        maxt = max(max(t),maxt)
+        mint = min(min(t),mint)
+        maxp = max(max(p),maxp)
+        minp = min(min(p),minp)
+        # Concentrations
+        
+        files       =   os.listdir(f"outputs/{scen_name}/meac-out/")
+        files.sort(key = lambda x: int(re.search(r"[0-9]+",x)[0]))
+
+        latest = files[-1]
+        f = open(f'outputs/{scen_name}/meac-out/{latest}','r')
+        data = np.fromstring(''.join(f.readlines()[1:-1]),dtype=np.float32,sep=' ')
+        data = data.reshape(len(data)//19,19)
+        alts = data[:,2]
+
+        for j in range(8):
+            a = axes[j+1]
+            a.plot(data[:,4+2*j],alts,c=color)
+            a.set_ylim(maxp,minp)
+            a.set_xscale('log')
+            a.set_yscale('log')
+            if j not in [2,5]: a.set_yticks(ticks=[])
+
+    axes[0].invert_yaxis()
+    axes[0].set_yscale('log')
+    axes[0].legend()
+
+    # for a in axes[1:]:
+    #     a.invert_yaxis()
+
+    fig.set_figwidth(10)
+    fig.set_figheight(10)
+    plt.tight_layout()
+    plt.savefig('test',dpi=200)
+    plt.show()
+
 # plotSurfaceTemperature('outputs/test/surftemps.dat',out_dir=OUTPUT)
 # plotAtmosphericComposition("hu-code-sr/scenario_library/Sun/N2_CO2-Full/ConcentrationSTD_base.dat",id='test',\
 #                            ref_file="hu-code-sr/scenario_library/Sun/N2_CO2_1e-1-Full/ConcentrationSTD_base.dat",out_dir="outputs/test")
