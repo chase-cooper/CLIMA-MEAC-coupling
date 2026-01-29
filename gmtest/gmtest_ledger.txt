@@ -1,0 +1,35 @@
+### First, we produce a TP profile with the following parameters:
+NSTEPS  = 500
+IMW     = 2         # Tell the model to use the Manabe-Wetherald profile
+T0      = 285
+T_top   = 210
+IO3     = 0
+SOLCON  = 0.75      # Instellation relative to Earth
+
+fAr     = 0.02
+fCH4    = 2.5e-8    # Guess 2
+fC2H6   = 1e-40
+fCO2    = 1e-1     
+fO2     = 1e-15
+fH2     = 1e-40
+fH2O      set by MW profile
+
+
+### The resulting TP is passed to MEAC, along with the following initial conditions:
+
+# Scenario file
+ORBIT   = 1.15      # AU, results in ~75% Earth Instellation
+
+# Species file
+H2:     lower boundary --> flux, 8.6e9
+H2O:    lower boundary --> pressure, 0.02 bar
+CH4:    lower boundary --> flux, 6.8e8
+CO2:    fixed partial pressure, 0.1 bar
+N2:     fixed partial pressure, 0.9 bar
+
+The resulting atmospheric composition file has fCH4 ~ 2e-8, which is close enough to our CLIMA guess.
+This is used as the base concentratio file
+
+With this done, I run the coupled model like usual. Parameters and results are in the output folder
+
+

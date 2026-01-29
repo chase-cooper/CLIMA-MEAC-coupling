@@ -13,7 +13,7 @@ Note: The parameters in this file can be modified to model different planets aro
 #define RADIUS_PLANET         6371000.0   /* m */ /* Earth */
 
 /* Planet Orbital Properties */
-#define ORBIT               1.00          /* AU */ /* Earth */
+#define ORBIT               1.15          /* AU */ /* Earth */
 #define STAR_SPEC           "Data/solar00.txt"
 #define FaintSun			1.0				/* Faint early Sun factor */
 #define TIDELOCK			0				/* If the planet is tidelly locked */

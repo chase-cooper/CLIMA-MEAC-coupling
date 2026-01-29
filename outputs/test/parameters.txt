@@ -54,10 +54,10 @@ CLIMA Tempout File    =   /Users/cooper/Documents/GitHub/CLIMA-MEAC-coupling/clo
 CLIMA Profiles Folder =   /Users/cooper/Documents/GitHub/CLIMA-MEAC-coupling/cloudy_clima/CLIMA/IO/Profiles
 
 ###    MEAC FILE PATHS
-MEAC Scenario Name    =   Sun/N2_CO2-Full
-MEAC Scenario Path    =   scenario_library/Sun/N2_CO2-Full
-MEAC Converged File   =   /Users/cooper/Documents/GitHub/CLIMA-MEAC-coupling/hu-code-sr/scenario_library/Sun/N2_CO2-Full/ConcentrationSTD_base.dat
-MEAC Scenario File    =   scenario_library/Sun/N2_CO2-Full/planet_scenario_N2r.h
-MEAC Species File     =   scenario_library/Sun/N2_CO2-Full/species_scenario_N2r.dat
-MEAC ConcentrationFile=   /Users/cooper/Documents/GitHub/CLIMA-MEAC-coupling/hu-code-sr/scenario_library/Sun/N2_CO2-Full/ConcentrationSTD.dat
-MEAC T-P Profile      =   scenario_library/Sun/N2_CO2-Full/TP.dat
+MEAC Scenario Name    =   Sun/N2_CO2_1e-1-Full
+MEAC Scenario Path    =   scenario_library/Sun/N2_CO2_1e-1-Full
+MEAC Converged File   =   /Users/cooper/Documents/GitHub/CLIMA-MEAC-coupling/hu-code-sr/scenario_library/Sun/N2_CO2_1e-1-Full/ConcentrationSTD_base.dat
+MEAC Scenario File    =   scenario_library/Sun/N2_CO2_1e-1-Full/planet_scenario_N2r.h
+MEAC Species File     =   scenario_library/Sun/N2_CO2_1e-1-Full/species_scenario_N2r.dat
+MEAC ConcentrationFile=   /Users/cooper/Documents/GitHub/CLIMA-MEAC-coupling/hu-code-sr/scenario_library/Sun/N2_CO2_1e-1-Full/ConcentrationSTD.dat
+MEAC T-P Profile      =   scenario_library/Sun/N2_CO2_1e-1-Full/TP.dat

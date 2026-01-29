@@ -38,7 +38,7 @@ Note: The parameters in this file can be modified to model different planets aro
 /* Planet Temperature-Pressure Preofile*/
 #define TPMODE                 1            /* 1: import data from a ZTP list; 
                                                0: calculate TP profile from the parametized formula*/
-#define TPLIST                 "scenario_library/Sun/N2_CO2_1e-4-Full/TP_N2CO2.dat"
+#define TPLIST                 "scenario_library/Sun/N2_CO2_1e-4-Full/TP.dat"
 #define PTOP                   1.0E-8            /* Pressure at the top of atmosphere in bar */
 #define TTOP				   500.0            /* Temperature at the top of atmosphere */
 #define TSTR                   550.0            /* Temperature at the top of stratosphere */
@@ -94,7 +94,7 @@ Note: The parameters in this file can be modified to model different planets aro
 #define AERRADFILE2 "Data/S8AER_CrossM_01.dat"	/* radiative properties of S8 */
 
 /* Initial Concentration Setting */
-#define IMODE 1              /* 1: Import from SPECIES_LIST; 
+#define IMODE 4              /* 1: Import from SPECIES_LIST; 
                                 0: Calculate initial concentrations from chemical equilibrium sub-routines (not rad);
                                 3: Calculate initial concentrations from simplied chemical equilibrium formula (not rad);
                                 2: Import from results of previous calculations

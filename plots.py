@@ -162,7 +162,12 @@ def plotAtmosphericEvolution(scen_name:str='',out_dir:str=''):         # WIP
     for k in range(len(axes)):
         ax = axes[k]
         ax.set_xscale('log')
-        # if k not in [2,5,6]: ax.set_xscale('log')
+        ax.set_xticks([],minor=True)
+        ax.tick_params(rotation=-90)
+    axes[2].set_xticks(ticks=[2e-5,5e-5,1e-4],labels=[r"$2\times10^{-5}$",r"$5\times10^{-5}$",r"$10^{-4}$"],minor=False)         # CO2
+    axes[3].set_xticks(ticks=[4e-4,5e-4],labels=[r"$4\times10^{-4}$",r"$5\times10^{-4}$"],minor=False)  # H2
+    axes[5].set_xticks(ticks=[0.99,0.995,1.0],labels=["",r"$9.95\times10^{-1}$",r"1.0"],minor=False)    # N2
+
     fig.set_figwidth(15)
     fig.set_figheight(8)
     plt.tight_layout()
@@ -176,12 +181,14 @@ def plotTPprofile(clast:str,id:str,meac_conv:str='',out_dir:str=''):
     """
     fig,ax = plt.subplots()
 
-    f_first = open(meac_conv,'r')
-    data = f_first.read().replace('#','').split()[121:]
-    data = np.asarray(data,dtype=np.float32).reshape(len(data)//116,116)
-    f_first.close()
-    t_first = data[::-1,3]  # TOA to surf
-    p_first = data[::-1,4]  # TOA to surf
+    if meac_conv != '':
+        f_first = open(meac_conv,'r')
+        data = f_first.read().replace('#','').split()[121:]
+        data = np.asarray(data,dtype=np.float32).reshape(len(data)//116,116)
+        f_first.close()
+        t_first = data[::-1,3]  # TOA to surf
+        p_first = data[::-1,4]  # TOA to surf
+        ax.plot(t_first,p_first,c='cornflowerblue',ls=':',label="Initial MEAC TP profile")
 
     f_last = open(clast,'r')
     data = f_last.read().split()[9:]
@@ -190,16 +197,17 @@ def plotTPprofile(clast:str,id:str,meac_conv:str='',out_dir:str=''):
     t_last = data[:,2]      # TOA to surf
     p_last = data[:,1]*atm2Pa   # TOA to surf
 
-    ax.plot(t_first,p_first,c='cornflowerblue',ls=':',label="Initial MEAC TP profile")
     ax.plot(t_last,p_last,c='navy',label="Final CLIMA TP profile")
 
-    ax.set_ylim(bottom=max(max(p_last),max(p_first)),top=min(min(p_first),min(p_last)))
+    # ax.set_ylim(bottom=max(max(p_last),max(p_first)),top=min(min(p_first),min(p_last)))
+    ax.set_ylim((1e5,1))
     ax.set_yscale('log')
     ax.set_xlabel("Temperature [K]",size='x-large')
     ax.set_ylabel("Pressure [Pa]",size='x-large')
     plt.legend()
     plt.tight_layout()
     plt.savefig(f'{out_dir}/TPprofile',dpi=200)
+    # plt.show()
     plt.close()
 
 def plotTPevolution(scen_name:str,out_dir:str):
@@ -342,20 +350,21 @@ def compareScenarios():
     """
     Compare final TP profiles and mixing ratios of the four N2CO2 scenarios
     """
-    fig,axes = plt.subplots(ncols=3,nrows=3,gridspec_kw={'wspace':0.1,'hspace':0.3})
+    fig,axes = plt.subplots(ncols=3,nrows=3,gridspec_kw={'wspace':0.1,'hspace':0.45})
     axes = axes.flatten()
 
 
     colors = ['mediumspringgreen','darkturquoise','cornflowerblue','slateblue']
     labels = ['C2H6','CH4','CO2','H2','H2O','N2','O2','O3']
     for j in range(len(labels)):
-        axes[j+1].set_title(r"$f_{\rm "+labels[j]+r"}$",size='x-large')
+        a = axes[j+1]
+        a.set_title(r"$f_{\rm "+labels[j]+r"}$",size='x-large')
 
     maxt,maxp = 0,0
     mint,minp = 300,100
 
     for i in range(4):
-        scen_name = f"N2CO2_1e-{i+1}"
+        scen_name = f"N2_CO2_1e-{i+1}"
         color = colors[i]
 
         # Temperature-pressure profiles
@@ -369,6 +378,7 @@ def compareScenarios():
             t.append(float(line[3]))
             p.append(float(line[4]))
         axes[0].plot(t,p,c=color,label="pCO2 = $10^{-"+str(i+1)+"}$")
+        
         maxt = max(max(t),maxt)
         mint = min(min(t),mint)
         maxp = max(max(p),maxp)
@@ -390,24 +400,362 @@ def compareScenarios():
             a.set_ylim(maxp,minp)
             a.set_xscale('log')
             a.set_yscale('log')
-            if j not in [2,5]: a.set_yticks(ticks=[])
+            if j not in [2,5]: a.set_yticks(ticks=[],minor=False)
+            else:
+                a.set_yticks(ticks=[1e5,1e2,1e-1],minor=False)
 
     axes[0].invert_yaxis()
     axes[0].set_yscale('log')
     axes[0].legend()
+    axes[0].set_yticks(ticks=[1e5,1e2,1e-1],minor=False)
+    axes[0].set_title(r"Temperature [K]")
+    for i in [0,3,6]:
+        axes[i].set_ylabel(r"Pressure [Pa]",size='x-large')
 
     # for a in axes[1:]:
     #     a.invert_yaxis()
+    axes[6].set_xticks([],minor=True)
+    axes[6].set_xticks(ticks=[0.9,1],labels=['0.9','1.0'],minor=False)
 
-    fig.set_figwidth(10)
-    fig.set_figheight(10)
+    fig.set_figwidth(14)
+    fig.set_figheight(8)
     plt.tight_layout()
     plt.savefig('test',dpi=200)
     plt.show()
 
-# plotSurfaceTemperature('outputs/test/surftemps.dat',out_dir=OUTPUT)
-# plotAtmosphericComposition("hu-code-sr/scenario_library/Sun/N2_CO2-Full/ConcentrationSTD_base.dat",id='test',\
-#                            ref_file="hu-code-sr/scenario_library/Sun/N2_CO2_1e-1-Full/ConcentrationSTD_base.dat",out_dir="outputs/test")
-# plotChemTP(MCONC,CLAST,MCONV,OUTPUT)
-# plotAtmosphericEvolution("N2CO2_noS",OUTPUT)
-# plotTPevolution("N2CO2_noS",OUTPUT)
+def plotCH4GainLossMechanisms():
+
+    fig,ax = plt.subplots(ncols=2)
+
+    ### Production
+    # scenario gain variables
+    gains = []
+    rTotals = []
+    m57s = []
+    r71s = []
+
+    for i in range(1,5):
+        # Define some variables
+        totalGain = 0
+        rTotal = 0
+        m57 = 0
+        r71 = 0
+
+        # Open the reaction rates file and get all lines
+        f = open(f'hu-code-sr/scenario_library/Sun/N2_CO2_1e-{i}-Full/int.rates.out3.dat','r')
+        lines = f.readlines()
+        f.close()
+
+        # Discard all lines except the CH4 loss section
+        start,end = 0,0
+        # Find start tediously
+        i = 0
+        while i < 1e6:
+            if "CH4\t\t\t\tPRODUCTION" in lines[i]: 
+                lines = lines[i:]
+                break
+            i+=1
+        # Find end tediously
+        i = 0
+        while i < 1e6:
+            if "CH4\t\t\t\tLOSS" in lines[i]:
+                lines = lines[:i]
+                break
+            i += 1
+
+        # Split each line
+        for i in range(len(lines)):
+            lines[i] = lines[i].split()
+
+        # Set variables
+        totalGain = float(lines[0][-1])
+        for line in lines[1:]:
+            if line==[]: continue
+            if "R" in line[0]: 
+                rTotal += float(line[-1])
+            # Specific reactions
+            if line[0]=="R71": r71=float(line[-1])
+            if line[0]=="M57": m57=float(line[-1])
+        
+        # Save variables
+
+        print(rTotal)
+        gains.append(totalGain)
+        rTotals.append(rTotal)
+        m57s.append(m57)
+        r71s.append(r71)
+
+    # General trends
+    ax[0].plot(gains,'ko-',label="CH4 Production")
+    ax[0].plot(rTotals,'bo-',label="R Rxs")
+    # Specific reactions
+    ax[0].plot(r71s,color='navy',ls=':',label="CH3 + CHO = CH4 + CO")
+    ax[0].plot(m57s,color='red',ls=':',label="H + CH3 = CH4")
+
+    ax[0].set_xlabel(r"$f_{\rm CO2}$",size='x-large')
+    ax[0].set_ylabel("Production Rate",size='x-large')
+    ax[0].set_xticks(ticks=[0,1,2,3],labels=[r"$10^{-1}$",r"$10^{-2}$",r"$10^{-3}$",r"$10^{-4}$"],minor=False)
+    ax[0].set_yscale('log')
+    ax[0].legend()
+
+    ### Losses
+    # lists of scenario loss variables
+    losses = []
+    rTotals = []
+    pTotals = []
+    r501s = []
+    r157s = []
+    p33s = []
+    p32s = []
+
+    for i in range(1,5):
+        # Define some variables
+        totalLoss = 0
+        rTotal = 0
+        pTotal = 0
+        r501 = 0
+        r157 = 0
+        p33 = 0
+        p32 = 0
+
+        # Open the reaction rates file and get all lines
+        f = open(f'hu-code-sr/scenario_library/Sun/N2_CO2_1e-{i}-Full/int.rates.out3.dat','r')
+        lines = f.readlines()
+        f.close()
+
+        # Discard all lines except the CH4 loss section
+        start,end = 0,0
+        # Find start tediously
+        i = 0
+        while i < 1e6:
+            if "CH4\t\t\t\tLOSS" in lines[i]: 
+                lines = lines[i:]
+                break
+            i+=1
+        # Find end tediously
+        i = 0
+        while i < 1e6:
+            if "*****" in lines[i]:
+                lines = lines[:i]
+                break
+            i += 1
+
+        # Split each line
+        for i in range(len(lines)):
+            lines[i] = lines[i].split()
+
+        # Set variables
+        totalLoss = float(lines[0][-1])
+        for line in lines[1:]:
+            if line==[]: continue
+            # Simple -- just R vs P
+            if "P" in line[0]: pTotal += float(line[-1])
+            elif "R" in line[0]: rTotal += float(line[-1])
+            # Specific reactions
+            if line[0]=="R501": r501=float(line[-1])
+            if line[0]=="R157": r157=float(line[-1])
+            if line[0]=="P33": p33=float(line[-1])
+            if line[0]=="P32": p32=float(line[-1])
+        
+        # Save variables
+        losses.append(totalLoss)
+        pTotals.append(pTotal)
+        rTotals.append(rTotal)
+        r501s.append(r501)
+        r157s.append(r157)
+        p33s.append(p33)
+        p32s.append(p32)
+    
+    # Make the data pretty
+    
+    # General trends
+    ax[1].plot(losses,'ko-',label="CH4 Loss")
+    ax[1].plot(pTotals,'go-',label="P Rxs")
+    ax[1].plot(rTotals,'bo-',label="R Rxs")
+
+    # Specific reactions
+    ax[1].plot(r501s,color='navy',ls=':',label="OH + CH4 = CH3 + H2O")
+    ax[1].plot(r157s,color='cornflowerblue',ls=":",label="H + CH4 = CH3 + H2")
+    ax[1].plot(p33s,color="seagreen",ls=":",label="CH4 = CH21 + H2")
+    ax[1].plot(p32s,color="lawngreen",ls=":",label="CH4 = CH3 + H")
+
+    ax[1].set_xlabel(r"$f_{\rm CO2}$",size='x-large')
+    ax[1].set_ylabel("Loss Rate",size='x-large')
+    ax[1].set_xticks(ticks=[0,1,2,3],labels=[r"$10^{-1}$",r"$10^{-2}$",r"$10^{-3}$",r"$10^{-4}$"],minor=False)
+    ax[1].set_yscale('log')
+    ax[1].legend()
+    # ax.set_ylim(1e8,1e11)
+    fig.set_figwidth(12)
+    plt.tight_layout()
+    # plt.savefig("outputs/plots/ch4_gain_loss_mechanisms",dpi=250)
+    plt.show()
+    
+def plotH2OGainLossMechanisms():
+
+    fig,ax = plt.subplots(ncols=2)
+
+    ### Production
+    # scenario gain variables
+    gains = []
+    rTotals = []
+    m57s = []
+    r71s = []
+
+    for i in range(1,5):
+        # Define some variables
+        totalGain = 0
+        rTotal = 0
+        m57 = 0
+        r71 = 0
+
+        # Open the reaction rates file and get all lines
+        f = open(f'hu-code-sr/scenario_library/Sun/N2_CO2_1e-{i}-Full/int.rates.out3.dat','r')
+        lines = f.readlines()
+        f.close()
+
+        # Discard all lines except the CH4 loss section
+        start,end = 0,0
+        # Find start tediously
+        i = 0
+        while i < 1e6:
+            if "H2O\t\t\t\tPRODUCTION" in lines[i]: 
+                lines = lines[i:]
+                break
+            i+=1
+        # Find end tediously
+        i = 0
+        while i < 1e6:
+            if "H2O\t\t\t\tLOSS" in lines[i]:
+                lines = lines[:i]
+                break
+            i += 1
+
+        # Split each line
+        for i in range(len(lines)):
+            lines[i] = lines[i].split()
+
+        # Set variables
+        totalGain = float(lines[0][-1])
+        for line in lines[1:]:
+            if line==[]: continue
+            if "R" in line[0]: 
+                rTotal += float(line[-1])
+            # Specific reactions
+            # if line[0]=="R71": r71=float(line[-1])
+            # if line[0]=="M57": m57=float(line[-1])
+        
+        # Save variables
+
+        print(rTotal)
+        gains.append(totalGain)
+        # rTotals.append(rTotal)
+        # m57s.append(m57)
+        # r71s.append(r71)
+
+    # General trends
+    ax[0].plot(gains,'ko-',label="CH4 Production")
+    ax[0].plot(rTotals,'bo-',label="R Rxs")
+    # Specific reactions
+    ax[0].plot(r71s,color='navy',ls=':',label="CH3 + CHO = CH4 + CO")
+    ax[0].plot(m57s,color='red',ls=':',label="H + CH3 = CH4")
+
+    ax[0].set_xlabel(r"$f_{\rm CO2}$",size='x-large')
+    ax[0].set_ylabel("Production Rate",size='x-large')
+    ax[0].set_xticks(ticks=[0,1,2,3],labels=[r"$10^{-1}$",r"$10^{-2}$",r"$10^{-3}$",r"$10^{-4}$"],minor=False)
+    ax[0].set_yscale('log')
+    ax[0].legend()
+
+    ### Losses
+    # lists of scenario loss variables
+    losses = []
+    rTotals = []
+    pTotals = []
+    r501s = []
+    r157s = []
+    p33s = []
+    p32s = []
+
+    for i in range(1,5):
+        # Define some variables
+        totalLoss = 0
+        rTotal = 0
+        pTotal = 0
+        r501 = 0
+        r157 = 0
+        p33 = 0
+        p32 = 0
+
+        # Open the reaction rates file and get all lines
+        f = open(f'hu-code-sr/scenario_library/Sun/N2_CO2_1e-{i}-Full/int.rates.out3.dat','r')
+        lines = f.readlines()
+        f.close()
+
+        # Discard all lines except the CH4 loss section
+        start,end = 0,0
+        # Find start tediously
+        i = 0
+        while i < 1e6:
+            if "H2O\t\t\t\tLOSS" in lines[i]: 
+                lines = lines[i:]
+                break
+            i+=1
+        # Find end tediously
+        i = 0
+        while i < 1e6:
+            if "*****" in lines[i]:
+                lines = lines[:i]
+                break
+            i += 1
+
+        # Split each line
+        for i in range(len(lines)):
+            lines[i] = lines[i].split()
+
+        # Set variables
+        totalLoss = float(lines[0][-1])
+        for line in lines[1:]:
+            if line==[]: continue
+            # Simple -- just R vs P
+            if "P" in line[0]: pTotal += float(line[-1])
+            elif "R" in line[0]: rTotal += float(line[-1])
+            # Specific reactions
+            # if line[0]=="R501": r501=float(line[-1])
+            # if line[0]=="R157": r157=float(line[-1])
+            # if line[0]=="P33": p33=float(line[-1])
+            # if line[0]=="P32": p32=float(line[-1])
+        
+        # Save variables
+        losses.append(totalLoss)
+        pTotals.append(pTotal)
+        rTotals.append(rTotal)
+        # r501s.append(r501)
+        # r157s.append(r157)
+        # p33s.append(p33)
+        # p32s.append(p32)
+    
+    # Make the data pretty
+    
+    # General trends
+    ax[1].plot(losses,'ko-',label="CH4 Loss")
+    ax[1].plot(pTotals,'go-',label="P Rxs")
+    ax[1].plot(rTotals,'bo-',label="R Rxs")
+
+    # Specific reactions
+    # ax[1].plot(r501s,color='navy',ls=':',label="OH + CH4 = CH3 + H2O")
+    # ax[1].plot(r157s,color='cornflowerblue',ls=":",label="H + CH4 = CH3 + H2")
+    # ax[1].plot(p33s,color="seagreen",ls=":",label="CH4 = CH21 + H2")
+    # ax[1].plot(p32s,color="lawngreen",ls=":",label="CH4 = CH3 + H")
+
+    ax[1].set_xlabel(r"$f_{\rm CO2}$",size='x-large')
+    ax[1].set_ylabel("Loss Rate",size='x-large')
+    ax[1].set_xticks(ticks=[0,1,2,3],labels=[r"$10^{-1}$",r"$10^{-2}$",r"$10^{-3}$",r"$10^{-4}$"],minor=False)
+    ax[1].set_yscale('log')
+    ax[1].legend()
+    # ax.set_ylim(1e8,1e11)
+    fig.set_figwidth(12)
+    plt.tight_layout()
+    # plt.savefig("outputs/plots/ch4_gain_loss_mechanisms",dpi=250)
+    plt.show()
+ 
+
+plotTPprofile(CLAST,id='init_tp',out_dir='gmtest')

@@ -210,7 +210,10 @@ def updateMEAC(stepnum:int):
     print(zmax)
     val = np.format_float_positional(zmax,precision=1,trim='k',unique=True,min_digits=1)
     print(val)
-    writeScenarioFile()             
+    writeScenarioFile()       
+
+    # Update species scenario file
+    writeMEACspecies(tsurf=t[0],psurf=p[0])      
 
     # Plot surface temperature evolution
     plotSurfaceTemperature(f"{OUTPUT}/surftemps.dat",runBreaks=CLIMAstepIntervals,out_dir=OUTPUT)
@@ -233,7 +236,24 @@ def resetMEAC():
     os.chdir(PATH)
     subprocess.run(["cp","-rf","scp2000/",MEACPATH])
 
+def waterPressure(temp:float,psurf:float=101325):
+    if temp < 273.16:               # Murphy & Koop (2005)
+        res = np.exp(9.550426 - 5723.265/temp + 3.53068*np.log(temp) - 0.00728332*temp)
+        res /= psurf
+    else:                           # Seinfield & Pandis (2006)
+        a = 1 - 373.15/temp
+        res = (101325/psurf)*np.exp(13.3185*a - 1.97*a*a - 0.6445*a*a*a - 0.1229*a*a*a*a)
+    
+    res = np.round(res,4)
+    # print(f"When surface temperature = {temp} K, surface water vapor mixing ratio is {res}")
+    return res
+waterPressure = np.vectorize(waterPressure)
+
 ##############################
+
+# plotAtmosphericEvolution("N2_CO2_1e-4",OUTPUT)
+# input()
+# input()
 
 # resetMEAC()
 
@@ -260,16 +280,26 @@ else:
         os.mkdir('mr')
         os.chdir(PATH)
 
+species_warning = input("Ensure that CO2 and N2 mixing ratios have been properly set in the \"meac_species\" template file.\n\
+Would you like to continue? [y/n]\n")
+if species_warning != 'y':
+    exit()
+
+mw_warning = input("The CLIMA input template has recently been updated to use the Manabe-Weltham humidity profile.\n\
+Would you like to continue? [y/n]\n")
+if mw_warning != 'y':
+    exit()
+
+au_warning = input("The MEAC scenario template has been updated to set ORBIT = 1.15.\n\
+Would you like to continue? [y/n]\n")
+if au_warning != 'y':
+    exit()
+
 writeParameters()
 writeIncludeFile()
 for i in range(NLOOPS):
-    first = ((i==0) and not RESUMERUN)
     updateCLIMA(i)
-    # input()
     runCLIMA(i)
-    # # input()
     updateMEAC(i)
-    # input()
     runMEAC(i)
-    # input()
     os.system('clear')

@@ -159,6 +159,39 @@ def writeMEACmain():
     o.write(text)
     o.close()
 
+def writeMEACspecies(tsurf:float,psurf:float=101325):
+    # This function updates the lower boundary flux of water only -- other 
+    #   mixing ratios need to be changed manually!
+
+    # The boundary condition is calculated from surface pressure and surface
+    #   temperature using the below function. Surface values are sourced from
+    #   CLIMA out file.
+    def waterPressure(temp:float,psurf:float=101325):
+        if temp < 273.16:               # Murphy & Koop (2005)
+            res = np.exp(9.550426 - 5723.265/temp + 3.53068*np.log(temp) - 0.00728332*temp)
+            res /= psurf
+        else:                           # Seinfield & Pandis (2006)
+            a = 1 - 373.15/temp
+            res = (101325/psurf)*np.exp(13.3185*a - 1.97*a*a - 0.6445*a*a*a - 0.1229*a*a*a*a)
+        
+        res = np.round(res,4)
+        # print(f"When surface temperature = {temp} K, surface water vapor mixing ratio is {res}")
+        return res
+    
+    val = waterPressure(tsurf,psurf)
+
+    f = open('templates/meac_species.txt','r')
+    text = f.read()
+    f.close()
+
+    text = text.replace("{1}",str(val))
+
+    f = open(MEACPATH+'/'+MSPECIES,'w')
+    f.write(text)
+    f.close()
+
+    print("ENSURE MIXING RATIOS ARE PROPERLY SET IN SPECIES TEMPLATE FILE")
+
 def writeMEACout(conc_file:str,out_dir:str='',id:str=''):
     # holy shit my code is ass
     file = open(conc_file,'r')

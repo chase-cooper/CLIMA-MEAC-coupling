@@ -48,6 +48,12 @@ ind_o=1-1 #O
 ind_h=3-1 #H
 ind_oh=4-1 #OH
 ind_cho2=63-1
+ind_ch3=60-1
+ind_ch2=59-1
+ind_ch21=80-1
+ind_ch=58-1
+ind_cho=61-1
+ind_c2h4=29-1
 
 ind_so2=43-1
 ind_so=42-1
@@ -89,7 +95,7 @@ def plot_comparison(base_file, new_file, name):
     """
     
     ###Initialize plot
-    fig2, ax=plt.subplots(2, figsize=(8., 10.), sharey=True)
+    fig2, ax=plt.subplots(figsize=(10., 6.))
     markersizeval=5.
 
     ########################
@@ -164,65 +170,84 @@ def plot_comparison(base_file, new_file, name):
     linestyles=np.array(['-',':'])
     
     ###Top plot: Outgassed species
-    ax[0].plot(mr_z_s_base[:,ind_h2], z_center_base, linewidth=2, linestyle=linestyles[0], color='purple', label='H2')
-    ax[0].plot(mr_z_s_base[:,ind_n2], z_center_base, linewidth=2, linestyle=linestyles[0], color='olive', label='N2')
-    ax[0].plot(mr_z_s_base[:,ind_co2], z_center_base, linewidth=2, linestyle=linestyles[0], color='magenta', label='CO2')
-    ax[0].plot(mr_z_s_base[:,ind_h2o], z_center_base, linewidth=2, linestyle=linestyles[0], color='pink', label='H2O')
-    ax[0].plot(mr_z_s_base[:,ind_ch4], z_center_base, linewidth=2, linestyle=linestyles[0], color='cyan', label='CH4')
-    ax[0].plot(mr_z_s_base[:,ind_h2s], z_center_base, linewidth=2, linestyle=linestyles[0], color='yellow', label='H2S')
-    ax[0].plot(mr_z_s_base[:,ind_so2], z_center_base, linewidth=2, linestyle=linestyles[0], color='orange', label='SO2')
-    ax[0].plot(mr_z_s_base[:,ind_no], z_center_base, linewidth=2, linestyle=linestyles[0], color='black',label='NO')
+    ax.plot(mr_z_s_base[:,ind_h2], z_center_base, linewidth=2, linestyle=linestyles[0], color='purple', label='H2')
+    ax.plot(mr_z_s_base[:,ind_n2], z_center_base, linewidth=2, linestyle=linestyles[0], color='olive', label='N2')
+    ax.plot(mr_z_s_base[:,ind_co2], z_center_base, linewidth=2, linestyle=linestyles[0], color='magenta', label='CO2')
+    ax.plot(mr_z_s_base[:,ind_h2o], z_center_base, linewidth=2, linestyle=linestyles[0], color='pink', label='H2O')
+    ax.plot(mr_z_s_base[:,ind_ch4], z_center_base, linewidth=2, linestyle=linestyles[0], color='cyan', label='CH4')
+    ax.plot(mr_z_s_base[:,ind_oh], z_center_base, linewidth=2, linestyle=linestyles[0], color='blue', label='OH')
+    ax.plot(mr_z_s_base[:,ind_co], z_center_base, linewidth=2, linestyle=linestyles[0], color='grey', label='CO')
+    ax.plot(mr_z_s_base[:,ind_o2], z_center_base, linewidth=2, linestyle=linestyles[0], color='hotpink', label='O2')
+    # ax.plot(mr_z_s_base[:,ind_h2s], z_center_base, linewidth=2, linestyle=linestyles[0], color='yellow', label='H2S')
+    # ax.plot(mr_z_s_base[:,ind_so2], z_center_base, linewidth=2, linestyle=linestyles[0], color='orange', label='SO2')
+    # ax.plot(mr_z_s_base[:,ind_no], z_center_base, linewidth=2, linestyle=linestyles[0], color='black',label='NO')
 
 
     ##
-    ax[0].plot(mr_z_s_new[:,ind_h2], z_center_new, linewidth=2, linestyle=linestyles[1], color='purple')
-    ax[0].plot(mr_z_s_new[:,ind_n2], z_center_new, linewidth=2, linestyle=linestyles[1], color='olive')
-    ax[0].plot(mr_z_s_new[:,ind_co2], z_center_new, linewidth=2, linestyle=linestyles[1], color='magenta')
-    ax[0].plot(mr_z_s_new[:,ind_h2o], z_center_new, linewidth=2, linestyle=linestyles[1], color='pink')
-    ax[0].plot(mr_z_s_new[:,ind_ch4], z_center_new, linewidth=2, linestyle=linestyles[1], color='cyan')
-    ax[0].plot(mr_z_s_new[:,ind_h2s], z_center_new, linewidth=2, linestyle=linestyles[1], color='yellow')
-    ax[0].plot(mr_z_s_new[:,ind_so2], z_center_new, linewidth=2, linestyle=linestyles[1], color='orange')
-    ax[0].plot(mr_z_s_new[:,ind_no], z_center_new, linewidth=2, linestyle=linestyles[1], color='black')
-    print(n_z_s_new[:,ind_co2])
+    ax.plot(mr_z_s_new[:,ind_h2], z_center_new, linewidth=2, linestyle=linestyles[1], color='purple')
+    ax.plot(mr_z_s_new[:,ind_n2], z_center_new, linewidth=2, linestyle=linestyles[1], color='olive')
+    ax.plot(mr_z_s_new[:,ind_co2], z_center_new, linewidth=2, linestyle=linestyles[1], color='magenta')
+    ax.plot(mr_z_s_new[:,ind_h2o], z_center_new, linewidth=2, linestyle=linestyles[1], color='pink')
+    ax.plot(mr_z_s_new[:,ind_ch4], z_center_new, linewidth=2, linestyle=linestyles[1], color='cyan')
+    ax.plot(mr_z_s_new[:,ind_oh], z_center_new, linewidth=2, linestyle=linestyles[1], color='blue')
+    ax.plot(mr_z_s_new[:,ind_co], z_center_new, linewidth=2, linestyle=linestyles[1], color='grey')
+    ax.plot(mr_z_s_new[:,ind_o2], z_center_new, linewidth=2, linestyle=linestyles[1], color='hotpink')
+    # ax.plot(mr_z_s_new[:,ind_h2s], z_center_new, linewidth=2, linestyle=linestyles[1], color='yellow')
+    # ax.plot(mr_z_s_new[:,ind_so2], z_center_new, linewidth=2, linestyle=linestyles[1], color='orange')
+    # ax.plot(mr_z_s_new[:,ind_no], z_center_new, linewidth=2, linestyle=linestyles[1], color='black')
     
-    ax[0].set_title(name)
-    ax[0].set_yscale('linear')
-    ax[0].set_ylabel('Altitude (km)')
-    ax[0].set_xscale('log')
-    ax[0].set_xlabel('Mixing Ratio')  
-    ax[0].set_xlim([1.e-14, 1.e0])
-    ax[0].legend(loc=2, ncol=1, borderaxespad=0., fontsize=12)    
+    ax.set_title(name)
+    ax.set_yscale('linear')
+    ax.set_ylabel('Altitude (km)')
+    ax.set_ylim(1,100)
+    ax.set_xscale('log')
+    ax.set_xlabel('Mixing Ratio')  
+    ax.set_xlim([1.e-14, 1.e0])
+    ax.legend(loc=2, ncol=1, borderaxespad=0., fontsize=12)    
     
     ####Bottom Plot: Photochemical Products
-    ax[1].plot(mr_z_s_base[:,ind_o], z_center_base, linewidth=2, linestyle=linestyles[0], color='green', label='O')
-    ax[1].plot(mr_z_s_base[:,ind_h], z_center_base, linewidth=2, linestyle=linestyles[0], color='red', label='H')
-    ax[1].plot(mr_z_s_base[:,ind_oh], z_center_base, linewidth=2, linestyle=linestyles[0], color='blue', label='OH')
-    ax[1].plot(mr_z_s_base[:,ind_co], z_center_base, linewidth=2, linestyle=linestyles[0], color='grey', label='CO')
-    ax[1].plot(mr_z_s_base[:,ind_o2], z_center_base, linewidth=2, linestyle=linestyles[0], color='hotpink', label='O2')
-    ax[1].plot(mr_z_s_base[:,ind_o3], z_center_base, linewidth=2, linestyle=linestyles[0], color='saddlebrown', label='O3')
-    ax[1].plot(mr_z_s_base[:,ind_so], z_center_base, linewidth=2, linestyle=linestyles[0], color='mediumorchid', label='SO')
-    ax[1].plot(mr_z_s_base[:,ind_ho2], z_center_base, linewidth=2, linestyle=linestyles[0], color='black', label='HO2')
+    # ax[1].plot(mr_z_s_base[:,ind_o], z_center_base, linewidth=2, linestyle=linestyles[0], color='green', label='O')
+    # ax[1].plot(mr_z_s_base[:,ind_h], z_center_base, linewidth=2, linestyle=linestyles[0], color='red', label='H')
+    # ax[1].plot(mr_z_s_base[:,ind_oh], z_center_base, linewidth=2, linestyle=linestyles[0], color='blue', label='OH')
+
+    # # ax[1].plot(mr_z_s_base[:,ind_ch], z_center_base,linewidth=2,linestyle=linestyles[0],color='grey',label='CH')
+    # # ax[1].plot(mr_z_s_base[:,ind_ch2], z_center_base,linewidth=2,linestyle=linestyles[0],color='hotpink',label='CH2')
+    # # ax[1].plot(mr_z_s_base[:,ind_ch21], z_center_base,linewidth=2,linestyle=linestyles[0],color='black',label='CH2(1)')
+    # # ax[1].plot(mr_z_s_base[:,ind_ch3], z_center_base,linewidth=2,linestyle=linestyles[0],color='saddlebrown',label='CH3')
+    # # ax[1].plot(mr_z_s_base[:,ind_c2h4], z_center_base,linewidth=2,linestyle=linestyles[0],color='mediumorchid',label='C2H4')
+
+    # ax[1].plot(mr_z_s_base[:,ind_co], z_center_base, linewidth=2, linestyle=linestyles[0], color='grey', label='CO')
+    # ax[1].plot(mr_z_s_base[:,ind_o2], z_center_base, linewidth=2, linestyle=linestyles[0], color='hotpink', label='O2')
+    # ax[1].plot(mr_z_s_base[:,ind_o3], z_center_base, linewidth=2, linestyle=linestyles[0], color='saddlebrown', label='O3')
+    # ax[1].plot(mr_z_s_base[:,ind_so], z_center_base, linewidth=2, linestyle=linestyles[0], color='mediumorchid', label='SO')
+    # ax[1].plot(mr_z_s_base[:,ind_ho2], z_center_base, linewidth=2, linestyle=linestyles[0], color='black', label='HO2')
 
     
-    ax[1].plot(mr_z_s_new[:,ind_o], z_center_new, linewidth=2, linestyle=linestyles[1], color='green')
-    ax[1].plot(mr_z_s_new[:,ind_h], z_center_new, linewidth=2, linestyle=linestyles[1], color='red')
-    ax[1].plot(mr_z_s_new[:,ind_oh], z_center_new, linewidth=2, linestyle=linestyles[1], color='blue')
-    ax[1].plot(mr_z_s_new[:,ind_co], z_center_new, linewidth=2, linestyle=linestyles[1], color='grey')
-    ax[1].plot(mr_z_s_new[:,ind_o2], z_center_new, linewidth=2, linestyle=linestyles[1], color='hotpink')
-    ax[1].plot(mr_z_s_new[:,ind_o3], z_center_new, linewidth=2, linestyle=linestyles[1], color='saddlebrown')   
-    ax[1].plot(mr_z_s_new[:,ind_so], z_center_new, linewidth=2, linestyle=linestyles[1], color='mediumorchid')   
-    ax[1].plot(mr_z_s_new[:,ind_ho2], z_center_new, linewidth=2, linestyle=linestyles[1], color='black')   
+    # ax[1].plot(mr_z_s_new[:,ind_o], z_center_new, linewidth=2, linestyle=linestyles[1], color='green')
+    # ax[1].plot(mr_z_s_new[:,ind_h], z_center_new, linewidth=2, linestyle=linestyles[1], color='red')
+    # ax[1].plot(mr_z_s_new[:,ind_oh], z_center_new, linewidth=2, linestyle=linestyles[1], color='blue')
+    # # ax[1].plot(mr_z_s_new[:,ind_ch], z_center_base,linewidth=2,linestyle=linestyles[1],color='grey')
+    # # ax[1].plot(mr_z_s_new[:,ind_ch2], z_center_base,linewidth=2,linestyle=linestyles[1],color='hotpink')
+    # # ax[1].plot(mr_z_s_new[:,ind_ch21], z_center_base,linewidth=2,linestyle=linestyles[1],color='black')
+    # # ax[1].plot(mr_z_s_new[:,ind_ch3], z_center_base,linewidth=2,linestyle=linestyles[1],color='saddlebrown')
+    # # ax[1].plot(mr_z_s_new[:,ind_c2h4], z_center_base,linewidth=2,linestyle=linestyles[1],color='mediumorchid')
+    # ax[1].plot(mr_z_s_new[:,ind_co], z_center_new, linewidth=2, linestyle=linestyles[1], color='grey')
+    # ax[1].plot(mr_z_s_new[:,ind_o2], z_center_new, linewidth=2, linestyle=linestyles[1], color='hotpink')
+    # ax[1].plot(mr_z_s_new[:,ind_o3], z_center_new, linewidth=2, linestyle=linestyles[1], color='saddlebrown')   
+    # ax[1].plot(mr_z_s_new[:,ind_so], z_center_new, linewidth=2, linestyle=linestyles[1], color='mediumorchid')   
+    # ax[1].plot(mr_z_s_new[:,ind_ho2], z_center_new, linewidth=2, linestyle=linestyles[1], color='black')   
 
-    ax[1].legend(loc=2, ncol=1, borderaxespad=0., fontsize=12)    
+    # ax[1].legend(loc=2, ncol=1, borderaxespad=0., fontsize=12)    
 
     
-    ax[1].set_yscale('linear')
-    ax[1].set_ylabel('Altitude (km)')
-    ax[1].set_xscale('log')
-    ax[1].set_xlabel('Mixing Ratio')  
-    ax[1].set_xlim([1.e-20, 1.e-0])
+    # ax[1].set_yscale('linear')
+    # ax[1].set_ylabel('Altitude (km)')
+    # ax[1].set_xscale('log')
+    # ax[1].set_xlabel('Mixing Ratio')  
+    # ax[1].set_xlim([1.e-20, 1.e-0])
     
-    plt.savefig('./Plots/plot'+name+'.pdf', orientation='portrait', format='pdf')
+    # plt.savefig('./Plots/plot'+name+'.pdf', orientation='portrait', format='pdf')
+    plt.savefig("gmtest/comp_CLIMATP_PhotochemTP",dpi=250)
     plt.show()
 
 
@@ -230,7 +255,7 @@ def plot_comparison(base_file, new_file, name):
 ###Validate
 ###############################
 
-    
+plot_comparison('hu-code-sr/scenario_library/guzman-marmolejo/fco2_1e-1/ConcentrationSTD_CLIMA_base.dat','hu-code-sr/scenario_library/guzman-marmolejo/fco2_1e-1_photochem/ConcentrationSTD_Photochem_base.dat',"TP Profile: Solid -> CLIMA,    Dotted -> Photochem")
 # plot_comparison('hu-code-sr/scenario_library/Sun/N2_CO2_1e-4-Full/ConcentrationSTD.dat', 'hu-code-sr/scenario_library/Sun/N2_CO2_1e-1-Full/ConcentrationSTD.dat', 'Sun_N2CO2_updates')
 # plot_comparison('./scenario_library/Sun/H2/ConcentrationSTD_base.dat', './scenario_library/Sun/H2/ConcentrationSTD.dat', 'Sun_H2_updates')
 # plot_comparison('./scenario_library/Sun/N2/ConcentrationSTD_base.dat', './scenario_library/Sun/N2/ConcentrationSTD.dat', 'Sun_N2_updates')

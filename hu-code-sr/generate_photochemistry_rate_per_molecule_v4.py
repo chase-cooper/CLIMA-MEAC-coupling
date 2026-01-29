@@ -16,6 +16,7 @@ import numpy as np
 import pandas as pd
 from collections import Counter
 import pdb
+import os
 
 def return_colint_reaction_rates(concSTD, ChemReac, name):
     """
@@ -383,7 +384,8 @@ def generate_int_rates_out(name):
     sys.stdout = open(name+'int.rates.out3.dat', 'w')
     
     # input files
-    species_file         = "./SpeciesName.xlsx"
+    # species_file         = "./SpeciesName.xlsx"
+    species_file         = "./SpeciesNameRedox.xlsx"
     input_rate_file      = (name+"colintrxnrates.dat")
     input_reaction_files  = {"R":"Data/Reaction_R.txt",
                              "M":"Data/Reaction_M.txt",
@@ -447,6 +449,10 @@ def analyze_colint_rxn_rates(name):
     generate_int_rates_out(name)
     
 
-
-analyze_colint_rxn_rates('./scenario_library/TRAPPIST-1/CO2-Full/')
+# analyze_colint_rxn_rates('./scenario_library/TRAPPIST-1/CO2-Full/')
+# os.chdir('hu-code-sr/')
+# analyze_colint_rxn_rates('./scenario_library/Sun/N2_CO2_1e-1-Full/')
+# analyze_colint_rxn_rates('./scenario_library/Sun/N2_CO2_1e-2-Full/')
+# analyze_colint_rxn_rates('./scenario_library/Sun/N2_CO2_1e-3-Full/')
+# analyze_colint_rxn_rates('./scenario_library/Sun/N2_CO2_1e-4-Full/')
 
