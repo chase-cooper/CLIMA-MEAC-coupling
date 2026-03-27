@@ -26,6 +26,7 @@ km2cm=1.e5 #1 km in cm
 cm2km=1.e-5 #1 cm in km
 amu2g=1.66054e-24 #1 amu in g
 bar2atm=0.9869 #1 bar in atm
+atm2bar=1.0/bar2atm
 Pa2bar=1.e-5 #1 Pascal in bar
 bar2Pa=1.e5 #1 bar in Pascal
 deg2rad=np.pi/180.
@@ -34,11 +35,14 @@ barye2bar=1.e-6 #1 Barye in Bar
 micron2m=1.e-6 #1 micron in m
 micron2cm=1.e-4 #1 micron in cm
 metricton2kg=1000. #1 metric ton in kg
+cal2J = 4.184 # conversion from cal to J
+#k = 1.380649E-23 # Boltzmann constant [J/K]
 
 #Fundamental constants
 c=2.997924e10 #speed of light, cm/s
 h=6.6260755e-27 #planck constant, erg/s
 k=1.380658e-16 #boltzmann constant, erg/K
+NAVOGADRO=6.0221420E+23 #Avogadro's number [1/molecule]
 sigma=5.67051e-5 #Stefan-Boltzmann constant, erg/(cm^2 K^4 s)
 R_earth=6371.*km2m#radius of earth in m
 R_sun=69.63e9 #radius of sun in cm
@@ -417,6 +421,18 @@ def ReverseRate(mu, n_prod, n_react, a1, a2, a3, a4, a5, a6, a7, T, k_f):
     
 #     return kkM
 
+# def m7_yang(T,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     Implementing master eqn from Miller & Klippenstein 2004 for He bath gas
+#     """
+#     k_0_M=1.750E-16*pow(T, -4.664)*np.exp(-1902.0/T)*MM
+#     k_inf=2.84E-14*pow(T,1.266)*np.exp(-1363/T)
+#     kkM=k_0_M/(1.0+k_0_M/k_inf)
+    
+#     return kkM
+
 
 # fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
 # markersizeval=5.
@@ -424,12 +440,16 @@ def ReverseRate(mu, n_prod, n_react, a1, a2, a3, a4, a5, a6, a7, T, k_f):
 # ax[0].set_title('T=150 K')
 # ax[0].plot(P_list, np.log10(m7_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
 # ax[0].plot(P_list, np.log10(m7_new(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+# ax[0].plot(P_list, np.log10(m7_yang(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='blue')
+
 # ax[1].set_title('T=300 K')
 # ax[1].plot(P_list, np.log10(m7_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
 # ax[1].plot(P_list, np.log10(m7_new(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+# ax[1].plot(P_list, np.log10(m7_yang(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='blue')
 # ax[2].set_title('T=600 K')
 # ax[2].plot(P_list, np.log10(m7_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='M7, Hu2012')
 # ax[2].plot(P_list, np.log10(m7_new(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='M7, NIST+Lindemann')
+# ax[2].plot(P_list, np.log10(m7_yang(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='blue', label='M7, Miller+2004')
 # ax[0].set_ylabel('log10(k)')
 # ax[1].set_ylabel('log10(k)')
 # ax[2].set_ylabel('log10(k)')
@@ -1902,44 +1922,73 @@ def ReverseRate(mu, n_prod, n_react, a1, a2, a3, a4, a5, a6, a7, T, k_f):
 # ax[2].legend()
 
 
-# def m47_old(tl,MM):
-#     """
-#     T in K
-#     MM in cm^-3
-#     """
-#     kkM=6.45E-29*pow(tl/298.0,-3.48)*np.exp(-490.0/tl)*MM
-#     return kkM
+def m47_old(tl,MM):
+    """
+    T in K
+    MM in cm^-3
+    """
+    kkM=6.45E-29*pow(tl/298.0,-3.48)*np.exp(-490.0/tl)*MM
+    return kkM
 
-# def m47_new(tl,MM):
-#     """
-#     T in K
-#     MM in cm^-3
-#     """
-#     k_0_M=6.45E-29*pow(tl/298.0,-3.48)*np.exp(-490.0/tl)*MM
-#     k_inf=4.47E-11*pow(tl/298.0,0.50)*np.exp(199.7/tl)
-#     kkM=k_0_M/(1.0+k_0_M/k_inf)
-#     return kkM
+def m47_new(tl,MM):
+    """
+    T in K
+    MM in cm^-3
+    """
+    k_0_M=6.45E-29*pow(tl/298.0,-3.48)*np.exp(-490.0/tl)*MM
+    k_inf=4.47E-11*pow(tl/298.0,0.50)*np.exp(199.7/tl)
+    kkM=k_0_M/(1.0+k_0_M/k_inf)
+    return kkM
+
+def m47_Hughes2002(tl,MM):
+    """
+    T in K
+    MM in cm^-3
+    """
+    #Forward reaction HOSO + M --> OH + SO + M
+    k_0_M=1.92E22*pow(tl, -9.02)*np.exp(-26647/tl)*MM
+    k_inf=9.94E21*pow(tl, -2.54)*np.exp(-38190/tl)
+    kkM=k_0_M/(1.0+k_0_M/k_inf)
+    
+    n_prod=2
+    n_reac=1
+    mu=[-1, 1, 1] #HOSO + M --> OH + SO + M is the FORWARD reaction we are reversing
+    #thermo coefficents for [HOSO, OH, SO]. For 200-1000K. Via https://respecth.elte.hu/
+    a1=[3.73732792, 3.99198424, 3.61859514]
+    a2=[0.00930978241, -0.00240106655, -0.00232173768]
+    a3=[-0.00000385404197, 0.00000461664033, 0.0000116462669]
+    a4=[-0.00000000407782859, -0.00000000387916306, -0.000000014209251]
+    a5=[0.0000000000030963234, 0.00000000000136319502, 0.0000000000056076537]
+    a6=[-29826.0746, 3368.89836, -480.621641]
+    a7=[10.1080861, -0.103998477, 6.36504115]
+    
+    k_r=ReverseRate(mu, n_prod, n_reac, a1, a2, a3, a4, a5, a6, a7, tl, kkM)   
+    
+    return k_r
 
 
-# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
-# markersizeval=5.
+fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
+markersizeval=5.
 
-# ax[0].set_title('T=150 K')
-# ax[0].plot(P_list, np.log10(m47_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
-# ax[0].plot(P_list, np.log10(m47_new(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
-# ax[1].set_title('T=300 K')
-# ax[1].plot(P_list, np.log10(m47_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
-# ax[1].plot(P_list, np.log10(m47_new(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
-# ax[2].set_title('T=600 K')
-# ax[2].plot(P_list, np.log10(m47_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='m47, Hu2012')
-# ax[2].plot(P_list, np.log10(m47_new(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='m47, New')
-# ax[0].set_ylabel('log10(k)')
-# ax[1].set_ylabel('log10(k)')
-# ax[2].set_ylabel('log10(k)')
-# ax[2].set_xscale('log')
-# ax[2].set_xlabel('Pressure (bar)')
-# ax[2].set_yscale('linear')
-# ax[2].legend()
+ax[0].set_title('T=150 K')
+ax[0].plot(P_list, np.log10(m47_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+ax[0].plot(P_list, np.log10(m47_new(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+ax[0].plot(P_list, np.log10(m47_Hughes2002(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='green')
+ax[1].set_title('T=300 K')
+ax[1].plot(P_list, np.log10(m47_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+ax[1].plot(P_list, np.log10(m47_new(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+ax[1].plot(P_list, np.log10(m47_Hughes2002(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='green')
+ax[2].set_title('T=600 K')
+ax[2].plot(P_list, np.log10(m47_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='m47, Hu2012')
+ax[2].plot(P_list, np.log10(m47_new(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='m47, New')
+ax[2].plot(P_list, np.log10(m47_Hughes2002(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='green', label='m47, Hughes+2002')
+ax[0].set_ylabel('log10(k)')
+ax[1].set_ylabel('log10(k)')
+ax[2].set_ylabel('log10(k)')
+ax[2].set_xscale('log')
+ax[2].set_xlabel('Pressure (bar)')
+ax[2].set_yscale('linear')
+ax[2].legend()
 
 
 # def m48_old(tl,MM):
@@ -3731,8 +3780,9 @@ def ReverseRate(mu, n_prod, n_react, a1, a2, a3, a4, a5, a6, a7, T, k_f):
 #     MM in cm^-3
 #     """
     
-#     k_0_M=7.7E-9*np.exp(-33075.0/tl)*MM #Troe+2005 for Kr
-#     k_inf=1.51E14*np.exp(-50878.0/tl) #de Martins+1998
+#     k_0_M=9.4E-9*np.exp(-33140.0/tl)*MM #Troe+2005 for Ar
+#     #k_inf=1.51E14*np.exp(-50878.0/tl) #de Martins+1998
+#     k_inf=3.7E13*np.exp(-36220.0/tl) #Troe+2005
 #     kkM=k_0_M/(1.0+k_0_M/k_inf)
     
 #     return kkM
@@ -3744,7 +3794,7 @@ def ReverseRate(mu, n_prod, n_react, a1, a2, a3, a4, a5, a6, a7, T, k_f):
 #     T in K
 #     MM in cm^-3
 #     """
-#     k_0_M=9.4E-9*np.exp(-33140.0/tl)*MM #Troe+2005 for Ar
+#     k_0_M=7.3E14*pow(tl,-6.1)*np.exp(-47300.0/tl)*MM #Troe+2007
 #     k_inf=3.7E13*np.exp(-36220.0/tl) #Troe+2005
 #     kkM=k_0_M/(1.0+k_0_M/k_inf)
 #     return kkM
@@ -3765,6 +3815,374 @@ def ReverseRate(mu, n_prod, n_react, a1, a2, a3, a4, a5, a6, a7, T, k_f):
 # ax[2].plot(P_list, np.log10(t14_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t14, Hu2012')
 # ax[2].plot(P_list, np.log10(t14_alt(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t14, Alternative')
 # ax[2].plot(P_list, np.log10(t14_new(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='blue', label='t14, new')
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+
+
+# #T15 CH2O2 --> CO2 + H2 (CH2O2 --> O=CO)
+# def T15_old(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     """
+#     kkM=2.49E-8*np.exp(-28745.0/tl)*MM
+#     return kkM
+
+# def T15_alt(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     This is from RMG, Klippenstein_Glarborg2016/553 
+#     """
+    
+#     k_0_M=2.82E-9*np.exp(-34342.0/tl)*MM #Troe+2005 for Kr
+#     k_inf=4.5E13*np.exp(-34342.0/tl) #de Martins+1998
+#     kkM=k_0_M/(1.0+k_0_M/k_inf)
+    
+#     return kkM
+
+
+# def T15_new(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     This is from Chang+2007
+#     """
+#     k_0_M=2.81E-9*np.exp(-25720.0/tl)*MM
+#     k_inf=4.46E13*np.exp(-34340.0/tl)
+#     kkM=k_0_M/(1.0+k_0_M/k_inf)
+#     return kkM
+
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
+# markersizeval=5.
+
+# ax[0].set_title('T=150 K')
+# ax[0].plot(P_list, np.log10(T15_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(T15_alt(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+# ax[0].plot(P_list, np.log10(T15_new(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='blue')
+# ax[1].set_title('T=300 K')
+# ax[1].plot(P_list, np.log10(T15_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(T15_alt(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+# ax[1].plot(P_list, np.log10(T15_new(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='blue')
+# ax[2].set_title('T=600 K')
+# ax[2].plot(P_list, np.log10(T15_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='T15, Hu2012')
+# ax[2].plot(P_list, np.log10(T15_alt(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='T15, Alternative')
+# ax[2].plot(P_list, np.log10(T15_new(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='blue', label='T15, new')
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+
+# #T16 CH2O2 --> CO + H2O (CH2O2 --> O=CO)
+# def T16_old(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     """
+#     kkM=3.47E-10*np.exp(-20326.0/tl)*MM
+#     return kkM
+
+# def T16_alt(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     This is from RMG, Klippenstein_Glarborg2016/552 
+#     """
+    
+#     k_0_M=6.81E-9*np.exp(-26662.0/tl)*MM #Troe+2005 for Kr
+#     k_inf=4.5E13*np.exp(-34342.0/tl) #de Martins+1998
+#     kkM=k_0_M/(1.0+k_0_M/k_inf)
+    
+#     return kkM
+
+
+# def T16_new(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     This is from Chang+2007
+#     """
+#     k_0_M=6.73E-9*np.exp(-26662.1/tl)*MM
+#     k_inf=7.5E14*np.exp(-34578.1/tl)
+#     kkM=k_0_M/(1.0+k_0_M/k_inf)
+#     return kkM
+
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
+# markersizeval=5.
+
+# ax[0].set_title('T=150 K')
+# ax[0].plot(P_list, np.log10(T16_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(T16_alt(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+# ax[0].plot(P_list, np.log10(T16_new(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='blue')
+# ax[1].set_title('T=300 K')
+# ax[1].plot(P_list, np.log10(T16_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(T16_alt(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+# ax[1].plot(P_list, np.log10(T16_new(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='blue')
+# ax[2].set_title('T=600 K')
+# ax[2].plot(P_list, np.log10(T16_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='T16, Hu2012')
+# ax[2].plot(P_list, np.log10(T16_alt(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='T16, Alternative')
+# ax[2].plot(P_list, np.log10(T16_new(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='blue', label='T16, new')
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+
+#T17
+
+# ###The best reference is Zhang+2019. They provide the effective unimolecular rate law at different pressures, but not k_0 and k_inf. Let's see if we can back this out. 
+# R_cal=1.987 # cal/K/mol
+# def k_uni(PT, A_0, n_0, E_0, A_inf, n_inf, E_inf):
+#     """
+#     #P in bar
+#     #T in K
+#     #E in cal/mol
+#     """
+#     P=PT[0] #in bar
+#     T=PT[1] #in K
+#     M=MM(P,T)
+    
+#     k_0_M=A_0*pow(T, n_0)*np.exp(-E_0/(R_cal*T))*M
+#     k_inf=A_inf*pow(T, n_inf)*np.exp(-E_inf/(R_cal*T))
+#     k_tot=k_0_M*k_inf/(k_0_M + k_inf)
+#     # pdb.set_trace()
+#     return k_tot
+# # k_uni(np.array([101.325, 4000.0]), 8.7E7, -6.76, 32710.0, 4.31E19, -3.86, 36270.0)
+
+
+# T_range=np.arange(500, 1400,step=5)
+# P_range_atm=np.array([0.01, 0.1, 1.0, 10.0, 100.0]) #atm
+# data=np.zeros(len(P_range_atm)*len(T_range))
+# xx=np.zeros((2, len(P_range_atm)*len(T_range)))
+# ind=0 #initialize
+# for P_ind in range(0, len(P_range_atm)):
+#     P_atm=P_range_atm[P_ind]
+#     for T_ind in range(0, len(T_range)):
+#         T=T_range[T_ind]
+#         xx[0, ind]=P_atm*atm2bar
+#         xx[1, ind]=T
+        
+#         if P_atm==0.01:
+#             data[ind]=6.33E27*pow(T, -7.76)*np.exp(-32710.0/(R_cal*T))
+#         elif P_atm==0.1:
+#             data[ind]=5.07E26*pow(T, -7.27)*np.exp(-32970.0/(R_cal*T))
+#         elif P_atm==1.0:
+#             data[ind]=4.45E24*pow(T, -6.39)*np.exp(-33330.0/(R_cal*T))
+#         elif P_atm==10.0:
+#             data[ind]=8.79E20*pow(T, -4.86)*np.exp(-33770.0/(R_cal*T))
+#         elif P_atm==100.0:
+#             data[ind]=4.31E19*pow(T, -3.86)*np.exp(-36270.0/(R_cal*T))
+#         else:
+#             print('Error')
+#             break
+#         ind+=1
+
+# #These look OK
+# plt.plot(T_range, 6.33E27*pow(T_range, -7.76)*np.exp(-32710.0/(R_cal*T_range)), linestyle='--', color='black')
+# plt.plot(T_range, k_uni(xx[:,0:len(T_range)], 8.7E7, -6.76, 32710.0, 4.31E19, -3.86, 36270.0), linestyle='--', color='red')
+# plt.plot(T_range, 4.31E19*pow(T_range, -3.86)*np.exp(-36270.0/(R_cal*T_range)), linestyle='-', color='black')
+# plt.plot(T_range, k_uni(xx[:,-len(T_range):], 8.7E7, -6.76, 32710.0, 4.31E19, -3.86, 36270.0), linestyle='-', color='red')
+# plt.yscale('log')
+
+# p_0=np.array([8.7E7, -6.76, 32710.0, 4.31E19, -3.86, 36270.0])
+
+# popt, pcov=scipy.optimize.curve_fit(k_uni, xx, data, p0=p_0, maxfev=100000, xscale='jac')
+
+# #These look terrible. 
+# plt.plot(T_range, 6.33E27*pow(T_range, -7.76)*np.exp(-32710.0/(R_cal*T_range)), linestyle='--', color='black')
+# plt.plot(T_range, k_uni(xx[:,0:len(T_range)],popt[0],popt[1], popt[2],popt[3],popt[4],popt[5]), linestyle='--', color='blue')
+# plt.plot(T_range, 4.31E19*pow(T_range, -3.86)*np.exp(-36270.0/(R_cal*T_range)), linestyle='-', color='black')
+# plt.plot(T_range, k_uni(xx[:,-len(T_range):],popt[0],popt[1], popt[2],popt[3],popt[4],popt[5]), linestyle='-', color='blue')
+# plt.yscale('log')
+# #Abandoning this whole initiative until better fitting routines. Instead, use 0.01 to estimate low-pressure limit, 100 to estimate high-pressure limit. 
+
+# def T17_old(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     """
+#     kkM=5.0E4
+#     return kkM*np.ones(np.shape(MM))
+
+# def T17_alt(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     """
+#    ### kkM=5.86E10*pow(tl/298.0, 2.98)*np.exp(-19627/tl) #From Villano et al. 2011 via NIST...except I'm not convinced they transcribed correctly. Also they use a weird form of the Arrhenius relation. So ignoring. 
+#     kkM=1.5E13*np.exp(-23652/tl) #    This is from RMG, CH3Cl/808 
+#     # kkM=4.45E24*pow(tl,-6.39)*np.exp(-16774.0/tl) #Zhang et al. 2019 for 1 bar pressure.
+#     return kkM*np.ones(np.shape(MM))
+
+
+# def T17_new(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     This is from Chang+2007
+#     """
+#     k_0_M=8.7E7*pow(tl, -6.76)*np.exp(-16462.0/tl)*MM
+#     k_inf=4.31E19*pow(tl, -3.86)*np.exp(-18254.0/tl)
+#     kkM=k_0_M/(1.0+k_0_M/k_inf)
+#     return kkM
+
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
+# markersizeval=5.
+
+# # pdb.set_trace()
+# ax[0].set_title('T=150 K')
+# ax[0].plot(P_list, np.log10(T17_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(T17_alt(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+# ax[0].plot(P_list, np.log10(T17_new(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='blue')
+# ax[1].set_title('T=300 K')
+# ax[1].plot(P_list, np.log10(T17_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(T17_alt(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+# ax[1].plot(P_list, np.log10(T17_new(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='blue')
+# ax[2].set_title('T=600 K')
+# ax[2].plot(P_list, np.log10(T17_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='T17, Hu2012')
+# ax[2].plot(P_list, np.log10(T17_alt(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='T17, Alternative')
+# ax[2].plot(P_list, np.log10(T17_new(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='blue', label='T17, new')
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+
+###T18: OMITTED, wrong isomer. 
+
+#T19
+# def T19_old(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     """
+#     kkM=2.16e-8*np.exp(-33556.0/tl) * MM
+#     return kkM*np.ones(np.shape(MM))
+
+# def T19_alt(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     """
+#    ### kkM=5.86E10*pow(tl/298.0, 2.98)*np.exp(-19627/tl) #From Villano et al. 2011 via NIST...except I'm not convinced they transcribed correctly. Also they use a weird form of the Arrhenius relation. So ignoring. 
+#     # k_0_M=4.04E-07*pow(tl/300.0, 3.39)*np.exp(-50200.0/tl)*MM    #From STAND2019
+#     # k_inf=9.75E12*pow(tl/300.0, 2.39)*np.exp(-50200.0/tl) ##STAND2019
+    
+#     # k_0_M=7.2E18*pow(tl, -7.48)*np.exp(-59986.2/tl)*MM    #RMG, Nitrogen_Glarborg_Zhang_et_al/691 * 
+#     # k_inf=2.2E13*pow(tl, 0.46)*np.exp(-52925.6/tl) ##RMG, Nitrogen_Glarborg_Zhang_et_al/691 * 
+    
+#     k_0_M=1.3E6*pow(tl, -4.04)*np.exp(-54422.8/tl)*MM    #RMG, 2-BTP/full/95 * First result. 
+#     k_inf=4.7E14*pow(tl, -0.04)*np.exp(-52900.5/tl) ##RMG, 2-BTP/full/95 * *     
+    
+#     kkM=k_0_M/(1.0+k_0_M/k_inf)
+#     return kkM
+
+
+# def T19_new(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     """
+#     k_0_M=4.04E-07*pow(tl/300.0, 3.39)*np.exp(-50200.0/tl)*MM    #From STAND2019
+#     k_inf=1.19E7*pow(tl, 2.39)*np.exp(-50130.9/tl) #High-pressure limit from Ing+2003
+#     kkM=k_0_M/(1.0+k_0_M/k_inf)
+#     return kkM
+
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
+# markersizeval=5.
+
+# # pdb.set_trace()
+# ax[0].set_title('T=150 K')
+# ax[0].plot(P_list, np.log10(T19_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(T19_alt(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+# ax[0].plot(P_list, np.log10(T19_new(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='blue')
+# ax[1].set_title('T=300 K')
+# ax[1].plot(P_list, np.log10(T19_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(T19_alt(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+# ax[1].plot(P_list, np.log10(T19_new(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='blue')
+# ax[2].set_title('T=600 K')
+# ax[2].plot(P_list, np.log10(T19_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='T19, Hu2012')
+# ax[2].plot(P_list, np.log10(T19_alt(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='T19, Alternative')
+# ax[2].plot(P_list, np.log10(T19_new(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='blue', label='T19, new')
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+
+
+# #T20
+# def T20_old(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     """
+#     kkM=1.1e-7*np.exp(-33075.0/tl)* MM
+#     return kkM
+
+# def T20_alt(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     """
+#    ### kkM=5.86E10*pow(tl/298.0, 2.98)*np.exp(-19627/tl) #From Villano et al. 2011 via NIST...except I'm not convinced they transcribed correctly. Also they use a weird form of the Arrhenius relation. So ignoring. 
+#     k_0_M=8.9E17*pow(tl, -6.49)*np.exp(-48004.7/tl)*MM    #RMG, 2-BTP/full/79 * * First result. 
+#     k_inf=1.2E17*pow(tl, -0.19)*np.exp(-46444.7/tl) ##RMG, 2-BTP/full/79 * *     
+    
+#     kkM=k_0_M/(1.0+k_0_M/k_inf)
+#     return kkM
+
+
+# def T20_new(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     """
+#     k_0_M=1.1E-7*np.exp(-33075.0/tl)* MM #Baulch+1994
+#     k_inf=1.70E16*np.exp(-45706.0/tl) #Baulch+1994
+#     kkM=k_0_M/(1.0+k_0_M/k_inf)
+#     return kkM
+
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
+# markersizeval=5.
+
+# # pdb.set_trace()
+# ax[0].set_title('T=150 K')
+# ax[0].plot(P_list, np.log10(T20_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(T20_alt(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+# ax[0].plot(P_list, np.log10(T20_new(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='blue')
+# ax[1].set_title('T=300 K')
+# ax[1].plot(P_list, np.log10(T20_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(T20_alt(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+# ax[1].plot(P_list, np.log10(T20_new(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='blue')
+# ax[2].set_title('T=600 K')
+# ax[2].plot(P_list, np.log10(T20_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='T20, Hu2012')
+# ax[2].plot(P_list, np.log10(T20_alt(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='T20, Alternative')
+# ax[2].plot(P_list, np.log10(T20_new(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='blue', label='T20, new')
 
 # ax[0].set_ylabel('log10(k)')
 # ax[1].set_ylabel('log10(k)')
@@ -4093,400 +4511,6 @@ def ReverseRate(mu, n_prod, n_react, a1, a2, a3, a4, a5, a6, a7, T, k_f):
 
 # plt.show()
 
-# t41
-# def t41_old(tl,MM):
-#       """
-#      T in K
-#      MM in cm^-3
-#      """
-#       kkM = 9.47e-7*np.exp(-40051.0/tl)*MM
-#       return kkM
-
-
-# def t41_new(tl,MM):
-#      """
-#      T in K
-#      MM in cm^-3
-#      """
-     
-#      # low pressure limit from Sebbar+2019 (theory)
-#      k_0_M = 3.3E-9*np.power(tl/298, 0.65)*np.exp(-38607.7/tl)*MM    
-
-#      # high pressure limit from RMG 
-#      k_inf = 2.85e19*np.power(tl,-1.52)*np.exp(-43137.0/tl) 
-
-#      kkM=k_0_M/(1.0+k_0_M/k_inf)
-
-#      return kkM
-
-
-# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
-# markersizeval=5.
-
-# ax[0].set_title('T=150 K')
-# ax[0].plot(P_list, np.log10(t41_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
-# ax[0].plot(P_list, np.log10(t41_new(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
-# ax[1].set_title('T=300 K')
-# ax[1].plot(P_list, np.log10(t41_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
-# ax[1].plot(P_list, np.log10(t41_new(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
-# ax[2].set_title('T=600 K')
-# ax[2].plot(P_list, np.log10(t41_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t41, Hu2012')
-# ax[2].plot(P_list, np.log10(t41_new(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t41, new')
-
-# ax[0].set_ylabel('log10(k)')
-# ax[1].set_ylabel('log10(k)')
-# ax[2].set_ylabel('log10(k)')
-# ax[2].set_xscale('log')
-# ax[2].set_xlabel('Pressure (bar)')
-# ax[2].set_yscale('linear')
-# ax[2].legend()
-
-#t42
-# def t42_old(tl,MM):
-#       """
-#      T in K
-#      MM in cm^-3
-#      """
-#       kkM = 1.4e-8*np.exp(-29467.0/tl)*MM
-#       return kkM
-
-
-# def t42_new(tl,MM):
-#      """
-#      T in K
-#      MM in cm^-3
-#      """
-     
-#      # low pressure limit from Tsuchiya+1994 (estimated)
-#      k_0_M = 1.40E-8*np.exp(-29500.0/tl)*MM    
-
-#      # high pressure limit from Rimmer+2021 (estimated)
-#      k_inf = 3.38E+11*(tl/300)**(-1.0)*np.exp(-29500.0/tl)
-
-#      kkM=k_0_M/(1.0+k_0_M/k_inf)
-
-#      return kkM
-
-
-# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
-# markersizeval=5.
-
-# ax[0].set_title('T=150 K')
-# ax[0].plot(P_list, np.log10(t42_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
-# ax[0].plot(P_list, np.log10(t42_new(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
-# ax[1].set_title('T=300 K')
-# ax[1].plot(P_list, np.log10(t42_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
-# ax[1].plot(P_list, np.log10(t42_new(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
-# ax[2].set_title('T=600 K')
-# ax[2].plot(P_list, np.log10(t42_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t42, Hu2012')
-# ax[2].plot(P_list, np.log10(t42_new(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t42, new')
-
-# ax[0].set_ylabel('log10(k)')
-# ax[1].set_ylabel('log10(k)')
-# ax[2].set_ylabel('log10(k)')
-# ax[2].set_xscale('log')
-# ax[2].set_xlabel('Pressure (bar)')
-# ax[2].set_yscale('linear')
-# ax[2].legend()
-
-
-#t43 
-# def t43_old(tl,MM):
-#       """
-#      T in K
-#      MM in cm^-3
-#      """
-#       kkM = 4.16e-7*(tl/298.0)**(-3.29)*np.exp(-9610.0/tl)*MM
-#       return kkM
-
-
-# def t43_new(tl,MM):
-#      """
-#      T in K
-#      MM in cm^-3
-#      """
-     
-#      # low pressure limit from Goumri+1999 (theory)
-#      k_0_M = 4.16e-7*(tl/298.0)**(-3.29)*np.exp(-9610.0/tl)*MM    
-
-#      # high pressure limit from Goumri+1999 (theory)
-#      k_inf = 2.03e11*tl**0.9*np.exp(-9240/tl)
-
-#      kkM=k_0_M/(1.0+k_0_M/k_inf)
-
-#      return kkM
-
-
-# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
-# markersizeval=5.
-
-# ax[0].set_title('T=150 K')
-# ax[0].plot(P_list, np.log10(t43_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
-# ax[0].plot(P_list, np.log10(t43_new(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
-# ax[1].set_title('T=300 K')
-# ax[1].plot(P_list, np.log10(t43_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
-# ax[1].plot(P_list, np.log10(t43_new(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
-# ax[2].set_title('T=600 K')
-# ax[2].plot(P_list, np.log10(t43_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t43, Hu2012')
-# ax[2].plot(P_list, np.log10(t43_new(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t43, new')
-
-# ax[0].set_ylabel('log10(k)')
-# ax[1].set_ylabel('log10(k)')
-# ax[2].set_ylabel('log10(k)')
-# ax[2].set_xscale('log')
-# ax[2].set_xlabel('Pressure (bar)')
-# ax[2].set_yscale('linear')
-# ax[2].legend()
-
-# plt.show()
-
-
-
-# t46 
-# def t46_old(tl,MM):
-#       """
-#      T in K
-#      MM in cm^-3
-#      """
-#       kkM = 6.0e-11*np.exp(-7721.0/tl)*MM
-#       return kkM
-
-
-# def t46_new(tl,MM):
-#      """
-#      T in K
-#      MM in cm^-3
-#      """
-     
-#      # Input values
-#      n_prod = 1
-#      n_react = 2
-#      n_total = 3
-#      mu = [-1, -1, 1]  # CO, H, CH
-     
-#      # Thermo coefficients for [CO, H, CHO]
-#      a1 = [0.35795335E+01, 0.25000000E+01, 4.23754610E+00]
-#      a2 = [-0.61035369E-03, 0.00000000E+00, -3.32075257E-03]
-#      a3 = [0.10168143E-05, 0.00000000E+00, 1.40030264E-05]
-#      a4 = [0.90700586E-09, 0.00000000E+00, -1.34239995E-08]
-#      a5 = [-0.90442449E-12, 0.00000000E+00, 4.37416208E-12]
-#      a6 = [-0.14344086E+05, 0.25473660E+05, 3.87241185E+03]
-#      a7 = [0.35084093E+01, -0.44668285E+00, 3.30834869E+00]
-     
-#      k_f_0_M = 1.40e-34 * np.exp(-100 / tl) * MM
-#      k_f_inf = 1.96e-13 * np.exp(-1370 / tl)
-#      k_f = k_f_0_M / (1.0 + k_f_0_M / k_f_inf)
-     
-#      kkM = ReverseRate(mu, n_prod, n_react, a1, a2, a3, a4, a5, a6, a7, tl, k_f)
-
-#      return kkM
-
-
-# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
-# markersizeval=5.
-
-# ax[0].set_title('T=150 K')
-# ax[0].plot(P_list, np.log10(t46_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
-# ax[0].plot(P_list, np.log10(t46_new(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
-# ax[1].set_title('T=300 K')
-# ax[1].plot(P_list, np.log10(t46_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
-# ax[1].plot(P_list, np.log10(t46_new(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
-# ax[2].set_title('T=600 K')
-# ax[2].plot(P_list, np.log10(t46_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t46, Hu2012')
-# ax[2].plot(P_list, np.log10(t46_new(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t46, new')
-
-# ax[0].set_ylabel('log10(k)')
-# ax[1].set_ylabel('log10(k)')
-# ax[2].set_ylabel('log10(k)')
-# ax[2].set_xscale('log')
-# ax[2].set_xlabel('Pressure (bar)')
-# ax[2].set_yscale('linear')
-# ax[2].legend()
-
-# plt.show()
-
-# t47
-# def t47_old(tl,MM):
-#       """
-#      T in K
-#      MM in cm^-3
-#      """
-#       kkM = np.ones_like(MM)*1.69e14*(tl/298.0)**(-0.39)*np.exp(-13230.0/tl)
-#       return kkM
-
-
-# def t47_stand2019(tl,MM):
-#      """
-#      T in K
-#      MM in cm^-3
-#      """
-#      # rate laws from Stand+2019
-#      k_0_M = 6.59e-05*(tl/300)**(-2.7)*np.exp(-1.54e+04/tl) * MM
-#      k_inf = 2.87e+13*(tl/300)**1.31*np.exp(-1.58e+04/tl)
-#      kkM = k_0_M / (1.0 + k_0_M / k_inf)
-
-#      return kkM
-
-# def t47_new(tl,MM):
-#      """
-#      T in K
-#      MM in cm^-3
-#      """
-#      # rate laws from Hippler+2001
-#      k_0_M = 1.17e-06*(tl/298)**(-3.0)*np.exp(-12268/tl) * MM
-#      k_inf = 6.8e+13*np.exp(-13230/tl)
-#      F_c=0.97-tl/1950
-#      M_M_c=k_0_M/k_inf
-#      N=0.75-1.27*np.log10(F_c)
-#      F=np.power(F_c, 1.0/(1.0+pow((np.log10(M_M_c)/N),2.0)))
-#      kkM=k_0_M*k_inf/(k_0_M+k_inf)*F
-
-#      return kkM
-
-# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
-# markersizeval=5.
-
-# ax[0].set_title('T=150 K')
-# ax[0].plot(P_list, np.log10(t47_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
-# ax[0].plot(P_list, np.log10(t47_stand2019(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
-# ax[0].plot(P_list, np.log10(t47_new(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='pink')
-# ax[1].set_title('T=300 K')
-# ax[1].plot(P_list, np.log10(t47_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
-# ax[1].plot(P_list, np.log10(t47_stand2019(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
-# ax[1].plot(P_list, np.log10(t47_new(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='pink')
-# ax[2].set_title('T=600 K')
-# ax[2].plot(P_list, np.log10(t47_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t47, Hu2012')
-# ax[2].plot(P_list, np.log10(t47_stand2019(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t47, Stand+2019')
-# ax[2].plot(P_list, np.log10(t47_new(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='pink', label='t47, new')
-
-# ax[0].set_ylabel('log10(k)')
-# ax[1].set_ylabel('log10(k)')
-# ax[2].set_ylabel('log10(k)')
-# ax[2].set_xscale('log')
-# ax[2].set_xlabel('Pressure (bar)')
-# ax[2].set_yscale('linear')
-# ax[2].legend()
-
-# plt.show()
-
-#t48
-# def t48_old(tl,MM):
-#       """
-#      T in K
-#      MM in cm^-3
-#      """
-#       kkM = 7.67e-6*(tl/298.0)**-1.89*np.exp(-17800.0/tl)*MM
-#       return kkM
-
-
-# def t48_Larson1988(tl,MM):
-#      """
-#      T in K
-#      MM in cm^-3
-#      """
-#      # rate laws from Larson+1988
-#      k_0_M = 7.67e-6*(tl/298.0)**-1.89*np.exp(-17750.0/tl)*MM
-#      k_inf = 1.21e14*(tl/298.0)**0.53*np.exp(-17100.0/tl)
-#      kkM = k_0_M / (1.0 + k_0_M / k_inf)
-
-#      return kkM
-
-# def t48_Golden1998(tl,MM):
-#      """
-#      T in K
-#      MM in cm^-3
-#      """
-#      # rate laws from Golden+1998
-#      k_0_M = 4.92e-29*(tl/298.0)**-2.4*np.exp(-18862.0/tl)*MM
-#      k_inf = 2.985e1*(tl/298.0)**0.13*np.exp(-18349.0/tl)
-#      kkM = k_0_M / (1.0 + k_0_M / k_inf)
-
-#      return kkM
-
-# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
-# markersizeval=5.
-
-# ax[0].set_title('T=150 K')
-# ax[0].plot(P_list, np.log10(t48_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
-# ax[0].plot(P_list, np.log10(t48_Larson1988(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
-# ax[0].plot(P_list, np.log10(t48_Golden1998(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='pink')
-# ax[1].set_title('T=300 K')
-# ax[1].plot(P_list, np.log10(t48_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
-# ax[1].plot(P_list, np.log10(t48_Larson1988(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
-# ax[1].plot(P_list, np.log10(t48_Golden1998(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='pink')
-# ax[2].set_title('T=600 K')
-# ax[2].plot(P_list, np.log10(t48_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t48, Hu2012')
-# ax[2].plot(P_list, np.log10(t48_Larson1988(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t48, Larson+1988')
-# ax[2].plot(P_list, np.log10(t48_Golden1998(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='pink', label='t48, Golden+1998')
-
-# ax[0].set_ylabel('log10(k)')
-# ax[1].set_ylabel('log10(k)')
-# ax[2].set_ylabel('log10(k)')
-# ax[2].set_xscale('log')
-# ax[2].set_xlabel('Pressure (bar)')
-# ax[2].set_yscale('linear')
-# ax[2].legend()
-
-# # t49
-# def t49_old(tl,MM):
-#       """
-#      T in K
-#      MM in cm^-3
-#      """
-#       kkM = 1.25e-5*(tl/298.0)**-3.02*np.exp(-17560.0/tl)*MM
-#       return kkM
-
-
-# def t49_Larson1988(tl,MM):
-#      """
-#      T in K
-#      MM in cm^-3
-#      """
-#      # rate laws from Larson+1988
-#      k_0_M = 1.25e-5*(tl/298.0)**-3.02*np.exp(-17560.0/tl)*MM
-#      k_inf = 1.e13*(tl/298.0)**0.31*np.exp(-16570.0/tl)
-#      kkM = k_0_M / (1.0 + k_0_M / k_inf)
-
-#      return kkM
-
-# def t49_Golden1998(tl,MM):
-#      """
-#      T in K
-#      MM in cm^-3
-#      """
-#      # rate laws from Golden+1998
-#      k_0_M = 7.21e-31*(tl/298.0)**-3.15*np.exp(-18629.0/tl)*MM
-#      k_inf = 1.25e2*(tl/298.0)**0.41*np.exp(-17783.0/tl)
-#      kkM = k_0_M / (1.0 + k_0_M / k_inf)
-
-#      return kkM
-
-# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
-# markersizeval=5.
-
-# ax[0].set_title('T=150 K')
-# ax[0].plot(P_list, np.log10(t49_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
-# ax[0].plot(P_list, np.log10(t49_Larson1988(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
-# ax[0].plot(P_list, np.log10(t49_Golden1998(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='pink')
-# ax[1].set_title('T=300 K')
-# ax[1].plot(P_list, np.log10(t49_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
-# ax[1].plot(P_list, np.log10(t49_Larson1988(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
-# ax[1].plot(P_list, np.log10(t49_Golden1998(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='pink')
-# ax[2].set_title('T=600 K')
-# ax[2].plot(P_list, np.log10(t49_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t49, Hu2012')
-# ax[2].plot(P_list, np.log10(t49_Larson1988(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t49, Larson+1988')
-# ax[2].plot(P_list, np.log10(t49_Golden1998(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='pink', label='t49, Golden+1998')
-
-# ax[0].set_ylabel('log10(k)')
-# ax[1].set_ylabel('log10(k)')
-# ax[2].set_ylabel('log10(k)')
-# ax[2].set_xscale('log')
-# ax[2].set_xlabel('Pressure (bar)')
-# ax[2].set_yscale('linear')
-# ax[2].legend()
-
-# plt.show()
-
 # #t27
 # def t27_old(tl,MM):
 #       """
@@ -4562,6 +4586,1025 @@ def ReverseRate(mu, n_prod, n_react, a1, a2, a3, a4, a5, a6, a7, T, k_f):
 # ax[2].legend()
 
 # plt.show()
+
+#T30
+# def t30_old(tl,MM):
+#       """
+#      T in K
+#      MM in cm^-3
+#      """
+#       kkM = 5.98e-9*np.exp(-29828.0/tl)*MM
+#       return kkM
+
+
+# def t30_STAND2015(tl,MM):
+#      """
+#      T in K
+#      MM in cm^-3
+#      """
+#      # rate laws from Baulch+2005
+#      k_0_M = 5.98e-9*np.exp(-29828.0/tl)*MM
+#      k_inf = 3e14*np.exp(-35700.0/tl)
+#      kkM = k_0_M / (1.0 + k_0_M / k_inf)
+
+#      return kkM
+
+# def t30_Wagner_1971(tl,MM):
+#      """
+#      T in K
+#      MM in cm^-3
+#      """
+#      # rate laws from Curran+2006
+#      k_0_M = 3.6e15*np.exp(-29828.0/tl)*MM/6.022e23
+#      k_inf = 3e14*np.exp(-35619.0/tl)
+#      kkM = k_0_M / (1.0 + k_0_M / k_inf)
+
+#      return kkM
+
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True)
+# markersizeval=5.
+
+# ax[0].set_title('T=150 K')
+# ax[0].plot(P_list, np.log10(t30_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(t30_STAND2015(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+# ax[0].plot(P_list, np.log10(t30_Wagner_1971(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='blue')
+# #ax[0].plot(P_list, np.log10(t27_feng1993(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='green')
+# ax[1].set_title('T=300 K')
+# ax[1].plot(P_list, np.log10(t30_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(t30_STAND2015(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+# ax[1].plot(P_list, np.log10(t30_Wagner_1971(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='blue')
+# #ax[1].plot(P_list, np.log10(t27_feng1993(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='green')
+# ax[2].set_title('T=600 K')
+# ax[2].plot(P_list, np.log10(t30_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t27, Hu2012')
+# ax[2].plot(P_list, np.log10(t30_STAND2015(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t27, STAND+2015')
+# ax[2].plot(P_list, np.log10(t30_Wagner_1971(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='blue', label='t27, Wagner+1971')
+# #ax[2].plot(P_list, np.log10(t27_feng1993(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='green', label='t27, Feng+1993')
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+
+# plt.savefig('/Users/rahularora/Desktop/Project/SURP/hu-code-sr/Documentation/Plots/T30.png')
+
+# # T32
+# def t32_old(tl,MM):
+#       """
+#      T in K
+#      MM in cm^-3
+#      """
+#       kkM = 6.82e-3*(tl/298.0)**-8.62*np.exp(-11300.0/tl) * MM
+#       return kkM
+
+
+# def t32_STAND2015(tl,MM):
+#      """
+#      T in K
+#      MM in cm^-3
+#      """
+#      # rate laws from Baulch+2005
+#      k_0_M = 5.25e-10*np.exp(-6040/tl)*MM
+#      k_inf = 2e10*np.exp(-7550/tl)
+#      kkM = k_0_M / (1.0 + k_0_M / k_inf)
+
+#      return kkM
+
+# def t32_Tsung(tl,MM):
+#      """
+#      T in K
+#      MM in cm^-3
+#      """
+#      # rate laws from Baulch+2005
+#      k_0_M = 1.45e19*(tl)**-8.62*np.exp(-11284/tl)*MM
+#      k_inf = 2e10*np.exp(-7550/tl)
+#      kkM = k_0_M / (1.0 + k_0_M / k_inf)
+
+#      return kkM
+
+
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True)
+# markersizeval=5.
+
+# ax[0].set_title('T=150 K')
+# ax[0].plot(P_list, np.log10(t32_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(t32_STAND2015(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+# ax[0].plot(P_list, np.log10(t32_Tsung(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='blue')
+# #ax[0].plot(P_list, np.log10(t27_feng1993(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='green')
+# ax[1].set_title('T=300 K')
+# ax[1].plot(P_list, np.log10(t32_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(t32_STAND2015(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+# ax[1].plot(P_list, np.log10(t32_Tsung(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='blue')
+# #ax[1].plot(P_list, np.log10(t27_feng1993(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='green')
+# ax[2].set_title('T=600 K')
+# ax[2].plot(P_list, np.log10(t32_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t32, Hu2012')
+# ax[2].plot(P_list, np.log10(t32_STAND2015(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t32, STAND+2015')
+# ax[2].plot(P_list, np.log10(t32_Tsung(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='blue', label='t32, new')
+# #ax[2].plot(P_list, np.log10(t27_feng1993(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='green', label='t27, Feng+1993')
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+
+# plt.savefig('/Users/rahularora/Desktop/Project/SURP/hu-code-sr/Documentation/Plots/T32.png')
+
+# # # T33
+# def t33_old(tl,MM):
+#       """
+#      T in K
+#      MM in cm^-3
+#      """
+#       kkM = 2.0e15 * np.exp(-39810.0/tl) * MM
+#       return kkM
+
+
+# def t33_STAND2015(tl,MM):
+#      """
+#      T in K
+#      MM in cm^-3
+#      """
+#      # rate laws from Baulch+2005
+#      k_0_M = 2.48e-5*((tl)**(1))*np.exp(-39800/tl)*MM
+#      k_inf = 6e14*np.exp(-38900/tl)
+#      kkM = k_0_M / (1.0 + k_0_M / k_inf)
+
+#      return kkM
+
+# def t33_YASUNAGA2008(tl,MM):
+#      """
+#      T in K
+#      MM in cm^-3
+#      """
+#      # rate laws from Baulch+2005
+#      k_0_M = 2.0e15 * np.exp(-39810.0/tl) * MM/6.022e23
+#      k_inf = 6e14*np.exp(-38900/tl)
+#      kkM = k_0_M / (1.0 + k_0_M / k_inf)
+
+#      return kkM
+
+# def t33_satntos2018(tl,MM):
+#      """
+#      T in K
+#      MM in cm^-3
+#      """
+#      # rate laws from Baulch+2005
+#      k_0_M = 9.62e9*((tl/298)**(-11.92))* np.exp(-376000/8.314/tl) * MM
+#      k_inf = 1.45e17*np.exp(-353000/8.314/tl)
+#      kkM = k_0_M / (1.0 + k_0_M / k_inf)
+
+#      return kkM
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True)
+# markersizeval=5.
+
+# ax[0].set_title('T=150 K')
+# ax[0].plot(P_list, np.log10(t33_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(t33_STAND2015(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+# ax[0].plot(P_list, np.log10(t33_YASUNAGA2008(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='blue')
+# ax[0].plot(P_list, np.log10(t33_satntos2018(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='orange')
+# #ax[0].plot(P_list, np.log10(t27_feng1993(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='green')
+# ax[1].set_title('T=300 K')
+# ax[1].plot(P_list, np.log10(t33_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(t33_STAND2015(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+# ax[1].plot(P_list, np.log10(t33_YASUNAGA2008(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='blue')
+# ax[1].plot(P_list, np.log10(t33_satntos2018(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='orange')
+# #ax[1].plot(P_list, np.log10(t27_feng1993(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='green')
+# ax[2].set_title('T=600 K')
+# ax[2].plot(P_list, np.log10(t33_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t33, Hu2012')
+# ax[2].plot(P_list, np.log10(t33_STAND2015(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t33, STAND+2015')
+# ax[2].plot(P_list, np.log10(t33_YASUNAGA2008(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='blue', label='t33, Yasunga+2008')
+# ax[2].plot(P_list, np.log10(t33_satntos2018(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='orange', label='t33, Satntos+2018')
+# #ax[2].plot(P_list, np.log10(t27_feng1993(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='green', label='t27, Feng+1993')
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+# plt.savefig('/Users/rahularora/Desktop/Project/SURP/hu-code-sr/Documentation/Plots/T33.png')
+
+
+# # # T39
+# def T39_old(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     """
+#     kkM=1.66E-9*np.exp(-64.0/tl)*MM
+#     return kkM
+
+# def T39_new(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     From Tsang+1992, via NIST, matches Moses+2011, Rimmer+2016
+#     """
+#     k_0_M=3.6E4*pow(tl,-3.1)*np.exp(-51280.0/tl)*MM
+#     k_inf=6.0E13*np.exp(-50228.0/tl)
+#     kkM=k_0_M/(1.0+k_0_M/k_inf)
+#     return kkM
+
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
+# markersizeval=5.
+
+# # pdb.set_trace()
+# ax[0].set_title('T=150 K')
+# ax[0].plot(P_list, np.log10(T39_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(T39_new(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='blue')
+# ax[1].set_title('T=300 K')
+# ax[1].plot(P_list, np.log10(T39_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(T39_new(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='blue')
+# ax[2].set_title('T=600 K')
+# ax[2].plot(P_list, np.log10(T39_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='T39, Hu2012')
+# ax[2].plot(P_list, np.log10(T39_new(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='blue', label='T39, new')
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+
+
+# # # T40
+# def T40_old(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     """
+#     kkM=1.69E-9*np.exp(-23453.0/tl)*MM
+#     return kkM
+
+
+# def T40_alt(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     This is Dorko+1979, which is also what Rimmer+2016 used. 
+#     """
+#     k_0_M=3.65E-10*np.exp(-27200.0/tl)*MM #From Moses+2011, via Mertens and Hanson 1996
+#     # k_0_M=6.07E-28*np.exp(-27200.0/tl)*MM #From RMG, Nitrogen_Glarborg_Zhang_et_al/719 . Pretty different. 
+#     k_inf=9.54E13*pow(tl/300.0, -2.90)*np.exp(-30100.0/tl) #Rimmer+2016.
+#     kkM=k_0_M/(1.0+k_0_M/k_inf)
+#     return kkM
+
+# def T40_new(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     TFrom Rimmer+2016. Same as Rimmer+2019. Cited underlying reference is Tsang (1992). According to this reference, the reaction rate is not directly measured but rather fit in other experiments. Only the low-pressure limit is available, not the high-pressure limit. 
+#     """
+#     k_0_M=3.95E-6*pow(tl/300.0, -1.90)*np.exp(-30100.0/tl)*MM
+#     k_inf=9.54E13*pow(tl/300.0, -2.90)*np.exp(-30100.0/tl)
+#     kkM=k_0_M/(1.0+k_0_M/k_inf)
+#     return kkM
+
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
+# markersizeval=5.
+
+# # pdb.set_trace()
+# ax[0].set_title('T=150 K')
+# ax[0].plot(P_list, np.log10(T40_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(T40_new(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='blue')
+# ax[0].plot(P_list, np.log10(T40_alt(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+# ax[1].set_title('T=300 K')
+# ax[1].plot(P_list, np.log10(T40_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(T40_new(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='blue')
+# ax[1].plot(P_list, np.log10(T40_alt(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+# ax[2].set_title('T=600 K')
+# ax[2].plot(P_list, np.log10(T40_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='T40, Hu2012')
+# ax[2].plot(P_list, np.log10(T40_new(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='blue', label='T40, new')
+# ax[2].plot(P_list, np.log10(T40_alt(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='T40, alt')
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+
+
+
+# t41
+# def t41_old(tl,MM):
+#       """
+#      T in K
+#      MM in cm^-3
+#      """
+#       kkM = 9.47e-7*np.exp(-40051.0/tl)*MM
+#       return kkM
+
+
+# def t41_new(tl,MM):
+#      """
+#      T in K
+#      MM in cm^-3
+#      """
+     
+#      # low pressure limit from Sebbar+2019 (theory)
+#      k_0_M = 3.3E-9*np.power(tl/298, 0.65)*np.exp(-38607.7/tl)*MM    
+
+#      # high pressure limit from RMG 
+#      k_inf = 2.85e19*np.power(tl,-1.52)*np.exp(-43137.0/tl) 
+
+#      kkM=k_0_M/(1.0+k_0_M/k_inf)
+
+#      return kkM
+
+# def t41_new_reverse(tl,MM):
+#      """
+#      T in K
+#      MM in cm^-3
+#      """
+     
+#      # low pressure limit from Sebbar+2019 (theory)
+#      k_0_M = 3.3E-9*np.power(tl/298, 0.65)*np.exp(-38607.7/tl)*MM    
+
+#      # high pressure limit from RMG 
+#      k_inf = 2.85e19*np.power(tl,-1.52)*np.exp(-43137.0/tl) 
+
+#      kkM=k_0_M/(1.0+k_0_M/k_inf)
+
+#      ### compute reverse rate for forward reaction SO2 + O --> SO3
+#      n_prod=1
+#      n_reac=2
+#      mu=[-1, -1, 1] 
+#      #thermo coefficents for [SO2, O, SO3]. For 200-1000K. Via https://respecth.elte.hu/
+#      a1=[3.67480752, 3.1682671, 2.37461122]
+#      a2=[0.00228302107, -0.00327931884, 0.0159543297]
+#      a3=[0.00000846893049, 0.00000664306396, -0.0000126322543]
+#      a4=[-0.0000000136562039, -0.00000000612806624, 0.00000000281827264]
+#      a5=[0.00000000000576271873,  0.00000000000211265971, 0.000000000000623371547]
+#      a6=[-36945.5073, 29122.2592, -48926.9231]
+#      a7=[7.9686643, 2.05193346, 13.1043046]
+        
+#      k_r=ReverseRate(mu, n_prod, n_reac, a1, a2, a3, a4, a5, a6, a7, tl, kkM)   
+    
+#      return k_r
+
+# def t41_JY_reverse(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     """
+     
+
+#     k_0_M = 2.4E27/(NAVOGADRO**2)*(tl/1.)**(-3.6)*np.exp(-5186.*cal2J/(R*tl))*MM
+#     k_inf = 3.7e11/NAVOGADRO*np.exp(-1689.*cal2J/(R*tl))
+
+#     F_c=(1-0.442)*np.exp(-tl/316.0)+0.442*np.exp(-tl/7442.0)
+#     M_M_c=k_0_M/k_inf
+#     N=0.75-1.27*np.log10(F_c)
+#     F=pow(F_c, 1.0/(1.0+pow((np.log10(M_M_c)/N),2.0)))
+#     kkM=k_0_M*k_inf/(k_0_M+k_inf)*F
+
+#     return kkM
+
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
+# markersizeval=5.
+
+# ax[0].set_title('T=150 K')
+# ax[0].plot(P_list, np.log10(t41_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(t41_new(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+# ax[0].plot(P_list, np.log10(t41_new_reverse(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-.', color='purple')
+# ax[0].plot(P_list, np.log10(t41_JY_reverse(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-.', color='blue')
+# ax[1].set_title('T=300 K')
+# ax[1].plot(P_list, np.log10(t41_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(t41_new(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+# ax[1].plot(P_list, np.log10(t41_new_reverse(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-.', color='purple')
+# ax[1].plot(P_list, np.log10(t41_JY_reverse(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-.', color='blue')
+# ax[2].set_title('T=600 K')
+# ax[2].plot(P_list, np.log10(t41_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t41, Hu2012')
+# ax[2].plot(P_list, np.log10(t41_new(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t41, new')
+# ax[2].plot(P_list, np.log10(t41_new_reverse(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-.', color='purple', label='t41, new (reverse)')
+# ax[2].plot(P_list, np.log10(t41_JY_reverse(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-.', color='blue', label='t41, JY (reverse)')
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+
+# #t42
+# def t42_old(tl,MM):
+#       """
+#      T in K
+#      MM in cm^-3
+#      """
+#       kkM = 1.4e-8*np.exp(-29467.0/tl)*MM
+#       return kkM
+
+
+# def t42_new(tl,MM):
+#      """
+#      T in K
+#      MM in cm^-3
+#      """
+     
+#      # low pressure limit from Tsuchiya+1994 (estimated)
+#      k_0_M = 1.40E-8*np.exp(-29500.0/tl)*MM    
+
+#      # high pressure limit from Rimmer+2021 (estimated)
+#      k_inf = 3.38E+11*(tl/300)**(-1.0)*np.exp(-29500.0/tl)
+
+#      kkM=k_0_M/(1.0+k_0_M/k_inf)
+
+#      return kkM
+
+# def t42_JY(tl,MM):
+#      """
+#      T in K
+#      MM in cm^-3
+#      """
+#     # low pressure limit from Tsuchiya+1994 (estimated)
+#      k_0_M = 1.40E-8*np.exp(-29500.0/tl)*MM  
+     
+#      # high pressure limit from Sendt+2007 (Table 2, G3)
+#      k_inf = 3.13E14*np.exp(-29587.0/tl)
+
+#      kkM=k_0_M/(1.0+k_0_M/k_inf)
+
+#      return kkM
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
+# markersizeval=5.
+
+# ax[0].set_title('T=150 K')
+# ax[0].plot(P_list, np.log10(t42_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(t42_new(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+# ax[0].plot(P_list, np.log10(t42_JY(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='blue')
+# ax[1].set_title('T=300 K')
+# ax[1].plot(P_list, np.log10(t42_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(t42_new(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+# ax[1].plot(P_list, np.log10(t42_JY(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='blue')
+# ax[2].set_title('T=600 K')
+# ax[2].plot(P_list, np.log10(t42_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t42, Hu2012')
+# ax[2].plot(P_list, np.log10(t42_new(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t42, new')
+# ax[2].plot(P_list, np.log10(t42_JY(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='blue', label='t42, JY')
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+
+
+#t43 
+def t43_old(tl,MM):
+      """
+     T in K
+     MM in cm^-3
+     """
+      kkM = 4.16e-7*(tl/298.0)**(-3.29)*np.exp(-9610.0/tl)*MM
+      return kkM
+
+
+def t43_new(tl,MM):
+     """
+     T in K
+     MM in cm^-3
+     """
+     
+     # low pressure limit from Goumri+1999 (theory)
+     k_0_M = 2.58e7*tl**(-4.53)*np.exp(-24750.0/tl)*MM    
+
+     # high pressure limit from Goumri+1999 (theory)
+     k_inf = 1.70e10*tl**0.8*np.exp(-23620/tl)
+
+     kkM=k_0_M/(1.0+k_0_M/k_inf)
+
+     return kkM
+
+
+def t43_hughes2002(tl,MM):
+     """
+     T in K
+     MM in cm^-3
+     """
+
+     # The reaction we are reversing: H + SO2 + M --> HOSO + M
+     n_prod=1
+     n_reac=2
+     mu=[-1, -1, 1]
+
+     #Thermo coefficients for [H, SO2, HOSO]
+     a1 = [0.25000000E+01, 3.67480752, 3.73732792]
+     a2 = [0.00000000E+00, 0.00228302107, 0.00930978241]
+     a3 = [0.00000000E+00, 0.0000084689304, -0.00000385404197]
+     a4 = [0.00000000E+00, -0.0000000136562039, -0.00000000407782859]
+     a5 = [0.00000000E+00, 0.00000000000576271873, 0.00000000000309632341]
+     a6 = [0.25473660E+05, -36945.5073, -29826.0746]
+     a7 = [-0.44668285E+00, 7.9686643, 10.1080861]
+    
+     # forward reaction rate from Hughes+2002: H + SO2 + M --> HOSO + M
+     k_0_M=7.34e-10*tl**-6.43*np.exp(-5577./tl)*MM
+     k_inf=5.18e-16*tl**1.61*np.exp(-3606./tl)
+     kkM=k_0_M/(1.0+k_0_M/k_inf)
+    
+     k_r=ReverseRate(mu, n_prod, n_reac, a1, a2, a3, a4, a5, a6, a7, tl, kkM)
+     return k_r
+
+fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
+markersizeval=5.
+
+ax[0].set_title('T=150 K')
+ax[0].plot(P_list, np.log10(t43_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+ax[0].plot(P_list, np.log10(t43_new(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+ax[0].plot(P_list, np.log10(t43_hughes2002(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='green')
+ax[1].set_title('T=300 K')
+ax[1].plot(P_list, np.log10(t43_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+ax[1].plot(P_list, np.log10(t43_new(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+ax[1].plot(P_list, np.log10(t43_hughes2002(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='green')
+ax[2].set_title('T=600 K')
+ax[2].plot(P_list, np.log10(t43_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t43, Hu2012')
+ax[2].plot(P_list, np.log10(t43_new(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t43, Goumri+1999')
+ax[2].plot(P_list, np.log10(t43_hughes2002(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='green', label='t43, Hughes+2002')
+
+ax[0].set_ylabel('log10(k)')
+ax[1].set_ylabel('log10(k)')
+ax[2].set_ylabel('log10(k)')
+ax[2].set_xscale('log')
+ax[2].set_xlabel('Pressure (bar)')
+ax[2].set_yscale('linear')
+ax[2].legend()
+
+plt.show()
+
+
+# t44
+def t44_goumri1999(tl,MM):
+     """
+     T in K
+     MM in cm^-3
+     """
+     
+     # low pressure limit from Goumri+1999 (theory)
+     k_0_M = 2.07e8*tl**(-4.33)*np.exp(-34780.0/tl)*MM    
+
+     # high pressure limit from Goumri+1999 (theory)
+     k_inf = 1.65e16*tl**(-0.32)*np.exp(-34080.0/tl)
+
+     kkM=k_0_M/(1.0+k_0_M/k_inf)
+
+     return kkM
+
+def t44_hughes2002(tl,MM):
+     """
+     T in K
+     MM in cm^-3
+     """
+     
+     # low pressure limit from Hughes+2002 (theory)
+     k_0_M = 1.92e22*tl**(-9.02)*np.exp(-26647.0/tl)*MM
+
+     # high pressure limit from Hughes+2002 (theory)
+     k_inf = 9.94e21*tl**(-2.54)*np.exp(-38190.0/tl)
+
+     kkM=k_0_M/(1.0+k_0_M/k_inf)
+
+     return kkM
+
+fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
+markersizeval=5.
+
+ax[0].set_title('T=150 K')
+ax[0].plot(P_list, np.log10(t44_goumri1999(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+ax[0].plot(P_list, np.log10(t44_hughes2002(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='blue')
+ax[1].set_title('T=300 K')
+ax[1].plot(P_list, np.log10(t44_goumri1999(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+ax[1].plot(P_list, np.log10(t44_hughes2002(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='blue')
+ax[2].set_title('T=600 K')
+ax[2].plot(P_list, np.log10(t44_goumri1999(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t44, Goumri1999')
+ax[2].plot(P_list, np.log10(t44_hughes2002(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='blue', label='t44, Hughes2002')
+
+ax[0].set_ylabel('log10(k)')
+ax[1].set_ylabel('log10(k)')
+ax[2].set_ylabel('log10(k)')
+ax[2].set_xscale('log')
+ax[2].set_xlabel('Pressure (bar)')
+ax[2].set_yscale('linear')
+ax[2].legend()
+
+plt.show()
+
+
+# # t46 
+# def t46_old(tl,MM):
+#       """
+#      T in K
+#      MM in cm^-3
+#      """
+#       kkM = 6.0e-11*np.exp(-7721.0/tl)*MM
+#       return kkM
+
+
+# def t46_new(tl,MM):
+#      """
+#      T in K
+#      MM in cm^-3
+#      """
+     
+#      # Input values
+#      n_prod = 1
+#      n_react = 2
+#      n_total = 3
+#      mu = [-1, -1, 1]  # CO, H, CH
+     
+#      # Thermo coefficients for [CO, H, CHO]
+#      a1 = [0.35795335E+01, 0.25000000E+01, 4.23754610E+00]
+#      a2 = [-0.61035369E-03, 0.00000000E+00, -3.32075257E-03]
+#      a3 = [0.10168143E-05, 0.00000000E+00, 1.40030264E-05]
+#      a4 = [0.90700586E-09, 0.00000000E+00, -1.34239995E-08]
+#      a5 = [-0.90442449E-12, 0.00000000E+00, 4.37416208E-12]
+#      a6 = [-0.14344086E+05, 0.25473660E+05, 3.87241185E+03]
+#      a7 = [0.35084093E+01, -0.44668285E+00, 3.30834869E+00]
+     
+#      k_f_0_M = 1.40e-34 * np.exp(-100 / tl) * MM
+#      k_f_inf = 1.96e-13 * np.exp(-1370 / tl)
+#      k_f = k_f_0_M / (1.0 + k_f_0_M / k_f_inf)
+     
+#      kkM = ReverseRate(mu, n_prod, n_react, a1, a2, a3, a4, a5, a6, a7, tl, k_f)
+
+#      return kkM
+
+# def t46_JY_Liu(tl,MM):
+#      """
+#      T in K
+#      MM in cm^-3
+#      """
+     
+#      # upper and lower limit from Liu+2013
+#      k_0_M = 5.05E19/NAVOGADRO*tl**(-1.62)*np.exp(-9192/tl) * MM
+#      k_inf = 4.93E16*tl**(-0.93)*np.exp(-9927/tl)
+
+#      kkM = k_0_M / (1.0 + k_0_M / k_inf)
+     
+#      return kkM
+
+# def t46_JY_Yang(tl,MM):
+#      """
+#      T in K
+#      MM in cm^-3
+#      """
+
+#      # upper and lower limit from Yang+2013
+#      k_0_M = 1.23E-2*tl**(-2.36)*np.exp(-9755/tl) * MM
+#      k_inf = 4.93e+16*tl**(-0.93)*np.exp(-9927/tl)
+#      F_c=0.897*np.exp(-tl/139)+0.103*np.exp(-tl/1.09E4)+np.exp(-4.55E3/tl)
+#      M_M_c=k_0_M/k_inf
+#      N=0.75-1.27*np.log10(F_c)
+#      F=np.power(F_c, 1.0/(1.0+pow((np.log10(M_M_c)/N),2.0)))
+#      kkM=k_0_M*k_inf/(k_0_M+k_inf)*F
+
+#      return kkM
+
+
+
+
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
+# markersizeval=5.
+
+# ax[0].set_title('T=150 K')
+# ax[0].plot(P_list, np.log10(t46_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(t46_new(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+# ax[0].plot(P_list, np.log10(t46_JY_Liu(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='blue')
+# ax[0].plot(P_list, np.log10(t46_JY_Yang(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='green')
+# ax[1].set_title('T=300 K')
+# ax[1].plot(P_list, np.log10(t46_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(t46_new(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+# ax[1].plot(P_list, np.log10(t46_JY_Liu(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='blue')
+# ax[1].plot(P_list, np.log10(t46_JY_Yang(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='green')
+# ax[2].set_title('T=600 K')
+# ax[2].plot(P_list, np.log10(t46_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t46, Hu2012')
+# ax[2].plot(P_list, np.log10(t46_new(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t46, new')
+# ax[2].plot(P_list, np.log10(t46_JY_Liu(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='blue', label='t46, Liu+2013')
+# ax[2].plot(P_list, np.log10(t46_JY_Yang(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='green', label='t46, Yang+2013')
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+
+# plt.show()
+
+# t47
+# def t47_old(tl,MM):
+#       """
+#      T in K
+#      MM in cm^-3
+#      """
+#       kkM = np.ones_like(MM)*1.69e14*(tl/298.0)**(-0.39)*np.exp(-13230.0/tl)
+#       return kkM
+
+
+# def t47_stand2019(tl,MM):
+#      """
+#      T in K
+#      MM in cm^-3
+#      """
+#      # rate laws from Stand+2019
+#      k_0_M = 6.59e-05*(tl/300)**(-2.7)*np.exp(-1.54e+04/tl) * MM
+#      k_inf = 2.87e+13*(tl/300)**1.31*np.exp(-1.58e+04/tl)
+#      kkM = k_0_M / (1.0 + k_0_M / k_inf)
+
+#      return kkM
+
+# def t47_new(tl,MM):
+#      """
+#      T in K
+#      MM in cm^-3
+#      """
+#      # rate laws from Hippler+2001
+#      k_0_M = 1.17e-06*(tl/298)**(-3.0)*np.exp(-12268/tl) * MM
+#      k_inf = 6.8e+13*np.exp(-13230/tl)
+#      F_c=0.97-tl/1950
+#      M_M_c=k_0_M/k_inf
+#      N=0.75-1.27*np.log10(F_c)
+#      F=np.power(F_c, 1.0/(1.0+pow((np.log10(M_M_c)/N),2.0)))
+#      kkM=k_0_M*k_inf/(k_0_M+k_inf)*F
+
+#      return kkM
+
+# def t47_JY(tl,MM):
+#      """
+#      T in K
+#      MM in cm^-3
+#      """
+#      # rate laws from Dames & Golden+2013
+#      k_0_M = 9.995E-8*pow(tl, -0.55)*np.exp(-9063.94/tl) * MM
+#      k_inf = 1.13E10*pow(tl, 1.21)*np.exp(-12111.8944/tl)
+#      F_c = 0.659*np.exp(-tl/28)+0.341*np.exp(-tl/1000)+np.exp(-2339/tl)
+#      #ind=1.0/(1.0+pow((np.log10(LH*MM/RH)-0.4-0.67*np.log10(FC))/(0.75-1.27*np.log10(FC)-0.14*(np.log10(LH*MM/RH)-0.4-0.67*np.log10(FC))),2.0))
+#      M_M_c=k_0_M/k_inf
+#      N=0.75-1.27*np.log10(F_c)
+#      F=pow(F_c, 1.0/(1.0+pow((np.log10(M_M_c)/N),2.0)))
+#      kkM=k_0_M*k_inf/(k_0_M+k_inf)*F
+     
+#      return kkM
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
+# markersizeval=5.
+
+# ax[0].set_title('T=150 K')
+# ax[0].plot(P_list, np.log10(t47_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(t47_stand2019(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+# ax[0].plot(P_list, np.log10(t47_new(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='pink')
+# ax[0].plot(P_list, np.log10(t47_JY(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='green')
+# ax[1].set_title('T=300 K')
+# ax[1].plot(P_list, np.log10(t47_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(t47_stand2019(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+# ax[1].plot(P_list, np.log10(t47_new(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='pink')
+# ax[1].plot(P_list, np.log10(t47_JY(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='green')
+# ax[2].set_title('T=600 K')
+# ax[2].plot(P_list, np.log10(t47_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t47, Hu2012')
+# ax[2].plot(P_list, np.log10(t47_stand2019(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t47, Stand+2019')
+# ax[2].plot(P_list, np.log10(t47_new(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='pink', label='t47, new')
+# ax[2].plot(P_list, np.log10(t47_JY(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='green', label='t47, JY')
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+
+# plt.show()
+
+# #t48
+# def t48_old(tl,MM):
+#       """
+#      T in K
+#      MM in cm^-3
+#      """
+#       kkM = 7.67e-6*(tl/298.0)**-1.89*np.exp(-17800.0/tl)*MM
+#       return kkM
+
+
+# def t48_Larson1988(tl,MM):
+#      """
+#      T in K
+#      MM in cm^-3
+#      """
+#      # rate laws from Larson+1988
+#      k_0_M = 7.67e-6*(tl/298.0)**-1.89*np.exp(-17750.0/tl)*MM
+#      k_inf = 1.21e14*(tl/298.0)**0.53*np.exp(-17100.0/tl)
+#      kkM = k_0_M / (1.0 + k_0_M / k_inf)
+
+#      return kkM
+
+# def t48_Golden1998(tl,MM):
+#      """
+#      T in K
+#      MM in cm^-3
+#      """
+#      # rate laws from Golden+1998
+#      k_0_M = 10**25.137/NAVOGADRO*tl**-2.4*np.exp(-18862.0/tl)*MM
+#      k_inf = 10**14.074*tl**0.132*np.exp(-18349.0/tl)
+#      M_M_c=k_0_M/k_inf
+#      F_c = 0.729*np.exp(-513/tl)+np.exp(-tl/540)
+#      N=0.75-1.27*np.log10(F_c)
+#      F=pow(F_c, 1.0/(1.0+pow((np.log10(M_M_c)/N),2.0)))
+#      kkM=k_0_M*k_inf/(k_0_M+k_inf)*F
+
+#      return kkM
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
+# markersizeval=5.
+
+# ax[0].set_title('T=150 K')
+# ax[0].plot(P_list, np.log10(t48_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(t48_Larson1988(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+# ax[0].plot(P_list, np.log10(t48_Golden1998(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='pink')
+# ax[1].set_title('T=300 K')
+# ax[1].plot(P_list, np.log10(t48_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(t48_Larson1988(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+# ax[1].plot(P_list, np.log10(t48_Golden1998(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='pink')
+# ax[2].set_title('T=600 K')
+# ax[2].plot(P_list, np.log10(t48_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t48, Hu2012')
+# ax[2].plot(P_list, np.log10(t48_Larson1988(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t48, Larson+1988')
+# ax[2].plot(P_list, np.log10(t48_Golden1998(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='pink', label='t48, Golden+1998')
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+
+# # t49
+# def t49_old(tl,MM):
+#       """
+#      T in K
+#      MM in cm^-3
+#      """
+#       kkM = 1.25e-5*(tl/298.0)**-3.02*np.exp(-17560.0/tl)*MM
+#       return kkM
+
+
+# def t49_Larson1988(tl,MM):
+#      """
+#      T in K
+#      MM in cm^-3
+#      """
+#      # rate laws from Larson+1988
+#      k_0_M = 1.25e-5*(tl/298.0)**-3.02*np.exp(-17560.0/tl)*MM
+#      k_inf = 1.e13*(tl/298.0)**0.31*np.exp(-16570.0/tl)
+#      kkM = k_0_M / (1.0 + k_0_M / k_inf)
+
+#      return kkM
+
+# def t49_Golden1998(tl,MM):
+#      """
+#      T in K
+#      MM in cm^-3
+#      """
+#      # rate laws from Golden+1998
+#      k_0_M = 10**26.775/NAVOGADRO*tl**-3.15*np.exp(-18629.0/tl)*MM
+#      k_inf = 10**11.915*tl**0.413*np.exp(-17783.0/tl)
+#      M_M_c=k_0_M/k_inf
+#      F_c = 1.049*np.exp(-2407/tl)+np.exp(-tl/823)
+#      N=0.75-1.27*np.log10(F_c)
+#      F=pow(F_c, 1.0/(1.0+pow((np.log10(M_M_c)/N),2.0)))
+#      kkM=k_0_M*k_inf/(k_0_M+k_inf)*F
+
+#      return kkM
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
+# markersizeval=5.
+
+# ax[0].set_title('T=150 K')
+# ax[0].plot(P_list, np.log10(t49_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(t49_Larson1988(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+# ax[0].plot(P_list, np.log10(t49_Golden1998(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='pink')
+# ax[1].set_title('T=300 K')
+# ax[1].plot(P_list, np.log10(t49_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(t49_Larson1988(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+# ax[1].plot(P_list, np.log10(t49_Golden1998(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='pink')
+# ax[2].set_title('T=600 K')
+# ax[2].plot(P_list, np.log10(t49_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t49, Hu2012')
+# ax[2].plot(P_list, np.log10(t49_Larson1988(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t49, Larson+1988')
+# ax[2].plot(P_list, np.log10(t49_Golden1998(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='pink', label='t49, Golden+1998')
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+
+# plt.show()
+
+# t50
+def t50_old(tl,MM):
+#      """
+#      T in K
+#      MM in cm^-3
+#      """
+    kkM = 1.32e-6*np.exp(-17199.0/tl)*MM
+    return kkM  
+
+def t50_new(tl,MM):
+#      """
+#      T in K
+#      MM in cm^-3
+#      """
+    # high pressure limit from  Fernandez-Ramos+1998, low pressure limit from Hsu+1984
+    k_0_M = 1.32e-6*np.exp(-17199.0/tl)*MM
+    k_inf = 1.06e15*np.exp(-18041.0/tl)
+    kkM = k_0_M / (1.0 + k_0_M / k_inf)
+    return kkM
+
+fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
+markersizeval=5.
+
+ax[0].set_title('T=150 K')
+ax[0].plot(P_list, np.log10(t50_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+ax[0].plot(P_list, np.log10(t50_new(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+ax[1].set_title('T=300 K')
+ax[1].plot(P_list, np.log10(t50_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+ax[1].plot(P_list, np.log10(t50_new(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+ax[2].set_title('T=600 K')
+ax[2].plot(P_list, np.log10(t50_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t50, Hu2012')
+ax[2].plot(P_list, np.log10(t50_new(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t50, new')
+
+ax[0].set_ylabel('log10(k)')
+ax[1].set_ylabel('log10(k)')
+ax[2].set_ylabel('log10(k)')
+ax[2].set_xscale('log')
+ax[2].set_xlabel('Pressure (bar)')
+ax[2].set_yscale('linear')
+ax[2].legend()
+
+plt.show()
+
+# t51
+def t51_old(tl,MM):
+#      """
+#      T in K
+#      MM in cm^-3
+#      """
+    kkM = 3.98e13*np.exp(-19364.0/tl)*np.ones_like(MM)
+    return kkM  
+
+def t51_new(tl,MM):
+#      """
+#      T in K
+#      MM in cm^-3
+#      """
+    # high pressure limit from Batt+1977, low pressure limit from Ohmori+1993
+    k_0_M = 1.18e-11*MM
+    k_inf = 3.98e13*np.exp(-19364.0/tl)
+    kkM = k_0_M / (1.0 + k_0_M / k_inf)
+    return kkM
+
+fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
+markersizeval=5.
+
+ax[0].set_title('T=150 K')
+ax[0].plot(P_list, np.log10(t51_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+ax[0].plot(P_list, np.log10(t51_new(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+ax[1].set_title('T=300 K')
+ax[1].plot(P_list, np.log10(t51_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+ax[1].plot(P_list, np.log10(t51_new(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+ax[2].set_title('T=600 K')
+ax[2].plot(P_list, np.log10(t51_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t51, Hu2012')
+ax[2].plot(P_list, np.log10(t51_new(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t51, new')
+
+ax[0].set_ylabel('log10(k)')
+ax[1].set_ylabel('log10(k)')
+ax[2].set_ylabel('log10(k)')
+ax[2].set_xscale('log')
+ax[2].set_xlabel('Pressure (bar)')
+ax[2].set_yscale('linear')
+ax[2].legend()
+
+plt.show()
 
 # t52
 # use lower limit from Stand+2019 and upper limit from Zaslonko+1993 to compute the reverse rate (CH3O + NO2 --> CH3NO3), 
@@ -4984,65 +6027,942 @@ def ReverseRate(mu, n_prod, n_react, a1, a2, a3, a4, a5, a6, a7, T, k_f):
 # plt.show()
 
 #t57
-def t57_old(tl, MM):
-         """
-         T in K
-         MM in cm^-3
-         """
+# def t57_old(tl, MM):
+#          """
+#          T in K
+#          MM in cm^-3
+#          """
          
-         kkM = 1.93e-4*(tl/298.0)**-2.44*np.exp(-62782.1/tl) * MM
-         return kkM
+#          kkM = 1.93e-4*(tl/298.0)**-2.44*np.exp(-62782.1/tl) * MM
+#          return kkM
 
-def t57_NIST(tl, MM):
-         """
-         T in K
-         MM in cm^-3
-         """
+# def t57_NIST(tl, MM):
+#          """
+#          T in K
+#          MM in cm^-3
+#          """
          
-         # reference from NIST (Tsang+1991)
-         k_0_M = 1.93e-4*(tl/298.0)**-2.44*np.exp(-62782.1/tl) * MM
-         k_inf = 4.15E15*(tl/298)**-0.93*np.exp(-62294/tl)
-         Fc = 0.875 - 0.5e-4*tl
-         kkM = k_0_M / ((1.0 + k_0_M / k_inf)*Fc)
+#          # reference from NIST (Tsang+1991)
+#          k_0_M = 1.93e-4*(tl/298.0)**-2.44*np.exp(-62782.1/tl) * MM
+#          k_inf = 4.15E15*(tl/298)**-0.93*np.exp(-62294/tl)
+#          Fc = 0.875 - 0.5e-4*tl
+#          kkM = k_0_M / ((1.0 + k_0_M / k_inf)*Fc)
          
-         return kkM
+#          return kkM
 
-def t57_STAND2019(tl, MM):
-         """
-         T in K
-         MM in cm^-3
-         """
+# def t57_STAND2019(tl, MM):
+#          """
+#          T in K
+#          MM in cm^-3
+#          """
 
-         k_0_M = 6.14e-06*(tl/300)**-1.58*np.exp(-6.15e+04/tl)
-         k_inf = 2.55e+12*np.ones_like(MM)
-         kkM = k_0_M / (1.0 + k_0_M / k_inf)
+#          k_0_M = 6.14e-06*(tl/300)**-1.58*np.exp(-6.15e+04/tl)
+#          k_inf = 2.55e+12*np.ones_like(MM)
+#          kkM = k_0_M / (1.0 + k_0_M / k_inf)
          
-         return kkM
+#          return kkM
 
-fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
-markersizeval=5.
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
+# markersizeval=5.
 
-ax[0].set_title('T=150 K')
-ax[0].plot(P_list, np.log10(t57_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
-ax[0].plot(P_list, np.log10(t57_NIST(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
-ax[0].plot(P_list, np.log10(t57_STAND2019(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='blue')
+# ax[0].set_title('T=150 K')
+# ax[0].plot(P_list, np.log10(t57_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(t57_NIST(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+# ax[0].plot(P_list, np.log10(t57_STAND2019(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='blue')
 
-ax[1].set_title('T=300 K')
-ax[1].plot(P_list, np.log10(t57_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
-ax[1].plot(P_list, np.log10(t57_NIST(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
-ax[1].plot(P_list, np.log10(t57_STAND2019(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='blue')
+# ax[1].set_title('T=300 K')
+# ax[1].plot(P_list, np.log10(t57_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(t57_NIST(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+# ax[1].plot(P_list, np.log10(t57_STAND2019(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='blue')
 
-ax[2].set_title('T=600 K')
-ax[2].plot(P_list, np.log10(t57_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t57, Hu2012')
-ax[2].plot(P_list, np.log10(t57_NIST(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t57, NIST')
-ax[2].plot(P_list, np.log10(t57_STAND2019(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='blue', label='t57, STAND2019')
+# ax[2].set_title('T=600 K')
+# ax[2].plot(P_list, np.log10(t57_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t57, Hu2012')
+# ax[2].plot(P_list, np.log10(t57_NIST(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t57, NIST')
+# ax[2].plot(P_list, np.log10(t57_STAND2019(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='blue', label='t57, STAND2019')
 
 
-ax[0].set_ylabel('log10(k)')
-ax[1].set_ylabel('log10(k)')
-ax[2].set_ylabel('log10(k)')
-ax[2].set_xscale('log')
-ax[2].set_xlabel('Pressure (bar)')
-ax[2].set_yscale('linear')
-ax[2].legend()
-plt.show()
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+# plt.show()
+
+# # t58
+# def t58_old(tl, MM):
+#          """
+#          T in K
+#          MM in cm^-3
+#          """
+         
+#          kkM = 3.6e-10*np.exp(-32954.6/tl) * MM
+#          return kkM
+
+# def t58_Zahnle2016_reverse(tl, MM):
+#          """
+#          T in K
+#          MM in cm^-3
+#          """
+
+#          # the reaction we are reversing is: H2+S+M-->H2S+M
+#          # reverse reaction using both limits from Zahnle+2016
+
+#          n_prod = 1
+#          n_react = 2
+#          mu = [-1, -1, 1]
+         
+#          # Thermo coefficients for [H2, S, H2S] from https://respecth.elte.hu/burcat.php
+          
+#          a1 = [3.50207268, 2.31725616, 4.12024455]
+#          a2 = [0.0000865475654, 0.00478018342, -0.00187907426]
+#          a3 = [-0.000000263683344, -0.0000142082674, 0.0000082142665]
+#          a4 = [0.000000000337306621, 0.0000000156569538, -0.0000000070642573]
+#          a5 = [-0.0000000000000292359706, -0.00000000000596588299, 0.0000000000021423486]
+#          a6 = [-1046.31279, 32506.8976, -3682.15173]
+#          a7 = [-4.25875759, 6.06242434, 1.53174068]
+
+#          # forward reaction rate
+#          k_f_0_M = 1.4e-31 * (tl/298)**-1.9 * np.exp(-8140 / tl) * MM
+#          k_f_inf = 1.0e-11
+#          k_f = k_f_0_M / (1.0 + k_f_0_M / k_f_inf)
+
+#          kkM = ReverseRate(mu, n_prod, n_react, a1, a2, a3, a4, a5, a6, a7, tl, k_f)
+
+#          return kkM
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
+# markersizeval=5.
+
+# ax[0].set_title('T=150 K')
+# ax[0].plot(P_list, np.log10(t58_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(t58_Zahnle2016_reverse(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+
+# ax[1].set_title('T=300 K')
+# ax[1].plot(P_list, np.log10(t58_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(t58_Zahnle2016_reverse(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+
+# ax[2].set_title('T=600 K')
+# ax[2].plot(P_list, np.log10(t58_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t58, Hu2012')
+# ax[2].plot(P_list, np.log10(t58_Zahnle2016_reverse(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t58, Zahnle2016, reverse')
+
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+# plt.show()
+
+# # t59
+# def t59_old(tl, MM):
+#          """
+#          T in K
+#          MM in cm^-3
+#          """
+         
+#          kkM = 2.92e-8*np.exp(-33315.4/tl) * MM
+#          return kkM
+
+# def t59_Zahnle2016_reverse(tl, MM):
+#          """
+#          T in K
+#          MM in cm^-3
+#          """
+
+#          # the reaction we are reversing is: HS+H+M-->H2S+M
+#          # reverse reaction using both limits from Zahnle+2016
+
+#          n_prod = 1
+#          n_react = 2
+#          mu = [-1, -1, 1]
+         
+#          # Thermo coefficients for [HS, H, H2S] from https://respecth.elte.hu/burcat.php
+          
+#          a1 = [3.68466877,  2.5, 4.12024455]
+#          a2 = [0.00324608824, 0, -0.00187907426]
+#          a3 = [-0.0000128635079, 0, 0.0000082142665]
+#          a4 = [0.0000000169512196, 0, -0.0000000070642573]
+#          a5 = [-0.00000000000707595387, 0, 0.0000000000021423486]
+#          a6 = [15903.6477, 25473.66, -3682.15173]
+#          a7 = [2.01781634, -0.44668285, 1.53174068]
+
+#          # forward reaction rate
+#          k_f_0_M = 1.4e-31 * (tl/298)**-2.5 * np.exp(500 / tl) * MM
+#          k_f_inf = 1.0e-10
+#          k_f = k_f_0_M / (1.0 + k_f_0_M / k_f_inf)
+
+#          kkM = ReverseRate(mu, n_prod, n_react, a1, a2, a3, a4, a5, a6, a7, tl, k_f)
+
+#          return kkM
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
+# markersizeval=5.
+
+# ax[0].set_title('T=150 K')
+# ax[0].plot(P_list, np.log10(t59_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(t59_Zahnle2016_reverse(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+
+# ax[1].set_title('T=300 K')
+# ax[1].plot(P_list, np.log10(t59_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(t59_Zahnle2016_reverse(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+
+# ax[2].set_title('T=600 K')
+# ax[2].plot(P_list, np.log10(t59_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t59, Hu2012')
+# ax[2].plot(P_list, np.log10(t59_Zahnle2016_reverse(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t59, Zahnle2016, reverse')
+
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+
+
+
+# plt.show()
+
+
+
+# def T91_old(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     """
+#     kkM=6.61E-9*np.exp(-20567.0/tl)*MM
+#     return kkM
+
+# def T91_new(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     This is from Meyer+1969
+#     """
+#     k_0_M=6.61E-9*np.exp(-20634.0/tl)*MM
+#     k_inf=7.94E13*np.exp(-27680.0/tl)
+#     kkM=k_0_M/(1.0+k_0_M/k_inf)
+#     return kkM
+
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
+# markersizeval=5.
+
+# # pdb.set_trace()
+# ax[0].set_title('T=150 K')
+# ax[0].plot(P_list, np.log10(T91_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(T91_new(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='blue')
+# ax[1].set_title('T=300 K')
+# ax[1].plot(P_list, np.log10(T91_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(T91_new(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='blue')
+# ax[2].set_title('T=600 K')
+# ax[2].plot(P_list, np.log10(T91_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='T91, Hu2012')
+# ax[2].plot(P_list, np.log10(T91_new(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='blue', label='T91, new')
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+
+# def T92_old(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     """
+#     kkM=2.66E-11*np.exp(-24295.0/tl)*MM #Klatt+1995 via NIST
+#     return kkM
+
+# def T92_new(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     """
+#     k_0_M=2.66E-11*np.exp(-24295.0/tl)*MM #Klatt+1995 via NIST
+#     k_inf=6.43E8*pow(tl/300.0, -1.00)*np.exp(-24300/tl) #Rimmer+2016
+#     kkM=k_0_M/(1.0+k_0_M/k_inf)
+#     return kkM
+
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
+# markersizeval=5.
+
+# # pdb.set_trace()
+# ax[0].set_title('T=150 K')
+# ax[0].plot(P_list, np.log10(T92_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(T92_new(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='blue')
+# ax[1].set_title('T=300 K')
+# ax[1].plot(P_list, np.log10(T92_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(T92_new(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='blue')
+# ax[2].set_title('T=600 K')
+# ax[2].plot(P_list, np.log10(T92_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='T92, Hu2012')
+# ax[2].plot(P_list, np.log10(T92_new(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='blue', label='T92, new')
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+
+
+# def T93_old(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     """
+#     kkM=1.36E-7*np.exp(-30669.0/tl)*MM 
+#     return kkM
+
+
+# def T93_alt(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     This is Dorko+1979, which is also what Rimmer+2016 used. 
+#     """
+#     k_0_M=5.25E-11*np.exp(-17700.0/tl)*MM
+#     k_inf=6.92e+10*np.exp(-24200.0/tl)
+#     kkM=k_0_M/(1.0+k_0_M/k_inf)
+#     return kkM
+
+# def T93_new(tl,MM):
+#     """
+#     T in K
+#     MM in cm^-3
+#     This reverses M86. 
+#     """
+#     # the reaction we are reversing is: CH3+NH2+M-->CH5N+M, which is our M86. The forward rate is taken from M86, with underlying reference Jodkowski+1995.
+
+#     n_prod = 1
+#     n_react = 2
+#     mu = [-1, -1, 1]
+         
+#     # Thermo coefficients for [CH3, NH2, CH5N] from https://respecth.elte.hu/burcat.php (Text file)
+#     #The CAS IDs are: 2229-07-4,  13770-40-6, 74-89-5
+#     a1 = [0.36571797E+01,  4.19198016E+00, 4.93595327E+00]
+#     a2 = [0.21265979E-02, -2.04602827E-03, -1.06687240E-02]
+#     a3 = [0.54583883E-05, 6.67756134E-06, 6.66595644E-05]
+#     a4 = [-0.66181003E-08, -5.24907235E-09, -7.68165338E-08]
+#     a5 = [0.24657074E-11, 1.55589948E-12, 2.88891949E-11]
+#     a6 = [0.16422716E+05, 2.11864310E+04, -3.96311166E+03]
+#     a7 = [0.16735354E+01, -9.04785244E-02, 1.01955189E+00]
+
+#     # forward reaction rate, from M86
+#     k_f_0_M = 1.8E-27*pow(tl/298.0,-3.85)*MM
+#     k_f_inf = 1.30E-10*pow(tl/298.0,0.42)
+#     k_f = k_f_0_M / (1.0 + k_f_0_M / k_f_inf)
+
+#     kkM = ReverseRate(mu, n_prod, n_react, a1, a2, a3, a4, a5, a6, a7, tl, k_f)
+#     return kkM
+
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=True)
+# markersizeval=5.
+
+# # pdb.set_trace()
+# ax[0].set_title('T=150 K')
+# ax[0].plot(P_list, np.log10(T93_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(T93_new(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='blue')
+# ax[0].plot(P_list, np.log10(T93_alt(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+# ax[1].set_title('T=300 K')
+# ax[1].plot(P_list, np.log10(T93_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(T93_new(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='blue')
+# ax[1].plot(P_list, np.log10(T93_alt(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+# ax[2].set_title('T=600 K')
+# ax[2].plot(P_list, np.log10(T93_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='T93, Hu2012')
+# ax[2].plot(P_list, np.log10(T93_new(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='blue', label='T93, new')
+# ax[2].plot(P_list, np.log10(T93_alt(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='T93, alt')
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+
+# # t34
+
+# def t34_old(tl, MM):
+#     #      """
+#     #      T in K
+#     #      MM in cm^-3
+#     #      """
+
+#     kkM = 3e14*np.exp(-351000/(8.314*tl))*np.ones_like(MM)
+
+#     return kkM
+
+# def t34_stand2015(tl, MM):
+#     #      """
+#     #      T in K
+#     #      MM in cm^-3
+#     #      """
+
+#     # both limits from Somnitz+2004
+#     k_inf = 3e14*np.exp(-351000/(8.314*tl))
+#     k_0_M = 1.24e-5*(tl/300)**(-1)*np.exp(-42200/tl)*MM
+#     kkM = k_0_M / (1.0 + k_0_M / k_inf)
+
+#     return kkM
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=False)
+# markersizeval=5.
+
+# ax[0].set_title('T=150 K')
+# #ax[0].set_ylim(-35, -10)
+# ax[0].plot(P_list, np.log10(t34_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(t34_stand2015(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+
+# ax[1].set_title('T=300 K')
+# #ax[1].set_ylim(-20, 10)
+# ax[1].plot(P_list, np.log10(t34_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(t34_stand2015(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+
+# ax[2].set_title('T=600 K')
+# #ax[2].set_ylim(-20, 15)
+# ax[2].plot(P_list, np.log10(t34_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t34, Hu2012')
+# ax[2].plot(P_list, np.log10(t34_stand2015(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t34, new')
+
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+# plt.savefig('./Plots/T34.png')
+
+# # t35
+
+# def t35_old(tl, MM):
+#     #      """
+#     #      T in K
+#     #      MM in cm^-3
+#     #      """
+
+#     kkM = 1e15*np.exp(-42800/(tl))*np.ones_like(MM)
+
+#     return kkM
+
+# def t35_stand2015(tl, MM):
+#     #      """
+#     #      T in K
+#     #      MM in cm^-3
+#     #      """
+
+#     # both limits from Somnitz+2004
+#     k_inf = 1e15*np.exp(-42800/(tl))
+#     k_0_M = 4.14e-5*(tl/300)**(-1)*np.exp(-42800/tl)*MM
+#     kkM = k_0_M / (1.0 + k_0_M / k_inf)
+
+#     return kkM
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=False)
+# markersizeval=5.
+
+# ax[0].set_title('T=150 K')
+# #ax[0].set_ylim(-35, -10)
+# ax[0].plot(P_list, np.log10(t35_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(t35_stand2015(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+
+# ax[1].set_title('T=300 K')
+# #ax[1].set_ylim(-20, 10)
+# ax[1].plot(P_list, np.log10(t35_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(t35_stand2015(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+
+# ax[2].set_title('T=600 K')
+# #ax[2].set_ylim(-20, 15)
+# ax[2].plot(P_list, np.log10(t35_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t35, Hu2012')
+# ax[2].plot(P_list, np.log10(t35_stand2015(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t35, new')
+
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+# plt.savefig('./Plots/T35.png')
+
+# # t36
+
+# def t36_old(tl, MM):
+#     #      """
+#     #      T in K
+#     #      MM in cm^-3
+#     #      """
+
+#     kkM = 1.33e15*(tl/298.0)**-2.02*np.exp(-12749.0/tl)*np.ones_like(MM)
+
+#     return kkM
+
+# def t36_stand2015(tl, MM):
+#     #      """
+#     #      T in K
+#     #      MM in cm^-3
+#     #      """
+
+#     # both limits from Somnitz+2004
+#     k_inf = 1.33e15*(tl/298.0)**-2.02*np.exp(-12749.0/tl)
+#     k_0_M = 5.52e-5*(tl/300)**(-1.02)*np.exp(-10400/tl)*MM
+#     kkM = k_0_M / (1.0 + k_0_M / k_inf)
+
+#     return kkM
+
+# def t36_dames2014(tl, MM):
+#     #      """
+#     #      T in K
+#     #      MM in cm^-3
+#     #      """
+
+#     # both limits from Somnitz+2004
+#     k_inf = 1.33e15*(tl/298.0)**-2.02*np.exp(-12749.0/tl)
+#     k_0_M = 2.53e-6*(tl/298)**(-3)*np.exp(-8052/tl)*MM
+#     kkM = k_0_M / (1.0 + k_0_M / k_inf)
+
+#     return kkM
+
+# def t36_olm2016(tl, MM):
+#     #      """
+#     #      T in K
+#     #      MM in cm^-3
+#     #      """
+
+#     # both limits from Somnitz+2004
+#     k_inf = 1.33e15*(tl/298.0)**-2.02*np.exp(-12749.0/tl)
+#     k_0_M = 0.35*(tl/298)**(-10.23)*np.exp(-13600/tl)*MM
+#     kkM = k_0_M / (1.0 + k_0_M / k_inf)
+
+#     return kkM    
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=False)
+# markersizeval=5.
+
+# ax[0].set_title('T=150 K')
+# #ax[0].set_ylim(-35, -10)
+# ax[0].plot(P_list, np.log10(t36_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(t36_stand2015(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+# ax[0].plot(P_list, np.log10(t36_dames2014(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='blue')
+# ax[0].plot(P_list, np.log10(t36_olm2016(150.0, MM(P_list,150.0))), linewidth=2, linestyle='--', color='green', label='t36, Olm2016')
+# ax[1].set_title('T=300 K')
+# #ax[1].set_ylim(-20, 10)
+# ax[1].plot(P_list, np.log10(t36_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(t36_stand2015(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+# ax[1].plot(P_list, np.log10(t36_dames2014(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='blue')
+# ax[1].plot(P_list, np.log10(t36_olm2016(300.0, MM(P_list,300.0))), linewidth=2, linestyle='--', color='green', label='t36, Olm2016')
+# ax[2].set_title('T=600 K')
+# #ax[2].set_ylim(-20, 15)
+# ax[2].plot(P_list, np.log10(t36_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t36, Hu2012')
+# ax[2].plot(P_list, np.log10(t36_stand2015(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t36, new')
+# ax[2].plot(P_list, np.log10(t36_dames2014(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='blue', label='t36, Dames2014')
+# ax[2].plot(P_list, np.log10(t36_olm2016(600.0, MM(P_list,600.0))), linewidth=2, linestyle='--', color='green', label='t36, Olm2016')
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+# plt.savefig('./Plots/T36.png')
+
+# k = 1.38e-16
+
+# # t37
+# def t37_old(tl, MM):
+#     #      """
+#     #      T in K
+#     #      MM in cm^-3
+#     #      """
+
+#     kkM = 6.19e11*np.exp(-11900.0/tl)*(np.ones(len(MM)))
+
+#     return kkM
+
+# def t37_Xu2009(tl, MM):
+#     #      """
+#     #      T in K
+#     #      MM in cm^-3
+#     #      """
+
+#     # both limits from Somnitz+2004
+#     k_inf = 9.94e16*(tl/298)**(-6.54)*np.exp(-13567/tl)
+#     k_0_M = 4.68e17*(tl/298)**(-10.29)*np.exp(-14108/tl)*k*MM*tl/(1e6)
+#     kkM = k_0_M / (1.0 + k_0_M / k_inf)*(np.ones(len(MM)))
+
+#     return kkM
+
+# def t37_Xu2009_high(tl, MM):
+#     #      """
+#     #      T in K
+#     #      MM in cm^-3
+#     #      """
+
+#     # both limits from Somnitz+2004
+#     k_inf = 9.94e16*(tl/298)**(-6.54)*np.exp(-13567/tl)
+#     k_0_M = 4.32E06*(tl/298)**(1.51)*np.exp(-7639/tl)*k*MM*tl/(1333)
+#     kkM = k_0_M / (1.0 + k_0_M / k_inf)*(np.ones(len(MM)))
+
+#     return kkM
+
+# def t37_dames2014(tl, MM):
+#     #      """
+#     #      T in K
+#     #      MM in cm^-3
+#     #      """
+
+#     # both limits from Somnitz+2004
+#     k_inf = 1.33e15*(tl/298.0)**-2.02*np.exp(-12749.0/tl)
+#     k_0_M = 2.53e-6*(tl/298)**(-3)*np.exp(-8052/tl)*MM
+#     kkM = k_0_M / (1.0 + k_0_M / k_inf)
+
+#     return kkM
+
+# def t36_olm2016(tl, MM):
+#     #      """
+#     #      T in K
+#     #      MM in cm^-3
+#     #      """
+
+#     # both limits from Somnitz+2004
+#     k_inf = 1.33e15*(tl/298.0)**-2.02*np.exp(-12749.0/tl)
+#     k_0_M = 0.35*(tl/298)**(-10.23)*np.exp(-13600/tl)*MM
+#     kkM = k_0_M / (1.0 + k_0_M / k_inf)
+
+#     return kkM    
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=False)
+# markersizeval=5.
+
+# ax[0].set_title('T=150 K')
+# #ax[0].set_ylim(-35, -10)
+# ax[0].plot(P_list, np.log10(t37_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(t37_Xu2009(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+# ax[0].plot(P_list, np.log10(t37_Xu2009_high(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='blue')
+# #ax[0].plot(P_list, np.log10(t37_olm2016(150.0, MM(P_list,150.0))), linewidth=2, linestyle='--', color='green', label='t37, Olm2016')
+# ax[1].set_title('T=300 K')
+# #ax[1].set_ylim(-20, 10)
+# ax[1].plot(P_list, np.log10(t37_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(t37_Xu2009(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+# ax[1].plot(P_list, np.log10(t37_Xu2009_high(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='blue')
+# #ax[1].plot(P_list, np.log10(t37_olm2016(300.0, MM(P_list,300.0))), linewidth=2, linestyle='--', color='green', label='t37, Olm2016')
+# ax[2].set_title('T=600 K')
+# #ax[2].set_ylim(-20, 15)
+# ax[2].plot(P_list, np.log10(t37_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t37, Hu2012')
+# ax[2].plot(P_list, np.log10(t37_Xu2009(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t37, new')
+# ax[2].plot(P_list, np.log10(t37_Xu2009_high(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='blue', label='t37, Xu2009 high P')
+# #ax[2].plot(P_list, np.log10(t36_olm2016(600.0, MM(P_list,600.0))), linewidth=2, linestyle='--', color='green', label='t36, Olm2016')
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+# plt.savefig('./Plots/T37.png')
+
+# k = 1.38e-16
+
+# # t38
+# def t38_old(tl, MM):
+#     #      """
+#     #      T in K
+#     #      MM in cm^-3
+#     #      """
+
+#     kkM = 1.07e14*(tl/298.0)**-0.69*np.exp(-11187.0/tl)*(np.ones(len(MM)))
+
+#     return kkM
+
+# def t38_Xu2009(tl, MM):
+#     #      """
+#     #      T in K
+#     #      MM in cm^-3
+#     #      """
+
+#     # both limits from Somnitz+2004
+#     k_inf = 1.25E14*(tl/298)**(-2.15)*np.exp(-92030/(8.314*tl))
+#     k_0_M = 6.62E16*(tl/298)**(-8.61)*np.exp(-10700/tl)*k*MM*tl/(1e6)
+#     kkM = k_0_M / (1.0 + k_0_M / k_inf)
+
+#     return kkM
+
+# def t38_Xu2009_high(tl, MM):
+#     #      """
+#     #      T in K
+#     #      MM in cm^-3
+#     #      """
+
+#     # both limits from Somnitz+2004
+#     k_inf = 1.25E14*(tl/298)**(-2.15)*np.exp(-92030/(8.314*tl))
+#     k_0_M = 1.28E13*(tl/298)**(-7.58)*np.exp(-10754/tl)*k*MM*tl/(1333)
+#     kkM = k_0_M / (1.0 + k_0_M / k_inf)
+
+#     return kkM
+
+
+# # A * T^b * exp(C/T) * k * MM * T / P 
+# # def t37_dames2014(tl, MM):
+# #     #      """
+# #     #      T in K
+# #     #      MM in cm^-3
+# #     #      """
+
+# #     # both limits from Somnitz+2004
+# #     k_inf = 1.33e15*(tl/298.0)**-2.02*np.exp(-12749.0/tl)
+# #     k_0_M = 2.53e-6*(tl/298)**(-3)*np.exp(-8052/tl)*MM
+# #     kkM = k_0_M / (1.0 + k_0_M / k_inf)
+
+# #     return kkM
+
+# # def t36_olm2016(tl, MM):
+# #     #      """
+# #     #      T in K
+# #     #      MM in cm^-3
+# #     #      """
+
+# #     # both limits from Somnitz+2004
+# #     k_inf = 1.33e15*(tl/298.0)**-2.02*np.exp(-12749.0/tl)
+# #     k_0_M = 0.35*(tl/298)**(-10.23)*np.exp(-13600/tl)*MM
+# #     kkM = k_0_M / (1.0 + k_0_M / k_inf)
+
+# #     return kkM    
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=False)
+# markersizeval=5.
+
+# ax[0].set_title('T=150 K')
+# #ax[0].set_ylim(-35, -10)
+# ax[0].plot(P_list, np.log10(t38_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(t38_Xu2009(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+# ax[0].plot(P_list, np.log10(t38_Xu2009_high(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='blue')
+# #ax[0].plot(P_list, np.log10(t37_olm2016(150.0, MM(P_list,150.0))), linewidth=2, linestyle='--', color='green', label='t37, Olm2016')
+# ax[1].set_title('T=300 K')
+# #ax[1].set_ylim(-20, 10)
+# ax[1].plot(P_list, np.log10(t38_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(t38_Xu2009(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+# ax[1].plot(P_list, np.log10(t38_Xu2009_high(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='blue')
+# #ax[1].plot(P_list, np.log10(t37_olm2016(300.0, MM(P_list,300.0))), linewidth=2, linestyle='--', color='green', label='t37, Olm2016')
+# ax[2].set_title('T=600 K')
+# #ax[2].set_ylim(-20, 15)
+# ax[2].plot(P_list, np.log10(t38_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t37, Hu2012')
+# ax[2].plot(P_list, np.log10(t38_Xu2009(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t37, new')
+# ax[2].plot(P_list, np.log10(t38_Xu2009_high(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='blue', label='t37, Xu2009 low P')
+# #ax[2].plot(P_list, np.log10(t36_olm2016(600.0, MM(P_list,600.0))), linewidth=2, linestyle='--', color='green', label='t36, Olm2016')
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+# plt.savefig('./Plots/T38.png')
+
+
+# # t21
+# def t21_old(tl, MM):
+#     #      """
+#     #      T in K
+#     #      MM in cm^-3
+#     #      """
+
+#     kkM = 2.03e10*(tl/298.0)**1.22*np.exp(-43539.0/tl)*(np.ones(len(MM)))
+
+#     return kkM
+
+# def t21_Stand2015(tl, MM):
+#     #      """
+#     #      T in K
+#     #      MM in cm^-3
+#     #      """
+
+#     # both limits from Somnitz+2004
+#     k_inf = 2.03e10*(tl/298.0)**1.22*np.exp(-43539.0/tl)
+#     k_0_M = 8.78e-7*(tl/300)**(-2.22)*np.exp(-43539.0/tl)*MM
+#     kkM = k_0_M / (1.0 + k_0_M / k_inf)
+
+#     return kkM
+
+
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=False)
+# markersizeval=5.
+
+# ax[0].set_title('T=150 K')
+# #ax[0].set_ylim(-35, -10)
+# ax[0].plot(P_list, np.log10(t21_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(t21_Stand2015(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+# #ax[0].plot(P_list, np.log10(t38_Xu2009_high(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='blue')
+# #ax[0].plot(P_list, np.log10(t37_olm2016(150.0, MM(P_list,150.0))), linewidth=2, linestyle='--', color='green', label='t37, Olm2016')
+# ax[1].set_title('T=300 K')
+# #ax[1].set_ylim(-20, 10)
+# ax[1].plot(P_list, np.log10(t21_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(t21_Stand2015(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+# #ax[1].plot(P_list, np.log10(t38_Xu2009_high(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='blue')
+# #ax[1].plot(P_list, np.log10(t37_olm2016(300.0, MM(P_list,300.0))), linewidth=2, linestyle='--', color='green', label='t37, Olm2016')
+# ax[2].set_title('T=600 K')
+# #ax[2].set_ylim(-20, 15)
+# ax[2].plot(P_list, np.log10(t21_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t37, Hu2012')
+# ax[2].plot(P_list, np.log10(t21_Stand2015(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='t37, new')
+# #ax[2].plot(P_list, np.log10(t38_Xu2009_high(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='blue', label='t37, Xu2009 low P')
+# #ax[2].plot(P_list, np.log10(t36_olm2016(600.0, MM(P_list,600.0))), linewidth=2, linestyle='--', color='green', label='t36, Olm2016')
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+# plt.savefig('./Plots/T21.png')
+
+
+# def t29_old(tl, MM):
+#     #      """
+#     #      T in K
+#     #      MM in cm^-3
+#     #      """
+
+#     kkM = 1.08e-8 * np.exp(-29828.0/tl) *MM
+
+#     return kkM
+
+# def t29_rmg(tl, MM):
+#     alpha = 0.5757
+#     T3 = 237.0
+#     T1 = 1652.0
+#     T2 = 5069.0
+
+#     k_inf = 5.61818e19 * tl**(-1.28) * np.exp(-309677.92 / (R * tl))
+
+#     k_0 = 3.02258e28 * tl**(-5.02) * np.exp(-317778.14 / (R * tl))*1e6/6.022e23
+
+#     Pr = (k_0 * MM) / k_inf
+
+#     Fcent = ((1 - alpha) * np.exp(-tl / T3) +
+#              alpha * np.exp(-tl / T1) +
+#              np.exp(-T2 / tl))
+
+#     c = -0.4 - 0.67 * np.log10(Fcent)
+#     n = 0.75 - 1.27 * np.log10(Fcent)
+#     d = 0.14
+
+#     logPr_c = np.log10(Pr) + c
+#     denominator = n - d * logPr_c
+
+#     F = 10 ** ( np.log10(Fcent) /
+#                 (1 + (logPr_c / denominator)**2 ) )
+
+#     k = k_inf * (Pr / (1 + Pr)) * F
+#     return k
+
+
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=False)
+# markersizeval=5.
+
+# ax[0].set_title('T=150 K')
+# #ax[0].set_ylim(-35, -10)
+# ax[0].plot(P_list, np.log10(t29_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(t29_rmg(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+# #ax[0].plot(P_list, np.log10(t38_Xu2009_high(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='blue')
+# #ax[0].plot(P_list, np.log10(t37_olm2016(150.0, MM(P_list,150.0))), linewidth=2, linestyle='--', color='green', label='t37, Olm2016')
+# ax[1].set_title('T=300 K')
+# #ax[1].set_ylim(-20, 10)
+# ax[1].plot(P_list, np.log10(t29_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(t29_rmg(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+# #ax[1].plot(P_list, np.log10(t38_Xu2009_high(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='blue')
+# #ax[1].plot(P_list, np.log10(t37_olm2016(300.0, MM(P_list,300.0))), linewidth=2, linestyle='--', color='green', label='t37, Olm2016')
+# ax[2].set_title('T=1500 K')
+# #ax[2].set_ylim(-20, 15)
+# ax[2].plot(P_list, np.log10(t29_old(1500.0, MM(P_list,1500.0))), linewidth=2, linestyle='-', color='red', label='t29, Hu2012')
+# ax[2].plot(P_list, np.log10(t29_rmg(1500.0, MM(P_list,1500.0))), linewidth=2, linestyle='-', color='purple', label='29, new')
+# #ax[2].plot(P_list, np.log10(t38_Xu2009_high(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='blue', label='t37, Xu2009 low P')
+# #ax[2].plot(P_list, np.log10(t36_olm2016(600.0, MM(P_list,600.0))), linewidth=2, linestyle='--', color='green', label='t36, Olm2016')
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+# plt.savefig('./Plots/T29.png')
+
+
+
+# #T 31
+
+# def t31_old(tl, MM):
+#     #      """
+#     #      T in K
+#     #      MM in cm^-3
+#     #      """
+
+#     kkM = 2.2e12 * np.exp(-15154.0/tl) *np.ones_like(MM)
+
+#     return kkM
+
+# def t31_STAND2015_rev(tl, MM):
+#     k_inf = 9e-13*(tl/300)**2
+#     k_0_M = 5e-30*(tl/300)**-1.5*MM
+#     kkM = k_0_M / (1.0 + k_0_M / k_inf)
+
+#     a1 = [0.808679682, 3.43126659, 2.41723661]
+#     a2 = [0.0233615762, 0.000631146866, 0.017671704]
+#     a3 = [-0.0000355172234, -0.00000192914359, -0.00000904883576]
+#     a4 = [0.0000000280152958, 0.00000000240618712, -0.00000000103230911]
+#     a5 = [-0.00000000000850075165, -0.000000000000866679361, 0.00000000000199106024]
+#     a6 = [26428.9808, -18508.5918, -8112.20974]
+#     a7 = [13.9396761, 1.07990541, 12.5095416]
+
+#     kkM = ReverseRate([-1,-1,1],1,2,a1,a2,a3,a4,a5,a6,a7,tl,kkM)
+#     return kkM
+
+
+
+# fig, ax=plt.subplots(3, figsize=(8.,10.), sharex=True, sharey=False)
+# markersizeval=5.
+
+# ax[0].set_title('T=150 K')
+# #ax[0].set_ylim(-35, -10)
+# ax[0].plot(P_list, np.log10(t31_old(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='red')
+# ax[0].plot(P_list, np.log10(t31_STAND2015_rev(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='purple')
+# #ax[0].plot(P_list, np.log10(t38_Xu2009_high(150.0, MM(P_list,150.0))), linewidth=2, linestyle='-', color='blue')
+# #ax[0].plot(P_list, np.log10(t37_olm2016(150.0, MM(P_list,150.0))), linewidth=2, linestyle='--', color='green', label='t37, Olm2016')
+# ax[1].set_title('T=300 K')
+# #ax[1].set_ylim(-20, 10)
+# ax[1].plot(P_list, np.log10(t31_old(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='red')
+# ax[1].plot(P_list, np.log10(t31_STAND2015_rev(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='purple')
+# #ax[1].plot(P_list, np.log10(t38_Xu2009_high(300.0, MM(P_list,300.0))), linewidth=2, linestyle='-', color='blue')
+# #ax[1].plot(P_list, np.log10(t37_olm2016(300.0, MM(P_list,300.0))), linewidth=2, linestyle='--', color='green', label='t37, Olm2016')
+# ax[2].set_title('T=600 K')
+# #ax[2].set_ylim(-20, 15)
+# ax[2].plot(P_list, np.log10(t31_old(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='red', label='t29, Hu2012')
+# ax[2].plot(P_list, np.log10(t31_STAND2015_rev(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='purple', label='29, new')
+# #ax[2].plot(P_list, np.log10(t38_Xu2009_high(600.0, MM(P_list,600.0))), linewidth=2, linestyle='-', color='blue', label='t37, Xu2009 low P')
+# #ax[2].plot(P_list, np.log10(t36_olm2016(600.0, MM(P_list,600.0))), linewidth=2, linestyle='--', color='green', label='t36, Olm2016')
+
+# ax[0].set_ylabel('log10(k)')
+# ax[1].set_ylabel('log10(k)')
+# ax[2].set_ylabel('log10(k)')
+# ax[2].set_xscale('log')
+# ax[2].set_xlabel('Pressure (bar)')
+# ax[2].set_yscale('linear')
+# ax[2].legend()
+# plt.savefig('./Plots/T31.png')
+
+

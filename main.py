@@ -232,10 +232,6 @@ def runMEAC(stepnum:int):
     writeMEACout(MCONC,NAME,str(stepnum))
     plotAtmosphericComposition(conc_file=MCONC,id=str(stepnum),ref_file=MCONV,out_dir=OUTPUT)
 
-def resetMEAC():
-    os.chdir(PATH)
-    subprocess.run(["cp","-rf","scp2000/",MEACPATH])
-
 def waterPressure(temp:float,psurf:float=101325):
     if temp < 273.16:               # Murphy & Koop (2005)
         res = np.exp(9.550426 - 5723.265/temp + 3.53068*np.log(temp) - 0.00728332*temp)
@@ -250,12 +246,6 @@ def waterPressure(temp:float,psurf:float=101325):
 waterPressure = np.vectorize(waterPressure)
 
 ##############################
-
-# plotAtmosphericEvolution("N2_CO2_1e-4",OUTPUT)
-# input()
-# input()
-
-# resetMEAC()
 
 # make output folder for run if it doesn't exist yet
 if not (NAME in os.listdir('outputs')):
@@ -283,16 +273,6 @@ else:
 species_warning = input("Ensure that CO2 and N2 mixing ratios have been properly set in the \"meac_species\" template file.\n\
 Would you like to continue? [y/n]\n")
 if species_warning != 'y':
-    exit()
-
-mw_warning = input("The CLIMA input template has recently been updated to use the Manabe-Weltham humidity profile.\n\
-Would you like to continue? [y/n]\n")
-if mw_warning != 'y':
-    exit()
-
-au_warning = input("The MEAC scenario template has been updated to set ORBIT = 1.15.\n\
-Would you like to continue? [y/n]\n")
-if au_warning != 'y':
     exit()
 
 writeParameters()

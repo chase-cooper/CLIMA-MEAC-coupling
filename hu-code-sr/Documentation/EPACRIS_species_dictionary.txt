@@ -1,4 +1,4 @@
-Thermal Decomposition and Oxidation of CH3OHO
+O
 multiplicity 3
 1 O u2 p2 c0
 
@@ -388,13 +388,14 @@ multiplicity 2
 3 H u0 p0 c0 {1,S}
 
 CH3NO2
-1 C u0 p0 c0 {2,S} {5,S} {6,S} {7,S}
-2 N u0 p0 c+1 {1,S} {3,D} {4,S}
-3 O u0 p2 c0 {2,D}
-4 O u0 p3 c-1 {2,S}
-5 H u0 p0 c0 {1,S}
-6 H u0 p0 c0 {1,S}
-7 H u0 p0 c0 {1,S}
+multiplicity 3
+1 O u0 p2 c0 {3,S} {4,S}
+2 O u0 p2 c0 {3,D}
+3 N u0 p1 c0 {1,S} {2,D}
+4 C u0 p0 c0 {1,S} {5,S} {6,S} {7,S}
+5 H u0 p0 c0 {4,S}
+6 H u0 p0 c0 {4,S}
+7 H u0 p0 c0 {4,S}
 
 CH3NO3
 1 O u0 p3 c-1 {2,S}

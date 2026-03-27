@@ -13,7 +13,7 @@ Note: The parameters in this file can be modified to model different planets aro
 #define RADIUS_PLANET         6371000.0   /* m */ /* Earth */
 
 /* Planet Orbital Properties */
-#define ORBIT               1.15          /* AU */ /* Earth */
+#define ORBIT               1.00          /* AU */ /* Earth */
 #define STAR_SPEC           "Data/solar00.txt"
 #define FaintSun			1.0				/* Faint early Sun factor */
 #define TIDELOCK			0				/* If the planet is tidelly locked */
@@ -124,7 +124,7 @@ Note: The parameters in this file can be modified to model different planets aro
 #define Tback 1E+4
 #define KET1 1.0E+6
 #define KEH1 1.0E+8
-#define EDDYIMPORT	"Data/EddyN2.dat"
+#define EDDYIMPORT	"{6}/Eddy.dat"
 #define MDIFF_H_1	4.87
 #define MDIFF_H_2	0.698
 #define MDIFF_H2_1	2.80
@@ -134,6 +134,7 @@ Note: The parameters in this file can be modified to model different planets aro
 /* Parameters of rainout rates */
 #define	RainF	1.0	/* Rainout factor, 0 for no rainout, 1 for earthlike normal rainout, <1 for reduced rainout */
 #define	CloudDen	1.0	/* Cloud density in the unit of g m-3 */
+#define AbioticRainout  1 /*If 1: Rainout of H2, CO, CH4, NH3, N2, C2H2, C2H4, C2H6, and O2 turned off under assumption of saturation on abiotic planets (Hu et al. 2012 following Kasting). If 0: all gases rain out as normal (c.f. Earth).*/
 
 /* Output Options */
 #define OUT_FILE1			"{6}/Conx.dat"

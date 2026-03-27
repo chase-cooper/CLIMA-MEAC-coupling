@@ -134,6 +134,7 @@ Note: The parameters in this file can be modified to model different planets aro
 /* Parameters of rainout rates */
 #define	RainF	1.0	/* Rainout factor, 0 for no rainout, 1 for earthlike normal rainout, <1 for reduced rainout */
 #define	CloudDen	1.0	/* Cloud density in the unit of g m-3 */
+#define AbioticRainout  1 /*If 1: Rainout of H2, CO, CH4, NH3, N2, C2H2, C2H4, C2H6, and O2 turned off under assumption of saturation on abiotic planets (Hu et al. 2012 following Kasting). If 0: all gases rain out as normal (c.f. Earth).*/
 
 /* Output Options */
 #define OUT_FILE1			"scenario_library/Sun/H2-Full/Conx.dat"

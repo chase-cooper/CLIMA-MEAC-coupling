@@ -124,6 +124,8 @@ def writeCLIMAinput(first:bool):
     # Do the writing
     template = template.replace('{1}',str(NMAXSTEPS))           # number of CLIMA steps
     template = template.replace('{2}',str(RELHUM))              # relative humidity
+    template = template.replace('{21}',str(TSURF))              # Surface temperature
+    template = template.replace('{22}',str(T0))                 # Temperature at model top
     template = template.replace('{3}',str(P0))                  # TOA pressure [bar]
     template = template.replace('{4}',str(PSURF))               # Surface pressure [bar]
     template = template.replace('{5}',str(G))                   # Surface gravity [cgs]
@@ -257,21 +259,6 @@ def writeCLIMAout(clima_last:str,out_dir:str='',id:str=''):
         f.write(f"{alts[j]:.4f}\t\t\t{temps[j]:.4f}\t\t\t{p}\n")
     f.close()
 
-# file = open(MCONC,'r')
-# n_base = file.read().replace('#','').split()[121:]
-# n_base = np.asarray(n_base,dtype=np.float32).reshape(len(n_base)//116,116)
-# file.close()
-
-# file = open(MCONC,'r')
-# n_new = file.read().replace('#','').split()[121:]
-# n_new = np.asarray(n_new,dtype=np.float32).reshape(len(n_new)//116,116)
-# file.close()
-
-# print(MCONC)
-# print(n_new[:,59])
-# print(MCONV)
-# print(n_base[:,59])
-# print(n_new[:,59]-n_base[:,59])
 
 
 

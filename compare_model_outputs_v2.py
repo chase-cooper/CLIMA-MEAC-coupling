@@ -178,6 +178,7 @@ def plot_comparison(base_file, new_file, name):
     ax.plot(mr_z_s_base[:,ind_oh], z_center_base, linewidth=2, linestyle=linestyles[0], color='blue', label='OH')
     ax.plot(mr_z_s_base[:,ind_co], z_center_base, linewidth=2, linestyle=linestyles[0], color='grey', label='CO')
     ax.plot(mr_z_s_base[:,ind_o2], z_center_base, linewidth=2, linestyle=linestyles[0], color='hotpink', label='O2')
+    ax.plot(mr_z_s_base[:,ind_o3], z_center_base, linewidth=2, linestyle=linestyles[0], color='forestgreen', label='O3')
     # ax.plot(mr_z_s_base[:,ind_h2s], z_center_base, linewidth=2, linestyle=linestyles[0], color='yellow', label='H2S')
     # ax.plot(mr_z_s_base[:,ind_so2], z_center_base, linewidth=2, linestyle=linestyles[0], color='orange', label='SO2')
     # ax.plot(mr_z_s_base[:,ind_no], z_center_base, linewidth=2, linestyle=linestyles[0], color='black',label='NO')
@@ -192,6 +193,7 @@ def plot_comparison(base_file, new_file, name):
     ax.plot(mr_z_s_new[:,ind_oh], z_center_new, linewidth=2, linestyle=linestyles[1], color='blue')
     ax.plot(mr_z_s_new[:,ind_co], z_center_new, linewidth=2, linestyle=linestyles[1], color='grey')
     ax.plot(mr_z_s_new[:,ind_o2], z_center_new, linewidth=2, linestyle=linestyles[1], color='hotpink')
+    ax.plot(mr_z_s_new[:,ind_o3], z_center_new, linewidth=2, linestyle=linestyles[1], color='forestgreen')
     # ax.plot(mr_z_s_new[:,ind_h2s], z_center_new, linewidth=2, linestyle=linestyles[1], color='yellow')
     # ax.plot(mr_z_s_new[:,ind_so2], z_center_new, linewidth=2, linestyle=linestyles[1], color='orange')
     # ax.plot(mr_z_s_new[:,ind_no], z_center_new, linewidth=2, linestyle=linestyles[1], color='black')
@@ -247,19 +249,95 @@ def plot_comparison(base_file, new_file, name):
     # ax[1].set_xlim([1.e-20, 1.e-0])
     
     # plt.savefig('./Plots/plot'+name+'.pdf', orientation='portrait', format='pdf')
-    plt.savefig("gmtest/comp_CLIMATP_PhotochemTP",dpi=250)
+    plt.savefig(f"outputs/{name}",dpi=250)
     plt.show()
 
+def plot_comparison_MEAC_Photochem(meac_file,photochem_file):
+    ###Initialize plot
+    fig, ax=plt.subplots(figsize=(10., 6.))
+    markersizeval=5.
+
+    ########################
+    ###Read in base data
+    ########################
+    base_data=np.genfromtxt(meac_file, skip_header=2, skip_footer=0, unpack=False) #Import mapping between numerical ID in code and species name.
+    
+    z_center_base=base_data[:,0] # Center of altitude bins, km 
+    T_z_base=base_data[:,3] # Temperature(z), in K
+    P_z_base=base_data[:,4]*Pa2bar*bar2barye # Pressure(z), in Pa converted to Barye
+    n_z_s_base=base_data[:,5:] #Number concentrations of the 111 chemical species, in cm**-3, as a function of (altitude, species)
+
+    ###Get molar concentrations
+    ###NOTE: May (probably) need to exclude condensed-phase species for molar concentration calculation...probably doesn't matter most of the time, but formally required and mioght matter in some weird edge cases.
+    n_z_base=np.sum(n_z_s_base,1) #sum number densities across species. This is a profile for the whole atmosphere.
+    n_z_bulkatm_base=P_z_base/(k*T_z_base)
+    mc_z_s_base=np.zeros(np.shape(n_z_s_base))
+    mr_z_s_base=np.zeros(np.shape(n_z_s_base))
+
+    num_s=np.shape(n_z_s_base)[1]
+
+    for ind2 in range(0, num_s):
+        mc_z_s_base[:,ind2]=n_z_s_base[:,ind2]/n_z_base#molar concentration of each species.
+        mr_z_s_base[:,ind2]=n_z_s_base[:,ind2]/n_z_bulkatm_base#mixing ratio of each species.
+    
+    ### Plotting
+    linestyles=np.array(['-',':'])
+    
+    ###Top plot: Outgassed species
+    ax.plot(0,0,color='black',label="MEAC w/ Photochem TP")
+    ax.plot(0,0,color='black',ls=':',label="Photochem")
+
+    ax.plot(mr_z_s_base[:,ind_h2], z_center_base, linewidth=2, linestyle=linestyles[0], color='purple', label='H2')
+    ax.plot(mr_z_s_base[:,ind_n2], z_center_base, linewidth=2, linestyle=linestyles[0], color='olive', label='N2')
+    ax.plot(mr_z_s_base[:,ind_co2], z_center_base, linewidth=2, linestyle=linestyles[0], color='magenta', label='CO2')
+    ax.plot(mr_z_s_base[:,ind_h2o], z_center_base, linewidth=2, linestyle=linestyles[0], color='pink', label='H2O')
+    ax.plot(mr_z_s_base[:,ind_ch4], z_center_base, linewidth=2, linestyle=linestyles[0], color='cyan', label='CH4')
+    ax.plot(mr_z_s_base[:,ind_oh], z_center_base, linewidth=2, linestyle=linestyles[0], color='blue', label='OH')
+    ax.plot(mr_z_s_base[:,ind_co], z_center_base, linewidth=2, linestyle=linestyles[0], color='grey', label='CO')
+    ax.plot(mr_z_s_base[:,ind_o2], z_center_base, linewidth=2, linestyle=linestyles[0], color='hotpink', label='O2')
+    ax.plot(mr_z_s_base[:,ind_o3], z_center_base, linewidth=2, linestyle=linestyles[0], color='forestgreen', label='O3')
+
+    ########################
+    ###Read in photochem data
+    ########################    
+    # f = open(photochem_file).readline().split()
+    # for i in range(len(base_data[0])):
+    #     print(f[i],i)
+    base_data=np.genfromtxt(photochem_file, skip_header=1, skip_footer=0, unpack=False)
+    alt = base_data[:,0]
+    ax.plot(base_data[:,23],alt,linewidth=2,linestyle=linestyles[1],color='purple')
+    ax.plot(base_data[:,52],alt,linewidth=2,linestyle=linestyles[1],color='olive')
+    ax.plot(base_data[:,29],alt,linewidth=2,linestyle=linestyles[1],color='magenta')
+    ax.plot(base_data[:,24],alt,linewidth=2,linestyle=linestyles[1],color='pink')
+    ax.plot(base_data[:,36],alt,linewidth=2,linestyle=linestyles[1],color='cyan')
+    ax.plot(base_data[:,25],alt,linewidth=2,linestyle=linestyles[1],color='blue')
+    ax.plot(base_data[:,28],alt,linewidth=2,linestyle=linestyles[1],color='grey')
+    ax.plot(base_data[:,27],alt,linewidth=2,linestyle=linestyles[1],color='hotpink')
+    ax.plot(base_data[:,66],alt,linewidth=2,linestyle=linestyles[1],color='forestgreen')
+
+    lines = ax.get_lines()
+    l1 = ax.legend(lines[:2],["MEAC w/ Photochem TP","Photochem"],loc=(0.01,0.6))
+    l2 = ax.legend(lines[2:],[r'$H_2$',r'$N_2$',r'$CO_2$',r'$H_2O$',r'$CH_4$',r'$OH$',r'$CO$',r'$O_2$',r'$O_3$'],loc=(0.01,0.2))
+    ax.set_xlabel('Mixing ratio',size='x-large')
+    ax.set_xscale('log')
+    ax.set_ylabel("Altitude [km]",size='x-large')
+    ax.set_ylim(0,100)
+    fig.set_figwidth(10)
+    ax.add_artist(l1)
+    ax.add_artist(l2)
+    plt.tight_layout()
+    plt.savefig('outputs/photochem_comp2',dpi=250)
+    plt.show()
 
 ###############################
 ###Validate
 ###############################
 
-plot_comparison('hu-code-sr/scenario_library/guzman-marmolejo/fco2_1e-1/ConcentrationSTD_CLIMA_base.dat','hu-code-sr/scenario_library/guzman-marmolejo/fco2_1e-1_photochem/ConcentrationSTD_Photochem_base.dat',"TP Profile: Solid -> CLIMA,    Dotted -> Photochem")
+# plot_comparison('hu-code-sr/scenario_library/CO2_CH4/fco2_1e-3/ConcentrationSTD.dat','hu-code-sr/scenario_library/CO2_CH4/fco2_1e-3/ConcentrationSTD.dat',"")
 # plot_comparison('hu-code-sr/scenario_library/Sun/N2_CO2_1e-4-Full/ConcentrationSTD.dat', 'hu-code-sr/scenario_library/Sun/N2_CO2_1e-1-Full/ConcentrationSTD.dat', 'Sun_N2CO2_updates')
 # plot_comparison('./scenario_library/Sun/H2/ConcentrationSTD_base.dat', './scenario_library/Sun/H2/ConcentrationSTD.dat', 'Sun_H2_updates')
 # plot_comparison('./scenario_library/Sun/N2/ConcentrationSTD_base.dat', './scenario_library/Sun/N2/ConcentrationSTD.dat', 'Sun_N2_updates')
-
+# plot_comparison_MEAC_Photochem('hu-code-sr/scenario_library/CO2_CH4/ConcentrationSTD_photochem.dat','../../pc/atmosphere.txt')
 
 # plot_comparison('./scenario_library/Sun/CO2-Full/ConcentrationSTD_base.dat', './scenario_library/Sun/CO2-Full/ConcentrationSTD.dat', 'Sun_CO2-Full_updates')
 # plot_comparison('./scenario_library/Sun/H2-Full/ConcentrationSTD_base.dat', './scenario_library/Sun/H2-Full/ConcentrationSTD.dat', 'Sun_H2-Full_updates')

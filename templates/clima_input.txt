@@ -4,7 +4,7 @@
 *VARIABLE  VALUE        NOTES
 
 NSTEPS=    {1}    ! step number (200 recommended for coupling)
-IMW=       2         
+IMW=       0         
 RSURF=     {2}       	    ! Relative surface humidity     
 ZY=        60.     	        ! Solar zenith angle (degrees)
 DTAU0=     0.5		        ! Optical depth step
@@ -15,8 +15,8 @@ G=         {5}              ! Gravity (cgs) (Mars=373., Earth=980.)
 FAC=       4.0
 IO3=       {6}   		    ! Ozone flag
 IUP=       {20}                ! 1 means that it starts a new run and doesn't read TempIn.dat
-TG0=       300	        ! Surface temperature for IUP=1   
-TSTRAT=    210             ! Stratospheric temperature for IUP=1
+TG0=       {21}	        ! Surface temperature for IUP=1   
+TSTRAT=    {22}             ! Stratospheric temperature for IUP=1
 STARR=     "Sun"	        ! What star?
 ICONSERV=  {7}      ! Type of energy conservation
 ICOUPLE=   0                ! Photochem coupling flag

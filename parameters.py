@@ -15,16 +15,16 @@ RAD             =   6371.0                  # Planet radius in km
 G               =   980                     # grav*M/R**2; Surface gravity, cgs
 A               =   1.0                     # Semimajor axis in AU
 SURFALB         =   0.23                     # Planet surface albedo
-INSTELL         =   0.75                     # Planet instelation, relative to Earth
+INSTELL         =   1.00                     # Planet instelation, relative to Earth
 P0              =   1e-5                    # Top-of-atmosphere pressure [atm]
 PSURF           =   1e+0                    # Surface pressure [atm]
 T0              =   180                     # Top-of-atmosphere temperature [K]
-TSURF           =   285                     # Surface temperature [K]
+TSURF           =   280                     # Surface temperature [K]
 TROPOPAUSE      =   22                      # CLIMA tropopause layer, default 22 (of 101)
 AR              =   2e-2                    # Argon mixing ratio
 RELHUM          =   0.7                     # Surface relative humidity
 FIXH2O          =   1                       # Fixed H2O flag. I really recommend leaving this on
-IO3             =   0                       # Ozone flag -- IO3=0 means ozone isn't read in
+IO3             =   1                       # Ozone flag -- IO3=0 means ozone isn't read in
 IME             =   1                       # Methane/ethane flag
 
 # Eddysed variables
@@ -50,7 +50,7 @@ atm2Pa          =   101_325
 #######################
 
 # Paths
-NAME            =   'gm_comp'
+NAME            =   'Sun_fCO2_1e-3'
 OUTPUT          =   "outputs/"+NAME
 PATH            =   os.getcwd()                                     # Path to this python file
 CLIMAPATH       =   f'{PATH}/cloudy_clima'                          # Path to the cloudy-CLIMA folder
@@ -75,18 +75,11 @@ C_H2O           =   f'{CINOUT}/Profiles/H2O.dat'                    # H2O  verti
 C_O3            =   f'{CINOUT}/Profiles/O3.dat'                     # O3   vertical profile
 
 # MEAC files
-MSCENARIONAME   =   "guzman-marmolejo/fco2_1e-1"                                   # Name of MEAC scenario folder
+MSCENARIONAME   =   "CO2_CH4/fco2_1e-3"                                       # Name of MEAC scenario folder
 
 MSCENARIOPATH   =   f'scenario_library/{MSCENARIONAME}'             # Path to MEAC scenario folder
 MZTP            =   f'{MSCENARIOPATH}/TP.dat'                       # MEAC ztp profile
-for file in os.listdir(f"{MEACPATH}/{MSCENARIOPATH}"):              # Automatically identify key files
-    if 'base' in file: MCONV = f"{MEACPATH}/{MSCENARIOPATH}/{file}"                 # Converged "seed" concentration file
-    elif 'Concentration' in file: MCONC= f"{MEACPATH}/{MSCENARIOPATH}/{file}"       # Updated concentration file
-    if 'planet' in file: MSCENARIO = f"{MSCENARIOPATH}/{file}"                      # Planet scenario file
-    if 'species' in file: MSPECIES = f"{MSCENARIOPATH}/{file}"                      # Species file
-
-# MCONV           =   f"{MEACPATH}/{MSCENARIOPATH}/ConcentrationSTD_base.dat"    # Conc. file from last convergence
-# MSCENARIO       =   f'{MSCENARIOPATH}/planet_scenario_N2r.h'    # MEAC scenario file with planet parameters
-# MSPECIES        =   f'{MSCENARIOPATH}/species_scenario_N2r.dat'       # MEAC atmosphere species file
-# MCONC           =   f'{MEACPATH}/{MSCENARIOPATH}/ConcentrationSTD.dat'         # MEAC concentrations file
-# MZTP            =   f'{MSCENARIOPATH}/TP.dat'                       # MEAC ztp profile
+MCONV           =   f"{MEACPATH}/{MSCENARIOPATH}/ConcentrationSTD_base.dat"    # Conc. file from last convergence
+MSCENARIO       =   f'{MSCENARIOPATH}/planet_scenario_N2r.h'    # MEAC scenario file with planet parameters
+MSPECIES        =   f'{MSCENARIOPATH}/species_scenario_N2r.dat'       # MEAC atmosphere species file
+MCONC           =   f'{MEACPATH}/{MSCENARIOPATH}/ConcentrationSTD.dat'         # MEAC concentrations file

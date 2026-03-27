@@ -3,10 +3,55 @@
 /* cm3 molecule-1 s-1 */
 /* M in molecule cm-3 */
 
+// function to compute reaction rate of the reverse reaction when the forward reaction is known
+// product/reactant refer to the forward reaction
+double ReverseRate_2(int mu[], int n_prod, int n_react, double a1[], double a2[], double a3[], double a4[], double a5[], double a6[],double a7[], double T, double k_f) {
+     int delta_n, n_total;
+     double k;
+     double delta_a1 = 0.0;
+     double delta_a2 = 0.0;
+     double delta_a3 = 0.0;
+     double delta_a4 = 0.0;
+     double delta_a5 = 0.0;
+     double delta_a6 = 0.0;
+     double delta_a7 = 0.0;
+     double K_c, k_r;
+
+     k=1.380658e-16; //boltzmann constant, erg/K
+
+     // mu -- stoiochiometic coefficients, positive for products, negative for reactants
+     // a -- thermodynamics coefficienets for each species
+     // n_total -- total number of species
+
+     // Estimate change in mols between products and reactants
+     n_total = n_prod + n_react; // total number of reactants and products
+     delta_n = n_prod - n_react; // difference in number of reactants and products
+
+    // Calaulate delta_ai
+     for (int j = 0; j < n_total; j++) {
+          delta_a1 += mu[j]*a1[j];
+          delta_a2 += mu[j]*a2[j];
+          delta_a3 += mu[j]*a3[j];
+          delta_a4 += mu[j]*a4[j];
+          delta_a5 += mu[j]*a5[j];
+          delta_a6 += mu[j]*a6[j];
+          delta_a7 += mu[j]*a7[j];
+     }
+
+    // Calculate equilibrium constant (Rimmer&Helling+2016 and refernce therein)
+     K_c = pow(k*1.0E-6*T, -delta_n)*exp(delta_a1*(log(T)-1)+delta_a2*T/2+delta_a3*pow(T,2)/6+delta_a4*pow(T,3)/12+delta_a5*pow(T,4)/20-delta_a6/T+delta_a7);
+
+    // Calculate reverse reaction rate
+    k_r = k_f/K_c;
+
+    return k_r;
+}
+
 void ReactionRateM()
 {
   int i, j;
   double RH, LH, ind, K0, K2, K3, Kf, Kinf, kint, k_inf, k_0_M, F_c, F, M_M_c, N;
+  double n_prod, n_reac, k_f, k_f_0_M, k_f_inf;
 	
   for (i=1; i<=zbin; i++) {
     
@@ -39,8 +84,8 @@ void ReactionRateM()
 	k_inf=1.9E-13*pow(tl[i]/298.0, 2.25)*exp(-3033.4/tl[i]);
     kkM[i][6]=k_0_M/(1.0+k_0_M/k_inf);
 	
-	k_0_M=6.14E-28*pow(tl[i]/298.0, -4.6)*exp(-2237.2/tl[i])*MM[i]*THREEBODY;
-	k_inf=9.01E-12*exp(-1190.8/tl[i]);
+	k_0_M=1.750E-16*pow(tl[i], -4.664)*exp(-1902.0/tl[i])*MM[i]*THREEBODY;
+	k_inf=2.84E-14*pow(tl[i],1.266)*exp(-1363/tl[i]);
     kkM[i][7]=k_0_M/(1.0+k_0_M/k_inf); //3.31E-30*exp(-740.0/tl[i])*MM[i];
 	
 	k_0_M=1.38E-30*MM[i]*THREEBODY;
@@ -175,10 +220,11 @@ void ReactionRateM()
 	k_inf=3.4E-16;
     kkM[i][36]=k_0_M/(1.0+k_0_M/k_inf);
     
-    RH=8.3E-13*pow(tl[i]/298.0, 2.0);
-    LH=5.5E-30*THREEBODY;
-    ind=1.0/(1.0+pow(log10(LH*MM[i]/RH),2.0));
-    kkM[i][37]=LH*MM[i]/(1.0+LH*MM[i]/RH)*pow(0.6,ind);
+    // RH=8.3E-13*pow(tl[i]/298.0, 2.0);
+    // LH=5.5E-30*THREEBODY;
+    // ind=1.0/(1.0+pow(log10(LH*MM[i]/RH),2.0));
+    // kkM[i][37]=LH*MM[i]/(1.0+LH*MM[i]/RH)*pow(0.6,ind);
+	kkM[i][37] = 0;
     
     RH=8.5E-12*pow(tl[i]/298.0, -1.75);
     LH=1.1E-28*pow(tl[i]/298.0, -3.5)*THREEBODY;
@@ -229,10 +275,25 @@ void ReactionRateM()
 	k_0_M=4.82E-31*pow(tl[i]/298.0,-2.17)*MM[i]*THREEBODY;
     k_inf=5.30E-11;
     kkM[i][46]=k_0_M/(1.0+k_0_M/k_inf);
-	
-	k_0_M=6.45E-29*pow(tl[i]/298.0,-3.48)*exp(-490.0/tl[i])*MM[i]*THREEBODY;
-    k_inf=4.47E-11*pow(tl[i]/298.0,0.50)*exp(199.7/tl[i]);
-    kkM[i][47]=k_0_M/(1.0+k_0_M/k_inf);
+
+	//Forward reaction HOSO + M --> OH + SO + M
+    k_f_0_M=1.92E22*pow(tl[i], -9.02)*exp(-26647/tl[i])*MM[i]*THREEBODY;
+    k_f_inf=9.94E21*pow(tl[i], -2.54)*exp(-38190/tl[i]);
+    k_f=k_f_0_M/(1.0+k_f_0_M/k_f_inf);
+
+    n_prod=2;
+    n_reac=1;
+    int mu[3] = {-1, -1, 1}; //HOSO + M --> OH + SO + M is the FORWARD reaction we are reversing
+    //thermo coefficents for [HOSO, OH, SO]. For 200-1000K. Via https://respecth.elte.hu/
+    double a1[3] = {3.73732792, 3.99198424, 3.61859514};
+    double a2[3] = {0.00930978241, -0.00240106655, -0.00232173768};
+    double a3[3] = {-0.00000385404197, 0.00000461664033, 0.0000116462669};
+    double a4[3] = {-0.00000000407782859, -0.00000000387916306, -0.000000014209251};
+    double a5[3] = {0.0000000000030963234, 0.00000000000136319502, 0.0000000000056076537};
+    double a6[3] = {-29826.0746, 3368.89836, -480.621641};
+    double a7[3] = {10.1080861, -0.103998477, 6.36504115};
+
+    kkM[i][47]=ReverseRate_2(mu, n_prod, n_reac, a1, a2, a3, a4, a5, a6, a7, tl[i], k_f);
 	
 	
     k_0_M=5.61E-30*pow(tl[i]/298.0,-5.19)*exp(-2271.0/tl[i])*MM[i]*THREEBODY;

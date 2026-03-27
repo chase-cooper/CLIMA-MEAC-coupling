@@ -4,9 +4,6 @@ STEPS TO RUN CODE
 3. Run code via ./main
 Outputs are stored in the scenario libary subdirectory that also holds the planet_scenario and species_scenario files.
 
-PENDING UPDATES: NEAR-TERM
--Need to extend z-grid for CO2-rich atmospheres, low-mass stars (Ranjan et al. 2023c)
--Need to update CO + OH ratelaw to Type M (Ranjan et al. 2020)
 
 PENDING UPDATES: LONG-TERM
 -Need to better understand "absorption without photolysis" files.

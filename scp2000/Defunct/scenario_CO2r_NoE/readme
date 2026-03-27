@@ -1,4 +1,0 @@
-IMODE=1 is better with this scenario. IMODE=4 struggles. IMODE=4 takes ~20k cycles. 
-
-Remember to confirm the rainout treatment in main.c! The special treatment written by Renyu should be ON, i.e. the rainout modification commands should not be commented out.
-

@@ -236,6 +236,6 @@ def plot_modEarth_comparison(base_file, new_file, name):
     print('SO2 (ppt). Measured: 30-260, Hu+2012: 237-239, Current code: {0:3.0f}'.format(1.e+12*mc_z_s_new[0,ind_so2]))
     print('OCS (ppt). Measured: 510, Hu+2012: 185-188, Current code: {0:3.0f}'.format(1.e+12*mc_z_s_new[0,ind_ocs]))
     print('H2S (ppt). Measured: 1-13, Hu+2012: 3.62-3.92, Current code: {0:3.2f}'.format(1.e+12*mc_z_s_new[0,ind_h2s]))
-    print('H2SO4 (ppt). Measured*: 26-170, Hu+2012: 127, Current code: {0:3.1f}'.format(1.e+12*(mc_z_s_new[0,ind_h2so4]+mc_z_s_new[0,ind_h2so4a]))) #Tracing back the 5-70 ppt, I think there is an error in the source Hu cited -- the underlying source appears to be Warneck+1988, which gives 20-130 ng S m^-3 (as PARTICULATE SO4--) in the free troposphere. This converts to about 26-170 ppt PARTICULATE SO4--. That is within a factor of 2. 
+    print('H2SO4 (ppt). Measured*: 26-170, Hu+2012: 127, Current code: {0:3.1f}'.format(1.e+12*(mc_z_s_new[0,ind_h2so4]*0.0+mc_z_s_new[0,ind_h2so4a]))) #Tracing back the 5-70 ppt, I think there is an error in the source Hu cited -- the underlying source appears to be Warneck+1988, which gives 20-130 ng S m^-3 (as PARTICULATE SO4--) in the free troposphere. This converts to about 26-170 ppt PARTICULATE SO4--. That is within a factor of 2. 
 
 plot_modEarth_comparison('./scenario_library/Earth/ConcentrationSTD_base_Earth.dat', './scenario_library/Earth/ConcentrationSTD.dat', 'Modern_Earth') #

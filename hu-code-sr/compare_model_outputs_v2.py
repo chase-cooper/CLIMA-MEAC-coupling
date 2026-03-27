@@ -220,7 +220,7 @@ def plot_comparison(base_file, new_file, name):
     ax[1].set_xlabel('Mixing Ratio')  
     ax[1].set_xlim([1.e-20, 1.e-0])
     
-    plt.savefig('./Plots/plot'+name+'.pdf', orientation='portrait',papertype='letter', format='pdf')
+    plt.savefig('./Plots/plot'+name+'.pdf', orientation='portrait', format='pdf')
     plt.show()
 
 
@@ -229,14 +229,14 @@ def plot_comparison(base_file, new_file, name):
 ###############################
 
     
-# plot_comparison('./scenario_library/Sun/CO2/ConcentrationSTD_base.dat', './scenario_library/Sun/CO2/ConcentrationSTD.dat', 'Sun_CO2_updates')
-# plot_comparison('./scenario_library/Sun/H2/ConcentrationSTD_base.dat', './scenario_library/Sun/H2/ConcentrationSTD.dat', 'Sun_H2_updates')
-# plot_comparison('./scenario_library/Sun/N2/ConcentrationSTD_base.dat', './scenario_library/Sun/N2/ConcentrationSTD.dat', 'Sun_N2_updates')
+#plot_comparison('./scenario_library/Sun/CO2/ConcentrationSTD_base.dat', './scenario_library/Sun/CO2/ConcentrationSTD.dat', 'Sun_CO2_updates')
+#plot_comparison('./scenario_library/Sun/H2/ConcentrationSTD_base.dat', './scenario_library/Sun/H2/ConcentrationSTD.dat', 'Sun_H2_updates')
+#plot_comparison('./scenario_library/Sun/N2/ConcentrationSTD_base.dat', './scenario_library/Sun/N2/ConcentrationSTD.dat', 'Sun_N2_updates')
 
 
-# plot_comparison('./scenario_library/Sun/CO2-Full/ConcentrationSTD_base.dat', './scenario_library/Sun/CO2-Full/ConcentrationSTD.dat', 'Sun_CO2-Full_updates')
+plot_comparison('./scenario_library/Sun/CO2-Full/ConcentrationSTD_base.dat', './scenario_library/Sun/CO2-Full/ConcentrationSTD.dat', 'Sun_CO2-Full_updates')
 plot_comparison('./scenario_library/Sun/H2-Full/ConcentrationSTD_base.dat', './scenario_library/Sun/H2-Full/ConcentrationSTD.dat', 'Sun_H2-Full_updates')
-# plot_comparison('./scenario_library/Sun/N2-Full/ConcentrationSTD_base.dat', './scenario_library/Sun/N2-Full/ConcentrationSTD.dat', 'Sun_N2-Full_updates')
-# 
-# plot_comparison('./scenario_library/TRAPPIST-1/CO2-Full/ConcentrationSTD_base.dat', './scenario_library/TRAPPIST-1/CO2-Full/ConcentrationSTD.dat', 'TRAPPIST1_CO2-Full_updates')
+plot_comparison('./scenario_library/Sun/N2-Full/ConcentrationSTD_base.dat', './scenario_library/Sun/N2-Full/ConcentrationSTD.dat', 'Sun_N2-Full_updates')
+
+#plot_comparison('./scenario_library/TRAPPIST-1/CO2-Full/ConcentrationSTD_base.dat', './scenario_library/TRAPPIST-1/CO2-Full/ConcentrationSTD.dat', 'TRAPPIST1_CO2-Full_updates')
 
