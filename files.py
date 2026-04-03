@@ -259,6 +259,29 @@ def writeCLIMAout(clima_last:str,out_dir:str='',id:str=''):
         f.write(f"{alts[j]:.4f}\t\t\t{temps[j]:.4f}\t\t\t{p}\n")
     f.close()
 
+def importPhotochemH2O(root:str='fco2_1e-1'):
+    # Get PC altitudes and H2O mixing ratios
+    PCPATH = '../../pc/'
+    root = 'fco2_1e-1_H2Oaer07'
+    data = np.loadtxt(PCPATH+'/scenarios/'+root+'/atmosphere.txt',skiprows=1)
+    alts_pc = data[:,0]
+    ndens_pc= data[:,2]
+    h2o_pc  = data[:,24]*ndens_pc
+    co2_pc  = data[:,29]*ndens_pc   # not necessary but idk
 
+    # Interpolate values
+    alts_new    = np.linspace(1,99,50)
+    h2o_new     = np.interp(alts_new,alts_pc,h2o_pc)        # Mixing ratios
+    co2_new     = np.interp(alts_new,alts_pc,co2_pc)
+
+    # Write to ConstantMixing.dat
+    f = open('hu-code-sr/Data/ConstantMixing.dat','w')
+    f.write('z\t\tH2O\t\tCO2\n')
+    for i in range(len(alts_new)):
+        f.write(np.format_float_positional(alts_new[i],precision=6,min_digits=6)+'\t')
+        f.write(np.format_float_scientific(h2o_new[i],precision=6,min_digits=6)+'\t')
+        f.write(np.format_float_scientific(co2_new[i],precision=6,min_digits=6)+'\n')
+    f.close()
+    # Done!
 
 
