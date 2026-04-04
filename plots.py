@@ -77,8 +77,10 @@ def plotAtmosphericComposition(conc_file:str,id:str,ref_file:str='',out_dir:str=
     # Plot outputs
     fig,ax = plt.subplots()
     for j in range(len(nd_profiles)):
+        if j == 0: continue
         # ax[0].plot(nd_profiles[j],alts,c=colors[j],label=labels[j])
         ax.plot(mr_profiles[j],alts,c=colors[j],label=labels[j])
+    ax.plot(0,0,color='black',label="New (No sat. reduction)")
     
     if ref_file:
         f = open(ref_file,'r')
@@ -109,8 +111,11 @@ def plotAtmosphericComposition(conc_file:str,id:str,ref_file:str='',out_dir:str=
         colors      =   ['gold','orange','red','purple','cyan','green','cornflowerblue','blue','pink']
         labels      =   ['C2H6','CH4','CO2','H2','H2O','N2','O2','O3','OH']
 
+        ax.plot(0,0,color='black',ls=':',label="Old (Sat. reduction of 0.2)")
+
         # Plot outputs
         for j in range(len(nd_profiles)):
+            if j == 0: continue
             # ax[0].plot(nd_profiles[j],alts,ls=':',c=colors[j])
             ax.plot(mr_profiles[j],alts,ls=':',c=colors[j])
 
@@ -126,7 +131,7 @@ def plotAtmosphericComposition(conc_file:str,id:str,ref_file:str='',out_dir:str=
     ax.set_xlabel("Mixing ratio",size='x-large')
     ax.set_ylabel("Altitude [km]",size='x-large')
     ax.legend()
-    if ref_file: fig.suptitle('New -> solid, ref -> dotted')
+    if ref_file: fig.suptitle(r'$f_{\rm CO_2}=10^{-4}$')
     fig.set_figwidth(11)
     plt.tight_layout()
     plt.savefig(f"{out_dir}/mr/MEAC_mixing_ratios_{id}",dpi=300)
@@ -500,7 +505,6 @@ def compMEACandPhotochemCompositions(meacpath,pcpath):
     ax[1].set_yscale('log')
 
     plt.show()
-
 
 def getMEACintRates(meac:str,mol:str='CH4',mode:str='loss'):
     """
@@ -972,35 +976,39 @@ def compareRReactionRates():
     plt.savefig('figs/nonphot_rates')
     plt.show()
 
-# Get PC altitudes and H2O mixing ratios
-PCPATH = '../../pc/'
-root = 'fco2_1e-1_H2Oaer07'
-data = np.loadtxt(PCPATH+'/scenarios/'+root+'/atmosphere.txt',skiprows=1)
-alts_pc = data[:,0]
-ndens_pc= data[:,2]
-h2o_pc  = data[:,24]*ndens_pc
-co2_pc  = data[:,29]*ndens_pc   # not necessary but idk
+def importPhotochemWaterProfile(root:str = 'fco2_1e-1'):
+    """
+    This function takes the H2O mixing ratio profile from a specified Photochem
+    run and formats it to to serve as a MEAC model fixed profile.
+    """
 
-# Interpolate values
-alts_new    = np.linspace(1,99,50)
-h2o_new     = np.interp(alts_new,alts_pc,h2o_pc)        # Mixing ratios
-co2_new     = np.interp(alts_new,alts_pc,co2_pc)
 
-# Write to ConstantMixing.dat
-f = open('hu-code-sr/Data/ConstantMixing.dat','w')
-f.write('z\t\tH2O\t\tCO2\n')
-for i in range(len(alts_new)):
-    f.write(np.format_float_positional(alts_new[i],precision=6,min_digits=6)+'\t')
-    f.write(np.format_float_scientific(h2o_new[i],precision=6,min_digits=6)+'\t')
-    f.write(np.format_float_scientific(co2_new[i],precision=6,min_digits=6)+'\n')
-f.close()
+    # Get PC altitudes and H2O mixing ratios
+    PCPATH = '../../pc/'
+    data = np.loadtxt(PCPATH+'/scenarios/'+root+'/atmosphere.txt',skiprows=1)
+    alts_pc = data[:,0]
+    ndens_pc= data[:,2]
+    h2o_pc  = data[:,24]*ndens_pc
+    co2_pc  = data[:,29]*ndens_pc   # not necessary but idk
 
-input()
+    # Interpolate values
+    alts_new    = np.linspace(1,99,50)
+    h2o_new     = np.interp(alts_new,alts_pc,h2o_pc)        # Mixing ratios
+    co2_new     = np.interp(alts_new,alts_pc,co2_pc)
 
-plt.plot(h2o_pc,alts_pc)
-plt.plot(h2o_new,alts_new)
-plt.xscale('log')
-plt.show()
+    # Write to ConstantMixing.dat
+    f = open('hu-code-sr/Data/ConstantMixing.dat','w')
+    f.write('z\t\tH2O\t\tCO2\n')
+    for i in range(len(alts_new)):
+        f.write(np.format_float_positional(alts_new[i],precision=6,min_digits=6)+'\t')
+        f.write(np.format_float_scientific(h2o_new[i],precision=6,min_digits=6)+'\t')
+        f.write(np.format_float_scientific(co2_new[i],precision=6,min_digits=6)+'\n')
+    f.close()
+
+
+conc_file = 'hu-code-sr/scenario_library/CO2_CH4/fco2_1e-4/ConcentrationSTD.dat'
+ref_file  = 'hu-code-sr/scenario_library/CO2_CH4/fco2_1e-4_satred/ConcentrationSTD.dat'
+plotAtmosphericComposition(conc_file=conc_file,id='test4',ref_file=ref_file,out_dir='outputs/test')
 
 
 
