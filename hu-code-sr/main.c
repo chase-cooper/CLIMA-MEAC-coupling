@@ -2,7 +2,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-#include "./scenario_library/CO2_CH4/fco2_1e-4/planet_scenario_N2r.h"
+#include "./scenario_library/test/planet_scenario_N2r.h"
 
 #include "constant.h"
 #include "routine.h"

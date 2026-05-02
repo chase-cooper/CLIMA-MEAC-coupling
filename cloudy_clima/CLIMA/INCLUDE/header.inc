@@ -5,7 +5,7 @@ c JHM, 06-16-06
 c--------------------------------------------------
         PARAMETER(ND=101)
         PARAMETER(RAD=6371.0)
-        PARAMETER(TCONV=0.01)
-        PARAMETER(MINSTEPS=500)
+        PARAMETER(TCONV=0.1)
+        PARAMETER(MINSTEPS=10)
         PARAMETER(FIXH20=1)
         implicit real*8(A-H,O-Z)

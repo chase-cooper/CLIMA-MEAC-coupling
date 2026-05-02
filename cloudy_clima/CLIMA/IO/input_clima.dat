@@ -3,29 +3,29 @@
 * Write the value AFTER the 11th space
 *VARIABLE  VALUE        NOTES
 
-NSTEPS=    500    ! step number (200 recommended for coupling)
-IMW=       0         
-RSURF=     0.7       	    ! Relative surface humidity     
-ZY=        60.     	        ! Solar zenith angle (degrees)
-DTAU0=     0.5		        ! Optical depth step
-ZCON=      20		        ! Arbitrary constant (don't touch)
+NSTEPS=    10          ! step number (200 recommended for coupling)
+IMW=       0            ! Type of water profile: 0 -> saturated troposphere; 1 -> Manabe/Wetherald; 2 -> M/W with constant stratosphere, emperical troposphere; 3 -> dry adiabat
+RSURF=     0.7       	! Relative surface humidity     
+ZY=        60.     	    ! Solar zenith angle (degrees)
+DTAU0=     0.5		    ! Optical depth step
+ZCON=      20		    ! Arbitrary constant (don't touch)
 P0=        1e-05 	        ! Top-of-atmosphere pressure (bar)
 PGO=       1.0	        ! Surface pressure (bar)
-G=         980              ! Gravity (cgs) (Mars=373., Earth=980.) 
-FAC=       4.0
-IO3=       1   		    ! Ozone flag
-IUP=       0                ! 1 means that it starts a new run and doesn't read TempIn.dat
+G=         980          ! Surface gravity (cgs) (Mars=373., Earth=980.) 
+FAC=       4.0          ! Ratio of grid spacing at the model top to grid spacing at the model bottom
+IO3=       1   		! Ozone flag
+IUP=       1         ! 1 means that it starts a new run and doesn't read TempIn.dat
 TG0=       280	        ! Surface temperature for IUP=1   
-TSTRAT=    180             ! Stratospheric temperature for IUP=1
-STARR=     "Sun"	        ! What star?
-ICONSERV=  1      ! Type of energy conservation
-ICOUPLE=   0                ! Photochem coupling flag
-SRFALB=    0.23        ! Planetary surface albedo
-SOLCON=    1.0	    ! Instellation relative to Earth
-dtmax=     1.e4		        ! Max timestep in seconds, default 1e4
+TSTRAT=    180         ! Stratospheric temperature for IUP=1
+STARR=     "Sun"	    ! What star?
+ICONSERV=  1          ! Type of energy conservation
+ICOUPLE=   0            ! Photochem coupling flag (must be 0 for MEAC coupling!)
+SRFALB=    0.23          ! Planetary surface albedo
+SOLCON=    1.0	        ! Instellation relative to Earth
+dtmax=     1.e4		    ! Max timestep in seconds, default 1e4
 CO2MAX=    1.0         ! Max CO2 mixing ratio
-IMET=      1            ! Methane flag. If "1" then methane is turned on. (does not turn on ethane)
-IMETETH=   1            ! ethane flag.  If 1 then both methane and ethane turned on
+IMET=      1         ! Methane flag. If "1" then methane is turned on. (does not turn on ethane)
+IMETETH=   1         ! ethane flag.  If 1 then both methane and ethane turned on
 nga=       6
 IHAZE=     0
 monsize=   0
@@ -33,11 +33,11 @@ icealbedo= 0
 INVERSE=   0    
 FRAK=      1    
 doEddy=    .true.      	! Use EddySed for Cloud calculation
-fcloud=    0.0         	! Fractional Cloud Cover
+fcloud=    0.0         ! Fractional Cloud Cover
 kz_min=    100000.0         ! Minimum eddydiffusivity
 Crainf=    0.01         ! Standard rainf = 3.0
 Csig=      2.0         ! Standard Sig =2.0 !1.7 worked really well for current model
-supsat=    0.0          ! Standard supsat=0.0
-upatm_mix= 4e-10        ! minimum Coldtrap water mass mixing ratio, see Kopparapu et al. 2013 for rough values
+supsat=    0.0         ! Standard supsat=0.0
+upatm_mix= 4e-10         ! minimum Coldtrap water mass mixing ratio, see Kopparapu et al. 2013 for rough values
 fc_minf=   0.01         ! Minimum fraction for FC for upper atmosphere."""
     

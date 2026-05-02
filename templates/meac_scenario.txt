@@ -89,7 +89,7 @@ Note: The parameters in this file can be modified to model different planets aro
 #define AERDEN	2.0E+3	/* density in SI */
 #define	NCONDEN	1	/* Calculate the condensation every NCONDEN iterations */
 #define IFGREYAER	0	/* Contribute to the grey atmosphere Temperature? 0=no, 1=yes */
-#define SATURATIONREDUCTION	0.2 /* Ad hoc reduction factor for saturation pressure of water */
+#define SATURATIONREDUCTION	1.0 /* Ad hoc reduction factor for saturation pressure of water */
 #define AERRADFILE1	"Data/H2SO4AER_CrossM_01.dat"	/* radiative properties of H2SO4 */
 #define AERRADFILE2 "Data/S8AER_CrossM_01.dat"	/* radiative properties of S8 */
 

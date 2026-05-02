@@ -13,12 +13,13 @@ from plots import *
 ###   Bookkeeping   ###
 #######################
 
-CLIMAstepIntervals      = []                   # Step counts where MEAC runs occur
+CLIMAstepIntervals      = []     # Step counts where MEAC runs occur
 surfTemps     = []               # Surface temperatures after each CLIMA step (not each loop)
 zmax = ZMAX
 
-##############################################################################################################
-##############################################################################################################
+########################
+### Elements of main ###
+########################
 
 def updateCLIMA(stepnum:int):
     """
@@ -232,35 +233,14 @@ def runMEAC(stepnum:int):
     writeMEACout(MCONC,NAME,str(stepnum))
     plotAtmosphericComposition(conc_file=MCONC,id=str(stepnum),ref_file=MCONV,out_dir=OUTPUT)
 
-def waterPressure(temp:float,psurf:float=101325):
-    if temp < 273.16:               # Murphy & Koop (2005)
-        res = np.exp(9.550426 - 5723.265/temp + 3.53068*np.log(temp) - 0.00728332*temp)
-        res /= psurf
-    else:                           # Seinfield & Pandis (2006)
-        a = 1 - 373.15/temp
-        res = (101325/psurf)*np.exp(13.3185*a - 1.97*a*a - 0.6445*a*a*a - 0.1229*a*a*a*a)
-    
-    res = np.round(res,4)
-    # print(f"When surface temperature = {temp} K, surface water vapor mixing ratio is {res}")
-    return res
-waterPressure = np.vectorize(waterPressure)
+########################
+###       main       ###
+########################
 
-##############################
+def main():
 
-# make output folder for run if it doesn't exist yet
-if not (NAME in os.listdir('outputs')):
-    os.mkdir(OUTPUT)
-    os.chdir(OUTPUT)
-    os.mkdir('clima-in')
-    os.mkdir('clima-out')
-    os.mkdir('meac-in')
-    os.mkdir('meac-out')
-    os.mkdir('mr')
-    os.chdir(PATH)
-else:
-    clearDirectory = input("Do you want to clear this directory? [y/n]\n")
-    if clearDirectory=='y':
-        subprocess.call(['rm','-r',OUTPUT])
+    # make output folder for this run if it doesn't exist yet
+    if not (NAME in os.listdir('outputs')):
         os.mkdir(OUTPUT)
         os.chdir(OUTPUT)
         os.mkdir('clima-in')
@@ -269,17 +249,43 @@ else:
         os.mkdir('meac-out')
         os.mkdir('mr')
         os.chdir(PATH)
+    else:
+        clearDirectory = input("Do you want to clear this directory? [y/n]\n")
+        if clearDirectory=='y':
+            subprocess.call(['rm','-r',OUTPUT])
+            os.mkdir(OUTPUT)
+            os.chdir(OUTPUT)
+            os.mkdir('clima-in')
+            os.mkdir('clima-out')
+            os.mkdir('meac-in')
+            os.mkdir('meac-out')
+            os.mkdir('mr')
+            os.chdir(PATH)
 
-species_warning = input("Ensure that CO2 and N2 mixing ratios have been properly set in the \"meac_species\" template file.\n\
-Would you like to continue? [y/n]\n")
-if species_warning != 'y':
-    exit()
+    # Make scenario folder for this run, if it doesn't exist yet
+    if not (NAME in os.listdir(f"{MEACPATH}/scenario_library/")):
+        scen_path = f"{MEACPATH}/scenario_library/{NAME}"
+        os.mkdir(scen_path)
 
-writeParameters()
-writeIncludeFile()
-for i in range(NLOOPS):
-    updateCLIMA(i)
-    runCLIMA(i)
-    updateMEAC(i)
-    runMEAC(i)
-    os.system('clear')
+        # Copy an example concentration file to new scenario folder. Fair warning, if the kind of
+        #   atmosphere you're simulating isn't very Earth-like, then the first convergence could 
+        #   take a while.
+        subprocess.run(['cp','templates/ConcentrationSTD_base.dat',MCONV])
+
+        # Write a flat Kzz profile. You can change this file later
+        f = open(f'{scen_path}/Eddy.dat','w')
+        f.write('0.000000 100000\n100.000000 100000\n')
+        f.close()
+
+        os.chdir(PATH)
+
+    writeParameters()
+    writeIncludeFile()
+    for i in range(NLOOPS):
+        updateCLIMA(i)
+        runCLIMA(i)
+        updateMEAC(i)
+        runMEAC(i)
+        os.system('clear')
+
+main()

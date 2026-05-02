@@ -1,13 +1,13 @@
 import os
 
 # Coupling parameters
-ND              =   101                     # CLIMA layer variables DONT TOUCH
-NBIN            =   50                      # MEAC number of vertical bins, MUST MATCH ORIGINAL SCENARIO FILE (Earth --> 43)
-NLOOPS          =   15                       # Number of CLIMA-MEAC loops
-NMINSTEPS       =   500                      # Minimum number of CLIMA steps per loop
-NMAXSTEPS       =   500                      # Max Number of CLIMA steps per loops
-NMAXT           =   1e100                    # Max MEAC run cumulative timestep
-TCONV           =   1E-2                    # CLIMA convergence criterion, delta temperature
+ND              =   101                     # CLIMA number of layers -- PLEASE DONT TOUCH
+NBIN            =   50                      # MEAC number of layers
+NLOOPS          =   1                       # Number of CLIMA-MEAC loops
+NMINSTEPS       =   10                      # Minimum number of CLIMA steps per loop
+NMAXSTEPS       =   10                      # Max Number of CLIMA steps per loops
+NMAXT           =   1e100                    # Max MEAC cumulative integration time
+TCONV           =   1E-1                    # CLIMA convergence criterion, delta temperature
 
 # Planet + atmosphere parameters
 MASS            =   5.9722e24               # Planet mass in kg
@@ -16,7 +16,7 @@ G               =   980                     # grav*M/R**2; Surface gravity, cgs
 A               =   1.0                     # Semimajor axis in AU
 SURFALB         =   0.23                     # Planet surface albedo
 INSTELL         =   1.00                     # Planet instelation, relative to Earth
-P0              =   1e-5                    # Top-of-atmosphere pressure [atm]
+P0              =   1e-5                    # Top-of-atmosphere pressure [atm]. If this value is too low, temperatures might blow up :(
 PSURF           =   1e+0                    # Surface pressure [atm]
 T0              =   180                     # Top-of-atmosphere temperature [K]
 TSURF           =   280                     # Surface temperature [K]
@@ -50,7 +50,7 @@ atm2Pa          =   101_325
 #######################
 
 # Paths
-NAME            =   'Sun_fCO2_1e-3'
+NAME            =   'test'
 OUTPUT          =   "outputs/"+NAME
 PATH            =   os.getcwd()                                     # Path to this python file
 CLIMAPATH       =   f'{PATH}/cloudy_clima'                          # Path to the cloudy-CLIMA folder
@@ -75,9 +75,7 @@ C_H2O           =   f'{CINOUT}/Profiles/H2O.dat'                    # H2O  verti
 C_O3            =   f'{CINOUT}/Profiles/O3.dat'                     # O3   vertical profile
 
 # MEAC files
-MSCENARIONAME   =   "CO2_CH4/fco2_1e-3"                                       # Name of MEAC scenario folder
-
-MSCENARIOPATH   =   f'scenario_library/{MSCENARIONAME}'             # Path to MEAC scenario folder
+MSCENARIOPATH   =   f'scenario_library/{NAME}'             # Path to MEAC scenario folder
 MZTP            =   f'{MSCENARIOPATH}/TP.dat'                       # MEAC ztp profile
 MCONV           =   f"{MEACPATH}/{MSCENARIOPATH}/ConcentrationSTD_base.dat"    # Conc. file from last convergence
 MSCENARIO       =   f'{MSCENARIOPATH}/planet_scenario_N2r.h'    # MEAC scenario file with planet parameters

@@ -44,6 +44,7 @@ def return_colint_reaction_rates(concSTD, ChemReac, name):
     toprint['col2']=colint_chemrates
     np.savetxt(name+'colintrxnrates.dat', toprint, fmt='%s\t%3.6e', newline='\n', header='Reaction ID \t Column-Integrated Reaction Rate (cm**-2 s**-1)')
 
+
 def read_rate_input(input_file):
     
     with open(input_file) as f:
@@ -382,12 +383,12 @@ def generate_int_rates_out(name):
     sys.stdout = open(name+'int.rates.out3.dat', 'w')
     
     # input files
-    species_file         = "hu-code-sr/Documentation/SpeciesName.xlsx"
+    species_file         = "./SpeciesName.xlsx"
     input_rate_file      = (name+"colintrxnrates.dat")
-    input_reaction_files  = {"R":"hu-code-sr/Data/Reaction_R.txt",
-                             "M":"hu-code-sr/Data/Reaction_M.txt",
-                             "T":"hu-code-sr/Data/Reaction_T.txt",
-                             "P":"hu-code-sr/Data/Reaction_P.txt"}
+    input_reaction_files  = {"R":"Data/Reaction_R.txt",
+                             "M":"Data/Reaction_M.txt",
+                             "T":"Data/Reaction_T.txt",
+                             "P":"Data/Reaction_P.txt"}
     
     # load input reaction rates from colintrxnrates.dat into a python dictionary
     reaction_rate_data   = read_rate_input(input_rate_file)
@@ -447,5 +448,5 @@ def analyze_colint_rxn_rates(name):
     
 
 
-# return_colint_reaction_rates('hu-code-sr/scenario_library/CO2_CH4/fco2_1e-1/ConcentrationSTD.dat','hu-code-sr/scenario_library/CO2_CH4/fco2_1e-1/ChemicalRate.dat','outputs/')
-generate_int_rates_out('hu-code-sr/scenario_library/CO2_CH4/fco2_1e-1/')
+analyze_colint_rxn_rates('./scenario_library/TRAPPIST-1/CO2-Full/')
+

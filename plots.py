@@ -1006,9 +1006,9 @@ def importPhotochemWaterProfile(root:str = 'fco2_1e-1'):
     f.close()
 
 
-conc_file = 'hu-code-sr/scenario_library/CO2_CH4/fco2_1e-4/ConcentrationSTD.dat'
-ref_file  = 'hu-code-sr/scenario_library/CO2_CH4/fco2_1e-4_satred/ConcentrationSTD.dat'
-plotAtmosphericComposition(conc_file=conc_file,id='test4',ref_file=ref_file,out_dir='outputs/test')
+# conc_file = 'hu-code-sr/scenario_library/CO2_CH4/fco2_1e-4/ConcentrationSTD.dat'
+# ref_file  = 'hu-code-sr/scenario_library/CO2_CH4/fco2_1e-4_satred/ConcentrationSTD.dat'
+# plotAtmosphericComposition(conc_file=conc_file,id='test4',ref_file=ref_file,out_dir='outputs/test')
 
 
 

@@ -72,7 +72,6 @@ def writeParameters():
     f.write(f"CLIMA Profiles Folder =   {CINOUT}/Profiles\n\n")
 
     f.write("###    MEAC FILE PATHS\n")
-    f.write(f"MEAC Scenario Name    =   {MSCENARIONAME}\n")
     f.write(f"MEAC Scenario Path    =   {MSCENARIOPATH}\n")
     f.write(f"MEAC Converged File   =   {MCONV}\n")
     f.write(f"MEAC Scenario File    =   {MSCENARIO}\n")
