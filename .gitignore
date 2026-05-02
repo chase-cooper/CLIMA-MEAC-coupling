@@ -1,3 +1,5 @@
-figs/**
+figs/*
 outputs/*
+Plots/*
 plots.py
+.vscode
