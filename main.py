@@ -231,7 +231,7 @@ def runMEAC(stepnum:int):
     os.chdir(PATH)                                          # Return to PATH
 
     writeMEACout(MCONC,NAME,str(stepnum))
-    plotAtmosphericComposition(conc_file=MCONC,id=str(stepnum),ref_file=MCONV,out_dir=OUTPUT)
+    plotAtmosphericComposition(conc_file=MCONC,id=str(stepnum),out_dir=OUTPUT)
 
 ########################
 ###       main       ###
@@ -267,10 +267,11 @@ def main():
         scen_path = f"{MEACPATH}/scenario_library/{NAME}"
         os.mkdir(scen_path)
 
-        # Copy an example concentration file to new scenario folder. Fair warning, if the kind of
-        #   atmosphere you're simulating isn't very Earth-like, then the first convergence could 
-        #   take a while.
+        # Copy an example concentration file to new scenario folder, then run MEAC to get a 
+        #   converged concentration file. Fair warning, if the kind of atmosphere you're simulating
+        #   isn't very Earth-like, then the first convergence could take a while.
         subprocess.run(['cp','templates/ConcentrationSTD_base.dat',MCONV])
+        writeMEACspecies(tsurf=TSURF,psurf=PSURF*atm2Pa)    
 
         # Write a flat Kzz profile. You can change this file later
         f = open(f'{scen_path}/Eddy.dat','w')
@@ -288,4 +289,6 @@ def main():
         runMEAC(i)
         os.system('clear')
 
-main()
+plotAtmosphericComposition(conc_file=MCONC,id=str(11),out_dir=OUTPUT)
+
+# main()

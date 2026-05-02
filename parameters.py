@@ -3,9 +3,9 @@ import os
 # Coupling parameters
 ND              =   101                     # CLIMA number of layers -- PLEASE DONT TOUCH
 NBIN            =   50                      # MEAC number of layers
-NLOOPS          =   1                       # Number of CLIMA-MEAC loops
-NMINSTEPS       =   10                      # Minimum number of CLIMA steps per loop
-NMAXSTEPS       =   10                      # Max Number of CLIMA steps per loops
+NLOOPS          =   12                       # Number of CLIMA-MEAC loops
+NMINSTEPS       =   500                      # Minimum number of CLIMA steps per loop
+NMAXSTEPS       =   500                      # Max Number of CLIMA steps per loops
 NMAXT           =   1e100                    # Max MEAC cumulative integration time
 TCONV           =   1E-1                    # CLIMA convergence criterion, delta temperature
 
@@ -50,7 +50,7 @@ atm2Pa          =   101_325
 #######################
 
 # Paths
-NAME            =   'test'
+NAME            =   'fco2_1e-6'
 OUTPUT          =   "outputs/"+NAME
 PATH            =   os.getcwd()                                     # Path to this python file
 CLIMAPATH       =   f'{PATH}/cloudy_clima'                          # Path to the cloudy-CLIMA folder

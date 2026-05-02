@@ -1,5 +1,4 @@
 figs/**
 outputs/*
 Plots/**
-plots.py
 .vscode
