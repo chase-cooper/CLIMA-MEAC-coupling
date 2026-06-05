@@ -5,7 +5,7 @@
 
 NSTEPS=    500          ! step number (200 recommended for coupling)
 IMW=       0            ! Type of water profile: 0 -> saturated troposphere; 1 -> Manabe/Wetherald; 2 -> M/W with constant stratosphere, emperical troposphere; 3 -> dry adiabat
-RSURF=     0.7       	! Relative surface humidity     
+RSURF=     1.0       	! Relative surface humidity     
 ZY=        60.     	    ! Solar zenith angle (degrees)
 DTAU0=     0.5		    ! Optical depth step
 ZCON=      20		    ! Arbitrary constant (don't touch)
@@ -15,12 +15,12 @@ G=         980          ! Surface gravity (cgs) (Mars=373., Earth=980.)
 FAC=       4.0          ! Ratio of grid spacing at the model top to grid spacing at the model bottom
 IO3=       1   		! Ozone flag
 IUP=       0         ! 1 means that it starts a new run and doesn't read TempIn.dat
-TG0=       280	        ! Surface temperature for IUP=1   
+TG0=       330	        ! Surface temperature for IUP=1   
 TSTRAT=    180         ! Stratospheric temperature for IUP=1
 STARR=     "Sun"	    ! What star?
 ICONSERV=  1          ! Type of energy conservation
 ICOUPLE=   0            ! Photochem coupling flag (must be 0 for MEAC coupling!)
-SRFALB=    0.23          ! Planetary surface albedo
+SRFALB=    0.3          ! Planetary surface albedo
 SOLCON=    1.0	        ! Instellation relative to Earth
 dtmax=     1.e4		    ! Max timestep in seconds, default 1e4
 CO2MAX=    1.0         ! Max CO2 mixing ratio

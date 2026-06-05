@@ -1,7 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+from shutil import rmtree
 import subprocess
+import sys
+import time
 
 from compare_model_outputs_v2 import *
 from files import *
@@ -40,17 +43,15 @@ def updateCLIMA(stepnum:int):
     nd_all  =   np.sum(data[::-1],axis=1)               # Total number densities
     nd_nc   =   nd_all - data[::-1,56]- data[::-1,11]   # Non-condensible number densities
     
-    # number densities                      mixing ratios (ACTUALLY molar concentrations)
-    ndC2H6  =   data[::-1,35];              mrC2H6  =   np.divide(ndC2H6,nd_nc)     # relative
-    ndCH4   =   data[::-1,25];              mrCH4   =   np.divide(ndCH4,nd_nc)      # relative
+    # number densities                      mixing ratios 
+    ndC2H6  =   data[::-1,35];              mrC2H6  =   np.divide(ndC2H6,nd_nc)     # relative to all non-condensibles
+    ndCH4   =   data[::-1,25];              mrCH4   =   np.divide(ndCH4,nd_nc)      # relative to all non-condensibles
     ndCO2   =   data[::-1,56];              mrCO2   =   np.divide(ndCO2,nd_all)     # ABSOLUTE
-    ndH2    =   data[::-1,57];              mrH2    =   np.divide(ndH2,nd_nc)       # relative
-    ndH2O   =   data[::-1,11];              mrH2O   =   np.divide(ndH2O,nd_all)     # ABSOLUTE
-    ndN2    =   data[::-1,59];              mrN2    =   np.divide(ndN2,nd_nc)       # relative
-    ndO2    =   data[::-1,58];              mrO2    =   np.divide(ndO2,nd_nc)       # relative      
-    ndO3    =   data[::-1,6];               mrO3    =   np.divide(ndO3,nd_nc)       # relative
-
-    fH2O    =   []      # For later
+    ndH2    =   data[::-1,57];              mrH2    =   np.divide(ndH2,nd_nc)       # relative to all non-condensibles
+    ndH2O   =   data[::-1,11];              mrH2O   =   np.divide(ndH2O,nd_all)     # not needed, H2O read in thru TempIn.dat
+    ndN2    =   data[::-1,59];              mrN2    =   np.divide(ndN2,nd_nc)       # relative to all non-condensibles
+    ndO2    =   data[::-1,58];              mrO2    =   np.divide(ndO2,nd_nc)       # relative to all non-condensibles      
+    ndO3    =   data[::-1,6];               mrO3    =   np.divide(ndO3,nd_nc)       # relative to all non-condensibles
 
     # Writing mixing ratio(*) profiles
     mr_profiles =   [mrC2H6,mrCH4,mrCO2,mrH2,mrH2O,mrN2,mrO2,mrO3]
@@ -69,16 +70,14 @@ def updateCLIMA(stepnum:int):
         f.close()
 
     ### Write mixing ratio profiles
+    fH2O = []
     for i in range(len(mr_files)):
         file = writeOrCreate(mr_files[i])
         profile = mr_profiles[i]
         mr = np.interp(pressure_range,pressures,profile)
 
-        # !!! Capping per-layer ozone to 1e-5
-        excessO3flag = 0
         for j in range(ND):
             if (i==7) and (mr[j] > 1e-5):
-                excessO3flag += 1
                 val = np.format_float_scientific(1e-5,precision=15,trim='k',unique=True,exp_digits=2,min_digits=15)
             else:
                 val = np.format_float_scientific(mr[j],precision=15,trim='k',unique=True,exp_digits=2,min_digits=15)
@@ -97,14 +96,14 @@ def updateCLIMA(stepnum:int):
     # Writing to 'mixing_ratios.dat'                       
     text = f"""\
 {np.format_float_scientific(AR,precision=3,trim='k',unique=True,exp_digits=2,min_digits=3)}     ! Argon
-{np.format_float_scientific(fCH4,precision=3,trim='k',unique=True,exp_digits=2,min_digits=3)}   ! Methane
-{np.format_float_scientific(fC2H6,precision=3,trim='k',unique=True,exp_digits=2,min_digits=3)}  ! Ethane
-{np.format_float_scientific(fCO2,precision=3,trim='k',unique=True,exp_digits=2,min_digits=3)}   ! Carbon Dioxide
-{np.format_float_scientific(fN2,precision=3,trim='k',unique=True,exp_digits=2,min_digits=3)}    ! Nitrogen
-{np.format_float_scientific(fO2,precision=3,trim='k',unique=True,exp_digits=2,min_digits=3)}    ! Oxygen
-{np.format_float_scientific(fH2,precision=3,trim='k',unique=True,exp_digits=2,min_digits=3)}    ! Hydrogen
-1.000e-72          !Nitrogen Dioxide
-{TROPOPAUSE}                 !Tropopause layer
+{np.format_float_scientific(fCH4,precision=3,trim='k',unique=True,exp_digits=2,min_digits=3)}     ! Methane
+{np.format_float_scientific(fC2H6,precision=3,trim='k',unique=True,exp_digits=2,min_digits=3)}     ! Ethane
+{np.format_float_scientific(fCO2,precision=3,trim='k',unique=True,exp_digits=2,min_digits=3)}     ! Carbon Dioxide
+{np.format_float_scientific(fN2,precision=3,trim='k',unique=True,exp_digits=2,min_digits=3)}     ! Nitrogen
+{np.format_float_scientific(fO2,precision=3,trim='k',unique=True,exp_digits=2,min_digits=3)}     ! Oxygen
+{np.format_float_scientific(fH2,precision=3,trim='k',unique=True,exp_digits=2,min_digits=3)}     ! Hydrogen
+1.000e-72     !Nitrogen Dioxide
+{TROPOPAUSE}     !Tropopause layer
 """
     f = writeOrCreate(CMIXING)
     f.write(text)
@@ -169,8 +168,8 @@ def updateMEAC(stepnum:int):
     zmax = z[-1]
     print("zmax = ",zmax,' km')
 
-    # updating temperature records
-    f = open(f"{CINOUT}/extras/surftemp.dat",'r')   # new surface temp values
+    # Add each CLIMA step's surface temperature and add it to the log of surf. temperature values.
+    f = open(f"{CINOUT}/extras/surftemp.dat",'r')   
     newSurfTemps = f.read().split('\n')[:-1]
     newSurfTemps = np.array(newSurfTemps,dtype=np.float32)
     for te in newSurfTemps: surfTemps.append(te)
@@ -187,9 +186,10 @@ def updateMEAC(stepnum:int):
     
     # Write temperature-pressure profile
     f = writeOrCreate(f"{MEACPATH}/{MZTP}")
+    # First, interpolate the CLIMA ztp over the MEAC altitude layers
     for i in np.linspace(0,zmax,ND):
         f.write(f"{i:.6f} {np.interp(i,z,np.log10(p)):.6f} {np.interp(i,z,t):.6f}\n")
-    
+    # For altitudes above the highest CLIMA altitude, assume an isotherm
     i = zmax
     pres = np.interp(i,z,np.log10(p))
     delta_p = np.interp(i,z,np.log10(p)) - np.interp(i-zmax/100,z,np.log10(p))
@@ -208,13 +208,10 @@ def updateMEAC(stepnum:int):
     subprocess.run(['cp',MCONC,f"{OUTPUT}/meac-in/conc_{stepnum}.dat"])
 
     # Update scenario file with CLIMA zTP
-    print(zmax)
-    val = np.format_float_positional(zmax,precision=1,trim='k',unique=True,min_digits=1)
-    print(val)
     writeScenarioFile()       
 
     # Update species scenario file
-    writeMEACspecies(tsurf=t[0],psurf=p[0])      
+    writeMEACspecies(tsurf=t[0])      
 
     # Plot surface temperature evolution
     plotSurfaceTemperature(f"{OUTPUT}/surftemps.dat",runBreaks=CLIMAstepIntervals,out_dir=OUTPUT)
@@ -237,41 +234,32 @@ def runMEAC(stepnum:int):
 ###       main       ###
 ########################
 
-def main():
+def main(name=None):
 
-    # make output folder for this run if it doesn't exist yet
-    if not (NAME in os.listdir('outputs')):
-        os.mkdir(OUTPUT)
-        os.chdir(OUTPUT)
-        os.mkdir('clima-in')
-        os.mkdir('clima-out')
-        os.mkdir('meac-in')
-        os.mkdir('meac-out')
-        os.mkdir('mr')
-        os.chdir(PATH)
-    else:
-        clearDirectory = input("Do you want to clear this directory? [y/n]\n")
-        if clearDirectory=='y':
-            subprocess.call(['rm','-r',OUTPUT])
-            os.mkdir(OUTPUT)
-            os.chdir(OUTPUT)
-            os.mkdir('clima-in')
-            os.mkdir('clima-out')
-            os.mkdir('meac-in')
-            os.mkdir('meac-out')
-            os.mkdir('mr')
-            os.chdir(PATH)
+    warning = input(f"Warning: if an output folder with the name '{NAME}' exists, it will be overwritten. Press enter to continue.\n")
+
+    # Clear any output subdirectory with the name NAME, then populate it
+    if (NAME in os.listdir('outputs')):
+        rmtree(OUTPUT)
+    os.mkdir(OUTPUT)
+    os.chdir(OUTPUT)
+    os.mkdir('clima-in')
+    os.mkdir('clima-out')
+    os.mkdir('meac-in')
+    os.mkdir('meac-out')
+    os.mkdir('mr')
+    os.chdir(PATH)
 
     # Make scenario folder for this run, if it doesn't exist yet
     if not (NAME in os.listdir(f"{MEACPATH}/scenario_library/")):
         scen_path = f"{MEACPATH}/scenario_library/{NAME}"
         os.mkdir(scen_path)
 
-        # Copy an example concentration file to new scenario folder, then run MEAC to get a 
+        # Copy an example concentration file to the new scenario folder, then run MEAC to get a 
         #   converged concentration file. Fair warning, if the kind of atmosphere you're simulating
         #   isn't very Earth-like, then the first convergence could take a while.
         subprocess.run(['cp','templates/ConcentrationSTD_base.dat',MCONV])
-        writeMEACspecies(tsurf=TSURF,psurf=PSURF*atm2Pa)    
+        writeMEACspecies(tsurf=TSURF)    
 
         # Write a flat Kzz profile. You can change this file later
         f = open(f'{scen_path}/Eddy.dat','w')
@@ -289,6 +277,9 @@ def main():
         runMEAC(i)
         os.system('clear')
 
-plotAtmosphericComposition(conc_file=MCONC,id=str(11),out_dir=OUTPUT)
-
-# main()
+start = time.time()
+main()
+end = time.time()
+print(f"Start:      {start}")
+print(f"End:        {end}")
+print(f"Duration:   {(end-start)/60} minutes")

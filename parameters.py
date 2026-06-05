@@ -3,7 +3,7 @@ import os
 # Coupling parameters
 ND              =   101                     # CLIMA number of layers -- PLEASE DONT TOUCH
 NBIN            =   50                      # MEAC number of layers
-NLOOPS          =   12                       # Number of CLIMA-MEAC loops
+NLOOPS          =   15                       # Number of CLIMA-MEAC loops
 NMINSTEPS       =   500                      # Minimum number of CLIMA steps per loop
 NMAXSTEPS       =   500                      # Max Number of CLIMA steps per loops
 NMAXT           =   1e100                    # Max MEAC cumulative integration time
@@ -14,20 +14,22 @@ MASS            =   5.9722e24               # Planet mass in kg
 RAD             =   6371.0                  # Planet radius in km
 G               =   980                     # grav*M/R**2; Surface gravity, cgs
 A               =   1.0                     # Semimajor axis in AU
-SURFALB         =   0.23                     # Planet surface albedo
-INSTELL         =   1.00                     # Planet instelation, relative to Earth
-P0              =   1e-5                    # Top-of-atmosphere pressure [atm]. If this value is too low, temperatures might blow up :(
+SURFALB         =   0.3                     # Planet surface albedo
+INSTELL         =   1.0                     # Planet instelation, relative to Earth
+
+# CLIMA parameters
+P0              =   1e-5                    # Top-of-atmosphere pressure [atm] considered by CLIMA. If this value is too low, temperatures might blow up :(
 PSURF           =   1e+0                    # Surface pressure [atm]
-T0              =   180                     # Top-of-atmosphere temperature [K]
-TSURF           =   280                     # Surface temperature [K]
-TROPOPAUSE      =   22                      # CLIMA tropopause layer, default 22 (of 101)
-AR              =   2e-2                    # Argon mixing ratio
-RELHUM          =   0.7                     # Surface relative humidity
-FIXH2O          =   1                       # Fixed H2O flag. I really recommend leaving this on
+T0              =   180                     # Top-of-atmosphere temperature initial guess [K]   * not used
+TSURF           =   330                     # Surface temperature initial guess [K]             * not used
+TROPOPAUSE      =   20                      # CLIMA tropopause layer, default 22 (of 101)
+AR              =   0                       # Argon mixing ratio
+RELHUM          =   1.0                     # Surface relative humidity
+FIXH2O          =   1                       # Fixed H2O flag. I really recommend leaving this on. Also, doesn't actually fix H2O?
 IO3             =   1                       # Ozone flag -- IO3=0 means ozone isn't read in
 IME             =   1                       # Methane/ethane flag
 
-# Eddysed variables
+# Eddysed parameters (also for CLIMA)
 DOEDDY          =   'true'                  # eddysed flag; if false, nothing below this matters
 FCLOUD          =   0.0                     # fractional cloud coverage   
 KZ_MIN          =   100000.0                # Minimum eddydiffusivity
@@ -38,11 +40,12 @@ COLDTRAPMINMIX  =   4e-10                   # Minimum coldtrap water mass mixing
 FCMINF          =   0.01                    # Minimum fraction for FC for upper atmosphere
 
 # Misc
-RESUMERUN       =   0                       # Continue from most recent run
-ICONSERVE       =   1                       # CLIMA energy conservation flag, PLEASE KEEP ON
+RESUMERUN       =   0                       # Continue from most recent run. Set to 0 for coupling
+ICONSERVE       =   1                       # CLIMA energy conservation flag, PLEASE KEEP ON 1
 RAINOUT         =   1                       # controls rainout in 'main.c'. not used yet
 ADIABATIC       =   0                       # tells CLIMA that atmosphere is dry adiabat  
-ZMAX            =   50                      # Upper altitude limit, WIP
+ZMAX            =   50                      # Uppermost altitude; overwritten in main.py, not used
+
 atm2Pa          =   101_325
 
 #######################
@@ -50,7 +53,7 @@ atm2Pa          =   101_325
 #######################
 
 # Paths
-NAME            =   'fco2_1e-6'
+NAME            =   'fco2_1e-1'
 OUTPUT          =   "outputs/"+NAME
 PATH            =   os.getcwd()                                     # Path to this python file
 CLIMAPATH       =   f'{PATH}/cloudy_clima'                          # Path to the cloudy-CLIMA folder
