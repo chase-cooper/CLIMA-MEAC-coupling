@@ -1,5 +1,6 @@
-figs/**
+figs/*
 outputs/*
-Plots/**
-.vscode
+Plots/*
+.vscode/*
+__pycache__/*
 clima_config_notes.docx

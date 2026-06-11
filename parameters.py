@@ -7,7 +7,7 @@ NLOOPS          =   15                       # Number of CLIMA-MEAC loops
 NMINSTEPS       =   500                      # Minimum number of CLIMA steps per loop
 NMAXSTEPS       =   500                      # Max Number of CLIMA steps per loops
 NMAXT           =   1e100                    # Max MEAC cumulative integration time
-TCONV           =   1E-1                    # CLIMA convergence criterion, delta temperature
+TCONV           =   1E-1                    # CLIMA convergence criterion, delta temperature (not too important)
 
 # Planet + atmosphere parameters
 MASS            =   5.9722e24               # Planet mass in kg
@@ -80,7 +80,7 @@ C_O3            =   f'{CINOUT}/Profiles/O3.dat'                     # O3   verti
 # MEAC files
 MSCENARIOPATH   =   f'scenario_library/{NAME}'             # Path to MEAC scenario folder
 MZTP            =   f'{MSCENARIOPATH}/TP.dat'                       # MEAC ztp profile
-MCONV           =   f"{MEACPATH}/{MSCENARIOPATH}/ConcentrationSTD_base.dat"    # Conc. file from last convergence
+MBASE           =   f"{MEACPATH}/{MSCENARIOPATH}/ConcentrationSTD_base.dat"    # Starting conc file
 MSCENARIO       =   f'{MSCENARIOPATH}/planet_scenario_N2r.h'    # MEAC scenario file with planet parameters
 MSPECIES        =   f'{MSCENARIOPATH}/species_scenario_N2r.dat'       # MEAC atmosphere species file
 MCONC           =   f'{MEACPATH}/{MSCENARIOPATH}/ConcentrationSTD.dat'         # MEAC concentrations file

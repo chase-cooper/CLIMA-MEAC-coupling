@@ -32,7 +32,7 @@ def updateCLIMA(stepnum:int):
 
     ### Getting mixing ratios from MEAC    
     # Open concentration file
-    conc_file = MCONV if firstloop else MCONC
+    conc_file = MBASE if firstloop else MCONC
     f = open(conc_file,'r')
     data = f.read().replace('#','').split()[121:]
     data = np.asarray(data,dtype=np.float32).reshape(len(data)//116,116)
@@ -146,9 +146,8 @@ def runCLIMA(stepnum:int):
     subprocess.run("./clima.run")
     os.chdir(PATH)
 
-    # Save formatted outputs, plot resulting TP profile
+    # Save formatted outputs
     writeCLIMAout(CLAST,OUTPUT,str(stepnum))
-    plotTPprofile(CLAST,str(stepnum),MCONV,OUTPUT)
 
 def updateMEAC(stepnum:int):
     """
@@ -202,7 +201,7 @@ def updateMEAC(stepnum:int):
 
     # write new concentration file, and save in outputs folder
     if firstloop:
-        generate_new_concentrationSTD(MCONV,f"{MEACPATH}/{MZTP}",0,100,NBIN,MCONC)
+        generate_new_concentrationSTD(MBASE,f"{MEACPATH}/{MZTP}",0,100,NBIN,MCONC)
     else:
         generate_new_concentrationSTD(MCONC,f"{MEACPATH}/{MZTP}",0,100,NBIN,MCONC)
     subprocess.run(['cp',MCONC,f"{OUTPUT}/meac-in/conc_{stepnum}.dat"])
@@ -236,6 +235,8 @@ def runMEAC(stepnum:int):
 
 def main(name=None):
 
+    start = time.time()
+
     warning = input(f"Warning: if an output folder with the name '{NAME}' exists, it will be overwritten. Press enter to continue.\n")
 
     # Clear any output subdirectory with the name NAME, then populate it
@@ -255,10 +256,7 @@ def main(name=None):
         scen_path = f"{MEACPATH}/scenario_library/{NAME}"
         os.mkdir(scen_path)
 
-        # Copy an example concentration file to the new scenario folder, then run MEAC to get a 
-        #   converged concentration file. Fair warning, if the kind of atmosphere you're simulating
-        #   isn't very Earth-like, then the first convergence could take a while.
-        subprocess.run(['cp','templates/ConcentrationSTD_base.dat',MCONV])
+        # Update water vapor lower boundary condition
         writeMEACspecies(tsurf=TSURF)    
 
         # Write a flat Kzz profile. You can change this file later
@@ -276,10 +274,8 @@ def main(name=None):
         updateMEAC(i)
         runMEAC(i)
         os.system('clear')
-
-start = time.time()
-main()
-end = time.time()
-print(f"Start:      {start}")
-print(f"End:        {end}")
-print(f"Duration:   {(end-start)/60} minutes")
+    
+    end = time.time()
+    print(f"Start:      {start}")
+    print(f"End:        {end}")
+    print(f"Duration:   {(end-start)/60} minutes")

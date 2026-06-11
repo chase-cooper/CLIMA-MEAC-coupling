@@ -1,0 +1,10 @@
+To run:
+
+ - Set parameter values in parameters.py
+    - [IMPORTANT] parameter NAME will be the output folder in outputs/ that results are saved to
+    - [IMPORTANT] Set parameter MCONV to the (relative) path to a converged MEAC concenctration file to start with.
+ - Make changes to species boundary conditions in templates/meac_species.txt
+ - Make changes to planetary parameters in templates/meac_scenario.txt
+    - parameters.py does have parameters for planet mass, radius, etc. but they are not currently read in :(
+
+Run from command line, while in this directory ("CLIMA-MEAC COUPLING"), as just 'python main.py'

@@ -13,10 +13,10 @@ P0=        1e-05 	        ! Top-of-atmosphere pressure (bar)
 PGO=       1.0	        ! Surface pressure (bar)
 G=         980          ! Surface gravity (cgs) (Mars=373., Earth=980.) 
 FAC=       4.0          ! Ratio of grid spacing at the model top to grid spacing at the model bottom
-IO3=       1   		! Ozone flag
-IUP=       0         ! 1 means that it starts a new run and doesn't read TempIn.dat
+IO3=       1   		    ! Ozone flag
+IUP=       0            ! 1 means that it starts a new run and doesn't read TempIn.dat
 TG0=       330	        ! Surface temperature for IUP=1   
-TSTRAT=    180         ! Stratospheric temperature for IUP=1
+TSTRAT=    180          ! Stratospheric temperature for IUP=1
 STARR=     "Sun"	    ! What star?
 ICONSERV=  1          ! Type of energy conservation
 ICOUPLE=   0            ! Photochem coupling flag (must be 0 for MEAC coupling!)
