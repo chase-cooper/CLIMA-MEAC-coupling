@@ -255,6 +255,7 @@ def main(name=None):
     if not (NAME in os.listdir(f"{MEACPATH}/scenario_library/")):
         scen_path = f"{MEACPATH}/scenario_library/{NAME}"
         os.mkdir(scen_path)
+        # os.system(f'cp {PATH}/templates/Concentration_STD_Earth.dat {PATH}/{MBASE}')    # Not wokring
 
         # Update water vapor lower boundary condition
         writeMEACspecies(tsurf=TSURF)    
@@ -264,7 +265,7 @@ def main(name=None):
         f.write('0.000000 100000\n100.000000 100000\n')
         f.close()
 
-        os.chdir(PATH)
+        # os.chdir(PATH)
 
     writeParameters()
     writeIncludeFile()
@@ -279,3 +280,5 @@ def main(name=None):
     print(f"Start:      {start}")
     print(f"End:        {end}")
     print(f"Duration:   {(end-start)/60} minutes")
+
+main(NAME)

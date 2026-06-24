@@ -3,9 +3,9 @@ import os
 # Coupling parameters
 ND              =   101                     # CLIMA number of layers -- PLEASE DONT TOUCH
 NBIN            =   50                      # MEAC number of layers
-NLOOPS          =   15                       # Number of CLIMA-MEAC loops
-NMINSTEPS       =   500                      # Minimum number of CLIMA steps per loop
-NMAXSTEPS       =   500                      # Max Number of CLIMA steps per loops
+NLOOPS          =   50                       # Number of CLIMA-MEAC loops
+NMINSTEPS       =   200                      # Minimum number of CLIMA steps per loop
+NMAXSTEPS       =   200                      # Max Number of CLIMA steps per loops
 NMAXT           =   1e100                    # Max MEAC cumulative integration time
 TCONV           =   1E-1                    # CLIMA convergence criterion, delta temperature (not too important)
 
@@ -20,12 +20,12 @@ INSTELL         =   1.0                     # Planet instelation, relative to Ea
 # CLIMA parameters
 P0              =   1e-5                    # Top-of-atmosphere pressure [atm] considered by CLIMA. If this value is too low, temperatures might blow up :(
 PSURF           =   1e+0                    # Surface pressure [atm]
-T0              =   180                     # Top-of-atmosphere temperature initial guess [K]   * not used
-TSURF           =   330                     # Surface temperature initial guess [K]             * not used
+T0              =   180                     # Top-of-atmosphere temperature initial guess [K]   
+TSURF           =   320                     # Surface temperature initial guess [K]             
 TROPOPAUSE      =   20                      # CLIMA tropopause layer, default 22 (of 101)
 AR              =   0                       # Argon mixing ratio
 RELHUM          =   1.0                     # Surface relative humidity
-FIXH2O          =   1                       # Fixed H2O flag. I really recommend leaving this on. Also, doesn't actually fix H2O?
+FIXH2O          =   1                       # Fixed H2O flag. I really recommend leaving this on. Also, doesn't actually fix H2O? unclear
 IO3             =   1                       # Ozone flag -- IO3=0 means ozone isn't read in
 IME             =   1                       # Methane/ethane flag
 
@@ -53,7 +53,7 @@ atm2Pa          =   101_325
 #######################
 
 # Paths
-NAME            =   'fco2_1e-1'
+NAME            =   'co2_1e-2_ch4_1e8_n40s200'
 OUTPUT          =   "outputs/"+NAME
 PATH            =   os.getcwd()                                     # Path to this python file
 CLIMAPATH       =   f'{PATH}/cloudy_clima'                          # Path to the cloudy-CLIMA folder

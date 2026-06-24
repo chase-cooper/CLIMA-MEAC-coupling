@@ -73,7 +73,7 @@ def writeParameters():
 
     f.write("###    MEAC FILE PATHS\n")
     f.write(f"MEAC Scenario Path    =   {MSCENARIOPATH}\n")
-    f.write(f"MEAC Converged File   =   {MCONV}\n")
+    f.write(f"MEAC Converged File   =   {MBASE}\n")
     f.write(f"MEAC Scenario File    =   {MSCENARIO}\n")
     f.write(f"MEAC Species File     =   {MSPECIES}\n")
     f.write(f"MEAC ConcentrationFile=   {MCONC}\n")
