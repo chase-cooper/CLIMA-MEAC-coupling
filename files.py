@@ -176,7 +176,7 @@ def writeMEACspecies(tsurf:float):
             res = np.exp(13.3185*a - 1.97*a*a - 0.6445*a*a*a - 0.1229*a*a*a*a)
         
         res = np.round(res,6)
-        # print(f"When surface temperature = {temp} K, surface water vapor mixing ratio is {res}")
+        print(f"When surface temperature = {temp} K, surface water vapor mixing ratio is {res}")
         return res
     
     val = waterPressure(tsurf)

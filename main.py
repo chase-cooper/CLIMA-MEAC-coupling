@@ -93,6 +93,7 @@ def updateCLIMA(stepnum:int):
     fH2     = (1-AR) * np.sum(ndH2)/np.sum(nd_nc)    # relative
     fN2     = (1-AR) * np.sum(ndN2)/np.sum(nd_nc)    # relative
     fO2     = (1-AR) * np.sum(ndO2)/np.sum(nd_nc)    # relative
+
     # Writing to 'mixing_ratios.dat'                       
     text = f"""\
 {np.format_float_scientific(AR,precision=3,trim='k',unique=True,exp_digits=2,min_digits=3)}     ! Argon
@@ -188,6 +189,7 @@ def updateMEAC(stepnum:int):
     # First, interpolate the CLIMA ztp over the MEAC altitude layers
     for i in np.linspace(0,zmax,ND):
         f.write(f"{i:.6f} {np.interp(i,z,np.log10(p)):.6f} {np.interp(i,z,t):.6f}\n")
+        
     # For altitudes above the highest CLIMA altitude, assume an isotherm
     i = zmax
     pres = np.interp(i,z,np.log10(p))
