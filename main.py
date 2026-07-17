@@ -19,6 +19,7 @@ from plots import *
 CLIMAstepIntervals      = []     # Step counts where MEAC runs occur
 surfTemps     = []               # Surface temperatures after each CLIMA step (not each loop)
 zmax = ZMAX
+atm2Pa  = 101_325
 
 ########################
 ### Elements of main ###
@@ -39,9 +40,9 @@ def updateCLIMA(stepnum:int):
     f.close()
 
     # Arrange number densities from TOA to surface
-    pressures = data[::-1,4]    
-    nd_all  =   np.sum(data[::-1],axis=1)               # Total number densities
-    nd_nc   =   nd_all - data[::-1,56]- data[::-1,11]   # Non-condensible number densities
+    pressures   = data[::-1,4]    
+    nd_all      =   np.sum(data[::-1],axis=1)               # Total number densities
+    nd_nc       =   nd_all - data[::-1,56]- data[::-1,11]   # Non-condensible number densities
     
     # number densities                      mixing ratios 
     ndC2H6  =   data[::-1,35];              mrC2H6  =   np.divide(ndC2H6,nd_nc)     # relative to all non-condensibles
@@ -52,6 +53,11 @@ def updateCLIMA(stepnum:int):
     ndN2    =   data[::-1,59];              mrN2    =   np.divide(ndN2,nd_nc)       # relative to all non-condensibles
     ndO2    =   data[::-1,58];              mrO2    =   np.divide(ndO2,nd_nc)       # relative to all non-condensibles      
     ndO3    =   data[::-1,6];               mrO3    =   np.divide(ndO3,nd_nc)       # relative to all non-condensibles
+
+    # get surface pressure by linearly extrpolating MEAC pressures to 0km
+    p = pressures[::-1]
+    PSURF = (p[0] + 0.5*(p[0]-p[1]))/atm2Pa     # atm
+
 
     # Writing mixing ratio(*) profiles
     mr_profiles =   [mrC2H6,mrCH4,mrCO2,mrH2,mrH2O,mrN2,mrO2,mrO3]
@@ -277,6 +283,7 @@ def main(name=None):
         updateMEAC(i)
         runMEAC(i)
         os.system('clear')
+        input()
     
     end = time.time()
     print(f"Start:      {start}")

@@ -171,8 +171,8 @@ def plotAtmosphericEvolution(scen_name:str='',out_dir:str=''):         # WIP
         ax.set_xticks([],minor=True)
         ax.tick_params(rotation=-90)
     # axes[2].set_xticks(ticks=[2e-5,5e-5,1e-4],labels=[r"$2\times10^{-5}$",r"$5\times10^{-5}$",r"$10^{-4}$"],minor=False)         # CO2
-    axes[3].set_xticks(ticks=[1.5e-5,2e-5,2.5e-5],labels=[r"$1.5\times10^{-5}$",r"$2\times10^{-5}$",r"$2.5\times10^{-5}$"],minor=False)  # H2
-    axes[5].set_xticks(ticks=[0.99,0.995,1.0],labels=["",r"$9.95\times10^{-1}$",r"1.0"],minor=False)    # N2
+    # axes[3].set_xticks(ticks=[1.5e-5,2e-5,2.5e-5],labels=[r"$1.5\times10^{-5}$",r"$2\times10^{-5}$",r"$2.5\times10^{-5}$"],minor=False)  # H2
+    # axes[5].set_xticks(ticks=[0.99,0.995,1.0],labels=["",r"$9.95\times10^{-1}$",r"1.0"],minor=False)    # N2
 
     fig.set_figwidth(15)
     fig.set_figheight(8)
@@ -215,11 +215,6 @@ def plotTPprofile(clast:str,id:str,meac_conv:str='',out_dir:str=''):
     plt.savefig(f'{out_dir}/TPprofile',dpi=200)
     # plt.show()
     plt.close()
-
-def plotTPevolution(scen_name:str,out_dir:str):
-
-    files = os.listdir(f"outputs/{scen_name}/clima-out/")
-    files.sort(key = lambda x: int(re.search(r"[0-9]+",x)[0]))
 
 def plotChemTP(conc_file:str,clast:str,ref_meac_file:str,out_dir:str=''):
     fig,axes = plt.subplots(ncols=2)
@@ -1009,5 +1004,5 @@ def importPhotochemWaterProfile(root:str = 'fco2_1e-1'):
 # ref_file  = 'hu-code-sr/scenario_library/CO2_CH4/fco2_1e-4_satred/ConcentrationSTD.dat'
 # plotAtmosphericComposition(conc_file=conc_file,id='test4',ref_file=ref_file,out_dir='outputs/test')
 
-
+# plotAtmosphericEvolution(scen_name='co2_1e-6_ch4_1e8',out_dir='outputs/co2_1e-6_ch4_1e8')
 

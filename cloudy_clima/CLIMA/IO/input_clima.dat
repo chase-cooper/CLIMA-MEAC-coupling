@@ -3,7 +3,7 @@
 * Write the value AFTER the 11th space
 *VARIABLE  VALUE        NOTES
 
-NSTEPS=    200          ! step number (200 recommended for coupling)
+NSTEPS=    20          ! step number (200 recommended for coupling)
 IMW=       0            ! Type of water profile: 0 -> saturated troposphere; 1 -> Manabe/Wetherald; 2 -> M/W with constant stratosphere, emperical troposphere; 3 -> dry adiabat
 RSURF=     1.0       	! Relative surface humidity     
 ZY=        60.     	    ! Solar zenith angle (degrees)
@@ -14,7 +14,7 @@ PGO=       1.0	        ! Surface pressure (bar)
 G=         980          ! Surface gravity (cgs) (Mars=373., Earth=980.) 
 FAC=       4.0          ! Ratio of grid spacing at the model top to grid spacing at the model bottom
 IO3=       1   		! Ozone flag
-IUP=       0         ! 1 means that it starts a new run and doesn't read TempIn.dat
+IUP=       1         ! 1 means that it starts a new run and doesn't read TempIn.dat
 TG0=       320	        ! Surface temperature for IUP=1   
 TSTRAT=    180         ! Stratospheric temperature for IUP=1
 STARR=     "Sun"	    ! What star?
