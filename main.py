@@ -283,7 +283,6 @@ def main(name=None):
         updateMEAC(i)
         runMEAC(i)
         os.system('clear')
-        input()
     
     end = time.time()
     print(f"Start:      {start}")

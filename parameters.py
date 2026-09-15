@@ -21,7 +21,7 @@ INSTELL         =   1.0                     # Planet instelation, relative to Ea
 P0              =   1e-5                    # Top-of-atmosphere pressure [atm] considered by CLIMA. If this value is too low, temperatures might blow up :(
 PSURF           =   0.9869                  # Surface pressure [atm]
 T0              =   180                     # Top-of-atmosphere temperature initial guess [K]   
-TSURF           =   320                     # Surface temperature initial guess [K]             
+TSURF           =   280                     # Surface temperature initial guess [K]             
 TROPOPAUSE      =   20                      # CLIMA tropopause layer, default 22 (of 101)
 AR              =   0                       # Argon mixing ratio
 RELHUM          =   1.0                     # Surface relative humidity
@@ -53,7 +53,7 @@ atm2Pa          =   101_325
 #######################
 
 # Paths
-NAME            =   'test'  #'co2_1e-6_ch4_1e8'
+NAME            =   'co2_1e-6_ch4_1e8'
 OUTPUT          =   "outputs/"+NAME
 PATH            =   os.getcwd()                                     # Path to this python file
 CLIMAPATH       =   f'{PATH}/cloudy_clima'                          # Path to the cloudy-CLIMA folder

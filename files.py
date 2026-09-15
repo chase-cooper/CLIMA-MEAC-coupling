@@ -240,6 +240,7 @@ def writeMEACout(conc_file:str,out_dir:str='',id:str=''):
     f.close()
 
 def writeCLIMAout(clima_last:str,out_dir:str='',id:str=''):
+    # Open clima_last which contains the final temperature-pressure profile
     f = open(clima_last,'r')
     data = ''.join(f.readlines()[1:])
     data = np.fromstring(data,dtype=np.float32,sep=' ').reshape((ND,9))
@@ -249,11 +250,25 @@ def writeCLIMAout(clima_last:str,out_dir:str='',id:str=''):
     temps = data[:,2]
     pres = data[:,1]*atm2Pa
 
+    # Open species mixing ratio profiles
+    c2h6    = np.genfromtxt(CINOUT+'/Profiles_out/C2H6.dat')
+    ch4     = np.genfromtxt(CINOUT+'/Profiles_out/CH4.dat')
+    co2     = np.genfromtxt(CINOUT+'/Profiles_out/CO2.dat')
+    h2      = np.genfromtxt(CINOUT+'/Profiles_out/H2.dat')
+    h2o     = np.genfromtxt(CINOUT+'/Profiles_out/H2O.dat')
+    n2      = np.genfromtxt(CINOUT+'/Profiles_out/N2.dat')
+    o2      = np.genfromtxt(CINOUT+'/Profiles_out/O2.dat')
+    o3      = np.genfromtxt(CINOUT+'/Profiles_out/O3.dat')
+
     f = writeOrCreate(f'{out_dir}/clima-out/ztp_{id}.dat')
-    f.write("Altitude [km]\tTemperature [K]\tPressure [Pa]\n")
+    f.write("Altitude [km]\tTemperature [K]\tPressure [Pa]\tC2H6\t\tCH4\t\t\tCO2\t\t\tH2\t\t\tH2O\t\t\tN2\t\t\tO2\t\t\tO3\n")
     for j in range(len(alts)):
-        p = np.format_float_positional(pres[j],precision=6,trim='k',unique=True,min_digits=6)
-        f.write(f"{alts[j]:.4f}\t\t\t{temps[j]:.4f}\t\t\t{p}\n")
+        p = np.format_float_scientific(pres[j],precision=4,trim='k',unique=True,min_digits=4)
+        f.write(f"{alts[j]:.4f}\t\t\t{temps[j]:.4f}\t\t{p}\t\t")
+        for arr in [c2h6,ch4,co2,h2,h2o,n2,o2,o3]:
+            f.write(np.format_float_scientific(arr[j],precision=4,min_digits=4)+'\t')
+        f.write('\n')
+
     f.close()
 
 def importPhotochemH2O(root:str='fco2_1e-1'):
@@ -280,5 +295,3 @@ def importPhotochemH2O(root:str='fco2_1e-1'):
         f.write(np.format_float_scientific(co2_new[i],precision=6,min_digits=6)+'\n')
     f.close()
     # Done!
-
-
