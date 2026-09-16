@@ -4,7 +4,7 @@ import numpy as np
 import os
 import re
 
-from parameters import *
+# from parameters import *
 
 # plot parameters
 figsize   = (8,6)
@@ -320,7 +320,7 @@ def plotChemTP(conc_file:str,clast:str,ref_meac_file:str,out_dir:str=''):
 
     fig.set_figwidth(9)
     plt.tight_layout()
-    plt.savefig(f"{OUTPUT}/mr_tp_combined",dpi=250)
+    plt.savefig(f"{out_dir}/mr_tp_combined",dpi=250)
     # plt.show()
 
 def plotSurfaceTemperature(temps_file:str,runBreaks:list[int]=[],out_dir:str=''):

@@ -6,6 +6,6 @@ c--------------------------------------------------
         PARAMETER(ND=101)
         PARAMETER(RAD=6371.0)
         PARAMETER(TCONV=0.1)
-        PARAMETER(MINSTEPS=500)
+        PARAMETER(MINSTEPS=20)
         PARAMETER(FIXH20=0)
         implicit real*8(A-H,O-Z)

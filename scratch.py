@@ -1,6 +1,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+
+
+
+
+
+
 meac_start      = 'hu-code-sr/scenario_library/co2_1e-6_ch4_1e8/ConcentrationSTD_base.dat'
 meac_final      = 'hu-code-sr/scenario_library/co2_1e-6_ch4_1e8/ConcentrationSTD.dat'
 clima_ztp_start = 'outputs/co2_1e-6_ch4_1e8/clima-out/ztp_0.dat'

@@ -3,9 +3,9 @@ import os
 # Coupling parameters
 ND              =   101                     # CLIMA number of layers -- PLEASE DONT TOUCH
 NBIN            =   50                      # MEAC number of layers
-NLOOPS          =   15                      # Number of CLIMA-MEAC loops
-NMINSTEPS       =   500                     # Minimum number of CLIMA steps per loop
-NMAXSTEPS       =   500                     # Max Number of CLIMA steps per loops
+NLOOPS          =   2                      # Number of CLIMA-MEAC loops
+NMINSTEPS       =   20                     # Minimum number of CLIMA steps per loop
+NMAXSTEPS       =   20                     # Max Number of CLIMA steps per loops
 NMAXT           =   1e100                    # Max MEAC cumulative integration time
 TCONV           =   1E-1                    # CLIMA convergence criterion, delta temperature (not too important)
 
@@ -25,7 +25,7 @@ TSURF           =   280                     # Surface temperature initial guess 
 TROPOPAUSE      =   20                      # CLIMA tropopause layer, default 22 (of 101)
 AR              =   0                       # Argon mixing ratio
 RELHUM          =   1.0                     # Surface relative humidity
-FIXH2O          =   0                       # Fixed H2O flag. I really recommend leaving this on. Also, doesn't actually fix H2O? unclear
+FIXH2O          =   0                       # Fixed H2O flag.
 IO3             =   1                       # Ozone flag -- IO3=0 means ozone isn't read in
 IME             =   1                       # Methane/ethane flag
 
@@ -53,8 +53,6 @@ atm2Pa          =   101_325
 #######################
 
 # Paths
-NAME            =   'co2_1e-6_ch4_1e8'
-OUTPUT          =   "outputs/"+NAME
 PATH            =   os.getcwd()                                     # Path to this python file
 CLIMAPATH       =   f'{PATH}/cloudy_clima'                          # Path to the cloudy-CLIMA folder
 MEACPATH        =   f'{PATH}/hu-code-sr'                            # Path to the MEAC folder
@@ -76,11 +74,3 @@ C_CH4           =   f'{CINOUT}/Profiles/CH4.dat'                    # CH4  verti
 C_C2H6          =   f'{CINOUT}/Profiles/C2H6.dat'                   # C2H6 vertical profile
 C_H2O           =   f'{CINOUT}/Profiles/H2O.dat'                    # H2O  vertical profile
 C_O3            =   f'{CINOUT}/Profiles/O3.dat'                     # O3   vertical profile
-
-# MEAC files
-MSCENARIOPATH   =   f'scenario_library/{NAME}'             # Path to MEAC scenario folder
-MZTP            =   f'{MSCENARIOPATH}/TP.dat'                       # MEAC ztp profile
-MBASE           =   f"{MEACPATH}/{MSCENARIOPATH}/ConcentrationSTD_base.dat"    # Starting conc file
-MSCENARIO       =   f'{MSCENARIOPATH}/planet_scenario_N2r.h'    # MEAC scenario file with planet parameters
-MSPECIES        =   f'{MSCENARIOPATH}/species_scenario_N2r.dat'       # MEAC atmosphere species file
-MCONC           =   f'{MEACPATH}/{MSCENARIOPATH}/ConcentrationSTD.dat'         # MEAC concentrations file
