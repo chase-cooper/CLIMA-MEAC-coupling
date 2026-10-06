@@ -25,15 +25,16 @@ atm2Pa  = 101_325
 ###       main       ###
 ########################
 
-def main(name='test'):
+def main(name='test',co2mr='1.0e-6',ch4flux='1.0e+8'):
 
-    NAME = name
+    NAME            = name
     # Set relevant paths
     OUTPUT          =   "outputs/"+NAME
     MSCENARIOPATH   =   f'scenario_library/{NAME}'             # Path to MEAC scenario folder
     MZTP            =   f'{MSCENARIOPATH}/TP.dat'                       # MEAC ztp profile
-    # MBASE           =   f"{MEACPATH}/{MSCENARIOPATH}/ConcentrationSTD_base.dat"    # Starting conc file
-    MBASE           =   f"{MEACPATH}/Earth/ConcentrationSTD_base_Earth.dat"
+    MBASE           =   f"{MEACPATH}/scenario_library/Earth/ConcentrationSTD_base_Earth.dat"    # Starting conc file
+    # MBASE           =   f"{MEACPATH}/Earth/ConcentrationSTD_base_Earth.dat"
+    # MBASE           =   f"{MEACPATH}/scenario_library/trappist-1_n2co2/ConcentrationSTD.dat"
     MSCENARIO       =   f'{MSCENARIOPATH}/planet_scenario_N2r.h'    # MEAC scenario file with planet parameters
     MSPECIES        =   f'{MSCENARIOPATH}/species_scenario_N2r.dat'       # MEAC atmosphere species file
     MCONC           =   f'{MEACPATH}/{MSCENARIOPATH}/ConcentrationSTD.dat'         # MEAC concentrations file
@@ -209,7 +210,7 @@ c--------------------------------------------------
         o.write(text)
         o.close()
 
-    def writeMEACspecies(tsurf:float):
+    def writeMEACspecies(tsurf:float,co2mr:str='1.0e-6',ch4flux:str='1.0e+8'):
         # This function updates the lower boundary flux of water only -- other 
         #   mixing ratios need to be changed manually!
 
@@ -235,6 +236,8 @@ c--------------------------------------------------
         f.close()
 
         text = text.replace("{1}",str(val))
+        text = text.replace("{2}",co2mr)
+        text = text.replace("{3}",ch4flux)
 
         f = open(MEACPATH+'/'+MSPECIES,'w')
         f.write(text)
@@ -517,7 +520,7 @@ c--------------------------------------------------
         writeScenarioFile()       
 
         # Update species scenario file
-        writeMEACspecies(tsurf=t[0])      
+        writeMEACspecies(tsurf=t[0],co2mr=co2mr,ch4flux=ch4flux)      
 
         # Plot surface temperature evolution
         plotSurfaceTemperature(f"{OUTPUT}/surftemps.dat",runBreaks=CLIMAstepIntervals,out_dir=OUTPUT)
@@ -561,7 +564,7 @@ c--------------------------------------------------
         # os.system(f'cp {PATH}/templates/Concentration_STD_Earth.dat {PATH}/{MBASE}')    # Not wokring
 
         # Update water vapor lower boundary condition
-        writeMEACspecies(tsurf=TSURF)    
+        writeMEACspecies(tsurf=TSURF,co2mr=co2mr,ch4flux=ch4flux)    
 
         # Write a flat Kzz profile. You can change this file later
         f = open(f'{scen_path}/Eddy.dat','w')
@@ -578,6 +581,7 @@ c--------------------------------------------------
     for i in range(NLOOPS):
         updateCLIMA(i)
         runCLIMA(i)
+        # input()
         updateMEAC(i)
         runMEAC(i)
         os.system('clear')
@@ -588,5 +592,7 @@ c--------------------------------------------------
     print(f"Duration:   {(end-start)/60} minutes")
 
 if __name__ == '__main__':
-    name = sys.argv[1]
-    main(name)
+    name    = sys.argv[1]
+    co2mr   = sys.argv[2]
+    ch4flux = sys.argv[3]
+    main(name,co2mr,ch4flux)

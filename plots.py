@@ -42,7 +42,7 @@ plt.rcParams['xtick.minor.width'] = tlinewidth
 plt.rcParams['ytick.minor.width'] = tlinewidth
 cmap = plt. get_cmap('tab20b')
 
-def plotAtmosphericComposition(conc_file:str,id:str,ref_file:str='',out_dir:str=''):
+def plotAtmosphericComposition(conc_file:str,id:str,ref_file:str='',out_dir:str='',plotit:bool=False):
     """
     Plot relevant mixing ratios from MEAC concentration file
     """
@@ -133,8 +133,9 @@ def plotAtmosphericComposition(conc_file:str,id:str,ref_file:str='',out_dir:str=
     if ref_file: fig.suptitle(r'$f_{\rm CO_2}=10^{-4}$')
     fig.set_figwidth(11)
     plt.tight_layout()
+    if plotit: plt.show()
     plt.savefig(f"{out_dir}/mr/MEAC_mixing_ratios_{id}",dpi=300)
-    # plt.show()
+    
     plt.close()
 
 def plotAtmosphericEvolution(scen_name:str='',out_dir:str=''):         # WIP
@@ -1004,5 +1005,5 @@ def importPhotochemWaterProfile(root:str = 'fco2_1e-1'):
 # ref_file  = 'hu-code-sr/scenario_library/CO2_CH4/fco2_1e-4_satred/ConcentrationSTD.dat'
 # plotAtmosphericComposition(conc_file=conc_file,id='test4',ref_file=ref_file,out_dir='outputs/test')
 
-# plotAtmosphericEvolution(scen_name='co2_1e-6_ch4_1e8',out_dir='outputs/co2_1e-6_ch4_1e8')
+# plotAtmosphericComposition(conc_file='hu-code-sr/scenario_library/trappist-1_n2co2/ConcentrationSTD.dat',id='test',plotit=True)
 
